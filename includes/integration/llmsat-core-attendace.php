@@ -61,7 +61,6 @@ class LLMS_AT_Core {
         $key               = $today_year."-".$today_month."-". $today_day."-".$course_id;
         $attendance        = get_user_meta( $user_id, $key, true );
         $disallow          = get_post_meta( $course_id, 'llmsatck1', true );
-        $llmsat_options    = get_option( 'llmsat_options', array() );
         $has_access        = $student->is_enrolled( $course->get( 'id' ) );
         // $meta_key = $today_year."-".$today_month."-".$today_day."-".$course_id;
         // $count_key = $today_year."-".$today_month."-".$course_id;
@@ -77,7 +76,7 @@ class LLMS_AT_Core {
         $attendance_button_text = apply_filters( "llms_attendance_button_text", $attendance_button_text );
         $output = "";
 
-        if ( $disallow != "on" && $llmsat_options['llmsat_global_attendance'] == "on" && null == $attendance && $has_access ) {
+        if ( $disallow != "on" && 'yes' === get_option( 'llms_integration_global_attendance_enabled', 'no' ) && null == $attendance && $has_access ) {
             $output .= '<input type="submit" value="'.$attendance_button_text.'" href="javascript:;" onclick="llmsat_attendance_btn_ajax('.$course_id.', '.$user_id.')" class="llmsat-attendance-btn llmsat-btn"/>';   
             $output .= '<div id="llmsat-ajax-response-id" class="llmsat-ajax-response"><span></span></div>'; 
         }   

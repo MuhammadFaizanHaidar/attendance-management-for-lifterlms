@@ -1,12 +1,12 @@
 <?php
 /**
- * LifterLMS Attendance System
+ * LifterLMS Attendance Management Addon
  *
- * Displays the LifterLMS Attendance Options.
+ * Displays the LifterLMS Attendance Management Options.
  *
  * @author   Muhammad Faizan Haidar
  * @category Admin
- * @package  LifterLMS Attendance/Plugin Options
+ * @package  LifterLMS Attendance Management/Plugin Options
  */
 
 
@@ -61,10 +61,8 @@ class LLMS_Attendance_Opions {
 
             $llmsat_options    = array();
 
-			$global_settings = isset( $_POST['llmsat_global_attendance'] ) ? $_POST['llmsat_global_attendance'] : 'no';
 			$delete_settings = isset( $_POST['llmsat_delete_attendance'] ) ? $_POST['llmsat_delete_attendance'] : 'no';
 
-			$llmsat_options['llmsat_global_attendance'] = sanitize_text_field( $global_settings );
 			$llmsat_options['llmsat_delete_attendance'] = sanitize_text_field( $delete_settings );
 
 

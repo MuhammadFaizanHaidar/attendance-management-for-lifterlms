@@ -14,7 +14,7 @@ $wpdb->query("DELETE FROM $wpdb->options WHERE option_name='llmsat_version';");
 
 $llmsat_options      = get_option( 'llmsat_options', array() );
  
-if( $llmsat_options['llmsat_delete_attendance'] == "on" ) {
+if( $llmsat_options['llmsat_delete_attendance'] == "on" && 'yes' === get_option( 'llms_integration_lifterlms_attendance_enabled', 'no' ) ) {
     $courses = get_posts( array(
 		'post_type' => 'course',
 		'post_status' => 'publish',

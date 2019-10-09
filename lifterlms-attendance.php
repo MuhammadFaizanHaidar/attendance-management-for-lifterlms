@@ -106,20 +106,23 @@ class LLMS_Attendance {
 	 */
 	private function includes() {
 
-		if ( file_exists( LLMS_At_INCLUDES_DIR . 'integration/llmsat-core-attendace.php' ) ) {
+		if ( 'yes' === get_option( 'llms_integration_lifterlms_attendance_enabled', 'no' ) ) {
 
-			require_once( LLMS_At_INCLUDES_DIR . 'integration/llmsat-core-attendace.php' );
-		}
-		
-		if ( file_exists( LLMS_At_INCLUDES_DIR . 'integration/llmsat-metabox.php' ) ) {
+			if ( file_exists( LLMS_At_INCLUDES_DIR . 'integration/llmsat-core-attendace.php' ) ) {
 
-			require_once( LLMS_At_INCLUDES_DIR . 'integration/llmsat-metabox.php' );
-		}
-		
-
-		if ( file_exists( LLMS_At_INCLUDES_DIR . 'integration/llmsat-shortcodes.php' ) ) {
-
-			require_once( LLMS_At_INCLUDES_DIR . 'integration/llmsat-shortcodes.php' );
+				require_once( LLMS_At_INCLUDES_DIR . 'integration/llmsat-core-attendace.php' );
+			}
+			
+			if ( file_exists( LLMS_At_INCLUDES_DIR . 'integration/llmsat-metabox.php' ) ) {
+	
+				require_once( LLMS_At_INCLUDES_DIR . 'integration/llmsat-metabox.php' );
+			}
+			
+	
+			if ( file_exists( LLMS_At_INCLUDES_DIR . 'integration/llmsat-shortcodes.php' ) ) {
+	
+				require_once( LLMS_At_INCLUDES_DIR . 'integration/llmsat-shortcodes.php' );
+			}
 		}
 
 		if ( file_exists( LLMS_At_INCLUDES_DIR . 'integration/llmsat-settings.php' ) ) {

@@ -64,7 +64,6 @@ class LLMS_AT_Metabox {
             list( $today_year, $today_month, $today_day, $hour, $minute, $second ) = preg_split( '([^0-9])', $blogtime );
             $key               = $today_year."-".$today_month."-". $today_day."-".$course_id;
             $attendance        = get_user_meta( $user_id, $key, true );
-            $llmsat_options    = get_option( 'llmsat_options', array() );
             $student           = llms_get_student( $user_id );
             $has_access        = $student->is_enrolled( $course->get( 'id' ) );
             $dateObj           = DateTime::createFromFormat('!m', $today_month );
@@ -72,7 +71,7 @@ class LLMS_AT_Metabox {
             $author_info       = get_userdata( $user_id );
             $days              = cal_days_in_month( CAL_GREGORIAN, $today_month, $today_year );
             $meta_key_count    = $today_year. "-". $today_month."-".$course_id;
-            if ( null !== get_user_meta( $user_id, $meta_key_count, true ) && $user_id != 0 && $has_access && $disallow != "on" && $llmsat_options['llmsat_global_attendance'] == "on" ) {
+            if ( null !== get_user_meta( $user_id, $meta_key_count, true ) && $user_id != 0 && $has_access && $disallow != "on" && 'yes' === get_option( 'llms_integration_global_attendance_enabled', 'no' )  ) {
                 $count         = get_user_meta( $user_id, $meta_key_count, true );
                 $count         = intval( $count );
                 $days          = intval( $days );

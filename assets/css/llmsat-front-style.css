@@ -1,0 +1,133 @@
+.llmsat-alert-success {
+	background: green;
+}
+.llmsat-sd-grades .llmsat-table .llmsat-progress {
+  display: block;
+  margin: 0; }
+  .llmsat-sd-grades .llmsat-table .llmsat-progress .llmsat-progress-bar {
+    top: 0;
+    height: 1.4em; }
+  .llmsat-sd-grades .llmsat-table .llmsat-progress .progress__indicator {
+    font-size: 1em;
+    position: relative;
+    right: 0.4em;
+    top: 0.2em;
+    z-index: 1; }
+.llmsat-table {
+  border: 1px solid #efefef;
+  width: 100%; }
+  .llmsat-table thead th, .llmsat-table thead td {
+    font-weight: 700; }
+  .llmsat-table tbody tr:nth-child(odd) td, .llmsat-table tbody tr:nth-child(odd) th {
+    background: #f9f9f9; }
+  .llmsat-table tbody tr:last-child {
+    border-bottom-width: 0; }
+  .llmsat-table tfoot tr {
+    background: #f9f9f9; }
+    .llmsat-table tfoot tr .llmsat-pagination .page-numbers {
+      margin: 0; }
+    .llmsat-table tfoot tr .llmsat-table-sort {
+      text-align: right; }
+      .llmsat-table tfoot tr .llmsat-table-sort form, .llmsat-table tfoot tr .llmsat-table-sort select, .llmsat-table tfoot tr .llmsat-table-sort input, .llmsat-table tfoot tr .llmsat-table-sort button {
+        margin: 0; }
+  .llmsat-table th {
+    font-weight: 700; }
+  .llmsat-table th, .llmsat-table td {
+    border-bottom: 1px solid #efefef;
+    padding: 8px 12px; }
+    .llmsat-table th:first-child, .llmsat-table td:first-child {
+      padding-left: 12px; }
+    .llmsat-table th:last-child, .llmsat-table td:last-child {
+      padding-right: 12px; }
+.llmsat-success {
+	color: #3c763d;
+	background: #dff0d8;
+  border:1px solid #3c763d;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  padding: 5px;
+}
+
+.llmsat-error {
+	padding: 5px;
+	border: 1px solid #a94442;
+	color:#a94442;
+	background: #f2dede;
+	border-radius: 5px;
+}
+
+
+
+/* Remove default bullets */
+ul, #llmsat-myUL {
+    list-style-type: none;
+  }
+  
+  /* Remove margins and padding from the parent ul */
+  #llmsat-myUL {
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Style the caret/arrow */
+  .llmsat-caret {
+    cursor: pointer; 
+    user-select: none; /* Prevent text selection */
+  }
+  
+  /* Create the caret/arrow with a unicode, and style it */
+  .llmsat-caret::before {
+    content: "\25B6";
+    color: black;
+    display: inline-block;
+    margin-right: 6px;
+  }
+  
+  /* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+  .llmsat-caret-down::before {
+    transform: rotate(90deg); 
+  }
+  
+  /* Hide the nested list */
+  .llmsat-nested {
+    display: none;
+  }
+
+  .llmsat-show::before {
+    content: "\2605";
+    color: black;
+    display: inline-block;
+    margin-right: 6px;
+    
+  }
+  .llmsat-diceychild li {
+    margin-left:35px;
+    position:relative;
+    margin-bottom:0.25em;
+  }
+
+  .llmsat-diceychild li:nth-child(1n):before {
+    position:absolute;
+    left:-1em;
+  }
+  .llmsat-diceychild li:nth-child(n):before {
+    color: black;
+    content: "\2681";
+  }
+
+
+  .llmsat-dicey li {
+    margin-left:35px;
+    position:relative;
+    margin-bottom:0.25em;
+  }
+
+  .llmsat-dicey li:nth-child(1n):before {
+    position:absolute;
+    left:-1em;
+  }
+
+  .llmsat-dicey li:nth-child(n):before {
+    color: black;
+    content: "\2680";
+  }

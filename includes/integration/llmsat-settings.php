@@ -33,14 +33,14 @@ class LLMS_Attendance_Settings {
 		);
 
 		$content[] = array(
-			'title' => __( 'LifterLMS Attendance General Settings', LLMS_At_TEXT_DOMAIN ),
+			'title' => __( 'LifterLMS Attendance Management Addon General Settings', LLMS_At_TEXT_DOMAIN ),
 			'type'  => 'title',
 			'desc'  => '',
 			'id'    => 'lifterlms_attendance_options'
 		);
 
 		$content[] = array(
-			'desc' 		=> __( 'Use LifterLMS Attendance System', LLMS_At_TEXT_DOMAIN ),
+			'desc' 		=> __( 'Use LifterLMS Attendance Management Addon.', LLMS_At_TEXT_DOMAIN ),
 			'default'	=> 'no',
 			'id' 		=> 'llms_integration_lifterlms_attendance_enabled',
 			'type' 		=> 'checkbox',
@@ -48,7 +48,7 @@ class LLMS_Attendance_Settings {
 		);
 		
 		$content[] = array(
-			'desc' 		=> __( 'Allow global attendance for all courses', LLMS_At_TEXT_DOMAIN ),
+			'desc' 		=> __( 'Allow global attendance for all courses.', LLMS_At_TEXT_DOMAIN ),
 			'default'	=> 'yes',
 			'id' 		=> 'llms_integration_global_attendance_enabled',
 			'type' 		=> 'checkbox',
@@ -58,6 +58,40 @@ class LLMS_Attendance_Settings {
         $content[] = array(
 			'type' => 'sectionend',
 			'id'   => 'lifterlms_attendance_options'
+		);
+
+		$content[] = array(
+			'type'  => 'sectionstart',
+			'id'    => 'lifterlms_attendance_shortcodes',
+			'class' =>'top'
+		);
+
+		$content[] = array(
+			'title' => __( 'LifterLMS Attendance Management Addon Shortcodes', LLMS_At_TEXT_DOMAIN ),
+			'type'  => 'title',
+			'desc'  => '',
+			'id'    => 'lifterlms_attendance_shortcodes'
+		);
+
+		$content[] = array(
+			'title' => __( 'Top "X" attendants shortcode', LLMS_At_TEXT_DOMAIN ),
+			'type'  => 'text',
+			'value' => '[llmsat_top_attendant course_id="y" students="x"]',
+			'desc'  => '<br>'. __( 'It shows top "x" attendants in a given course id "y" by default it shows only 1 top attendant. Automatically retrieves current dates.', LLMS_At_TEXT_DOMAIN ). '</br>',
+			'id'    => 'lifterlms_attendance_top_attendant'
+		);
+
+		$content[] = array(
+			'title' => __( 'Student attendance shortcode', LLMS_At_TEXT_DOMAIN ),
+			'type'  => 'text',
+			'value' => '[llmsat_student_attendance course_id="x"]',
+			'desc'  => '<br>'. __( 'It shows attendance of current login user for a given course id "x" automatically reterieves user id if not given. Automatically retrieves current dates.', LLMS_At_TEXT_DOMAIN ). '</br>',
+			'id'    => 'lifterlms_attendance_student_attendance'
+		);
+
+		$content[] = array(
+			'type' => 'sectionend',
+			'id'   => 'lifterlms_attendance_shortcodes'
 		);
 
 		return $content;

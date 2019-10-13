@@ -195,16 +195,11 @@ class LLMS_Attendance {
 	public function admin_enqueue_scripts( $hook ) {
 
 		$screen          = get_current_screen();
-		$current_post_id = get_the_ID();
-		$is_achievement  = badgeos_is_achievement( $current_post_id );
-		$is_rank         = badgeos_is_rank( $current_post_id );
-		if( $is_achievement || $is_rank || 'point_type' == $screen->post_type ) { //this is not our custom post, so let's exit
+		/**
+		 * plugin's admin script
+		 */
+		wp_enqueue_script( 'llmsat-admin-script', LLMS_At_ASSETS_URL . 'js/llmsat-admin-script.js', [ 'jquery' ], self::VERSION, true );
 
-			/**
-			 * plugin's admin script
-			 */
-			wp_enqueue_script( 'llmsat-admin-script', LLMS_At_ASSETS_URL . 'js/llmsat-admin-script.js', [ 'jquery' ], self::VERSION, true );
-		}
 		if( $screen->post_type == "course" ) {
 			/**
 			 * plugin's admin style

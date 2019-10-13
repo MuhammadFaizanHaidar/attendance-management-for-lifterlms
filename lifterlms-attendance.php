@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: LifterLMS Attendance Management Addon
- * Plugin URI: https://github.com/MuhammadFaizanHaidar/lifterlms-attendance-management-addon
+ * Plugin URI:  https://github.com/MuhammadFaizanHaidar/lifterlms-attendance-management-addon
  * Description: This addon will provide the Attendance functionality for LifterLMS registered users
  * Version:     1.0
  * Author:      Muhammad Faizan Haidar
@@ -150,27 +150,12 @@ class LLMS_Attendance {
 	}
 
 	private function hooks() {
-		add_action( 'admin_enqueue_scripts', [
-			$this,
-			'admin_enqueue_scripts',
-		] );
-		add_action( 'wp_enqueue_scripts', [
-			$this,
-			'frontend_enqueue_scripts',
-		], 11 );
-		add_filter( 'plugin_action_links_' . LLMS_At_BASE_DIR, [
-			$this,
-			'settings_link',
-		], 10, 1 );
-		add_action( 'plugins_loaded', [ $this, 'upgrade' ] );
-		add_action( 'plugins_loaded', add_filter( 'gettext', [
-			$this,
-			'activation_message',
-		], 99, 3 ) );
-		add_filter( 'lifterlms_integrations', [
-			$this,
-			'register_integration',
-		], 10, 1 );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
+		add_action( 'wp_enqueue_scripts',    [ $this, 'frontend_enqueue_scripts' ], 11 );
+		add_filter( 'plugin_action_links_' . LLMS_At_BASE_DIR, [ $this, 'settings_link' ], 10, 1 );
+		add_action( 'plugins_loaded',        [ $this, 'upgrade' ] );
+		add_action( 'plugins_loaded', add_filter( 'gettext', [$this, 'activation_message'], 99, 3 ) );
+		add_filter( 'lifterlms_integrations', array( $this, 'register_integration' ), 10, 1 );
 	}
 
 	/**
@@ -220,19 +205,12 @@ class LLMS_Attendance {
 	public function admin_enqueue_scripts( $hook ) {
 
 		$screen          = get_current_screen();
-		$current_post_id = get_the_ID();
-		if ( class_exists( 'BadgeOS' ) ) {
-			$is_achievement = badgeos_is_achievement( $current_post_id );
-			$is_rank        = badgeos_is_rank( $current_post_id );
-			if ( $is_achievement || $is_rank || 'point_type' == $screen->post_type ) { //this is not our custom post, so let's exit
+		/**
+		 * plugin's admin script
+		 */
+		wp_enqueue_script( 'llmsat-admin-script', LLMS_At_ASSETS_URL . 'js/llmsat-admin-script.js', [ 'jquery' ], self::VERSION, true );
 
-				/**
-				 * plugin's admin script
-				 */
-				wp_enqueue_script( 'llmsat-admin-script', LLMS_At_ASSETS_URL . 'js/llmsat-admin-script.js', [ 'jquery' ], self::VERSION, true );
-			}
-		}
-		if ( $screen->post_type == "course" ) {
+		if( $screen->post_type == "course" ) {
 			/**
 			 * plugin's admin style
 			 */

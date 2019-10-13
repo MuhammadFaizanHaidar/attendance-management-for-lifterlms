@@ -2,8 +2,8 @@
 /**
  * Plugin Name: LifterLMS Attendance Management Addon
  * Plugin URI: https://github.com/MuhammadFaizanHaidar/lifterlms-attendance-management-addon
- * Description: This addon will provide the Attendance functionality for
- * LifterLMS registered users Version:     1.0
+ * Description: This addon will provide the Attendance functionality for LifterLMS registered users
+ * Version:     1.0
  * Author:      Muhammad Faizan Haidar
  * Author URI:  https://profiles.wordpress.org/muhammadfaizanhaidar/
  * Text Domain: llms-attendance

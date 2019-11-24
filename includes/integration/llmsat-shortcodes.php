@@ -78,7 +78,7 @@ class LLMS_At_Short_Code {
                     $attendance = $count/intval( $today_day ) * 100;
                 } 
                 ?>
-                <li><span class=""><b><?php echo __( 'Number '. intval ( $st_count+1 ) .' Attendant for the course '.get_the_title( $course_id ).' :', LLMS_At_TEXT_DOMAIN );?> </b></span>
+                <li><span class=""><b><?php echo __( 'Number '. intval ( $st_count + 1 ) .' Attendant for the course '.get_the_title( $course_id ).' :', LLMS_At_TEXT_DOMAIN );?> </b></span>
                     <ul class="llmsat-dicey">
                         <li><?php echo __( "<b>Student Name</b> : ". $student->display_name,  LLMS_At_TEXT_DOMAIN ); ?></li>
                         <li><?php echo __( "<b>Course Name</b>       : ". get_the_title( $course_id ),   LLMS_At_TEXT_DOMAIN ); ?></li>

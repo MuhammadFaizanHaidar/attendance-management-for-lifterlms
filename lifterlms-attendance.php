@@ -154,7 +154,7 @@ class LLMS_Attendance {
 		add_action( 'wp_enqueue_scripts',    [ $this, 'frontend_enqueue_scripts' ], 11 );
 		add_filter( 'plugin_action_links_' . LLMS_At_BASE_DIR, [ $this, 'settings_link' ], 10, 1 );
 		add_action( 'plugins_loaded',        [ $this, 'upgrade' ] );
-		add_action( 'plugins_loaded', add_filter( 'gettext', [$this, 'activation_message'], 99, 3 ) );
+		//add_action( 'plugins_loaded', add_filter( 'gettext', [ $this, 'activation_message' ], 99, 3 ) );
 		add_filter( 'lifterlms_integrations', array( $this, 'register_integration' ), 10, 1 );
 	}
 
@@ -205,16 +205,26 @@ class LLMS_Attendance {
 	public function admin_enqueue_scripts( $hook ) {
 
 		$screen          = get_current_screen();
-		/**
-		 * plugin's admin script
-		 */
-		wp_enqueue_script( 'llmsat-admin-script', LLMS_At_ASSETS_URL . 'js/llmsat-admin-script.js', [ 'jquery' ], self::VERSION, true );
 
 		if( $screen->post_type == "course" ) {
 			/**
 			 * plugin's admin style
 			 */
-			wp_enqueue_style( 'llmsat-admin-style', LLMS_At_ASSETS_URL . 'css/llmsat-admin-style.css', self::VERSION, null );
+			wp_enqueue_style( 'llmsat-admin-style', 
+				LLMS_At_ASSETS_URL . 'css/llmsat-admin-style.css', 
+				self::VERSION, 
+				null 
+			);
+
+			/**
+			 * plugin's admin script
+			 */
+			wp_enqueue_script( 'llmsat-admin-script', 
+				LLMS_At_ASSETS_URL . 'js/llmsat-admin-script.js', 
+				[ 'jquery' ], 
+				self::VERSION, 
+				true 
+			);
 		}
 	}
 
@@ -225,8 +235,18 @@ class LLMS_Attendance {
 		/**
 		 * plugin's frontend script
 		 */
-		wp_enqueue_script( 'llmsat-front-script', LLMS_At_ASSETS_URL . 'js/llmsat-front-script.js', [ 'jquery' ], self::VERSION, true );
-		wp_enqueue_style( 'llmsat-front-style', LLMS_At_ASSETS_URL . 'css/llmsat-front-style.css', self::VERSION, null );
+		wp_enqueue_script( 'llmsat-front-script', 
+			LLMS_At_ASSETS_URL . 'js/llmsat-front-script.js', 
+			[ 'jquery' ], 
+			self::VERSION, 
+			true
+		);
+		
+		wp_enqueue_style( 'llmsat-front-style', 
+			LLMS_At_ASSETS_URL . 'css/llmsat-front-style.css', 
+			self::VERSION, 
+			null 
+		);
 
 		wp_localize_script( 'llmsat-front-script', 'llmsat_ajax_url',
 			[
@@ -241,7 +261,8 @@ class LLMS_Attendance {
 	 * @return void
 	 */
 	public function settings_link( $links ) {
-		$settings_link = '<a href="admin.php?page=lifterlms-attendance-management-options">' . __( 'Settings', LLMS_At_TEXT_DOMAIN ) . '</a>';
+		$settings_link = '<a href="admin.php?page=lifterlms-attendance-management-options">'
+			. __( 'Settings', LLMS_At_TEXT_DOMAIN ) . '</a>';
 		array_unshift( $links, $settings_link );
 
 		return $links;
@@ -258,7 +279,10 @@ function llmsat_ready() {
 
 	if ( ! class_exists( 'LifterLMS' ) ) {
 		$class   = 'notice is-dismissible error';
-		$message = __( 'LifterLMS Attendance add-on requires <a href="https://wordpress.org/plugins/lifterlms/" target="_BLANK">LifterLMS</a> plugin to be activated.', 'llms-attendance' );
+		$message = __( 'LifterLMS Attendance add-on requires <a href="https://wordpress.org/plugins/lifterlms/" 
+			target="_BLANK">LifterLMS</a> plugin to be activated.', 
+			'llms-attendance' 
+		);
 		printf( '<div id="message" class="%s"> <p>%s</p></div>', $class, $message );
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 	}

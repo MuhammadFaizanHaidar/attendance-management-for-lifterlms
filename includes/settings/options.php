@@ -42,11 +42,16 @@ class LLMS_Attendance_Opions {
      */
     public function llmsat_admin_notices() {
 
-        $screen = get_current_screen();
+		$screen = get_current_screen();
+		$updated = false;
         if( $screen->base != 'lifterlms_page_lifterlms-attendance-management-options' ) {
             return;
-        }
-        if( isset( $_POST['llmsat_settings_submit'] ) || $_GET['settings-updated'] == true ) {
+		}
+		
+		if( $_GET[ 'settings-updated' ] ) {
+			$updated =  $_GET[ 'settings-updated' ];
+		}
+        if( isset( $_POST['llmsat_settings_submit'] ) || $updated  == true ) {
             $class = 'notice notice-success is-dismissible';
             $message = __( 'Settings Saved', LLMS_At_TEXT_DOMAIN );
             printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );

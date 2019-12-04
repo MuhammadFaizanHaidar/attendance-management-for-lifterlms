@@ -3,7 +3,7 @@
  * Plugin Name: LifterLMS Attendance Management Addon
  * Plugin URI:  https://github.com/MuhammadFaizanHaidar/lifterlms-attendance-management-addon
  * Description: This addon will provide the Attendance functionality for LifterLMS registered users
- * Version:     1.0
+ * Version:     1.0.0
  * Author:      Muhammad Faizan Haidar
  * Author URI:  https://profiles.wordpress.org/muhammadfaizanhaidar/
  * Text Domain: llms-attendance
@@ -22,7 +22,7 @@ register_deactivation_hook( __FILE__, [ 'LLMS_Attendance', 'deactivation' ] );
  */
 class LLMS_Attendance {
 
-	const VERSION = '1.0';
+	const VERSION = '1.0.0';
 
 	/**
 	 * @var self
@@ -207,6 +207,10 @@ class LLMS_Attendance {
 		$screen          = get_current_screen();
 
 		if( $screen->post_type == "course" ) {
+			$active = "no";
+			if( function_exists('has_blocks') ) { 
+				$active = "yes";
+			}
 			/**
 			 * plugin's admin style
 			 */
@@ -225,6 +229,12 @@ class LLMS_Attendance {
 				self::VERSION, 
 				true 
 			);
+
+			wp_localize_script( 'llmsat-admin-script', 'llmsat_block_editor',
+				[
+					'block_editor_active' => $active,
+				]
+			);
 		}
 	}
 
@@ -232,6 +242,10 @@ class LLMS_Attendance {
 	 * Enqueue scripts on frontend
 	 */
 	public function frontend_enqueue_scripts() {
+		$active = "no";
+		if( function_exists( 'is_gutenberg_page' ) && is_gutenberg_page() ) { 
+			$active = "yes";
+		}
 		/**
 		 * plugin's frontend script
 		 */
@@ -250,7 +264,8 @@ class LLMS_Attendance {
 
 		wp_localize_script( 'llmsat-front-script', 'llmsat_ajax_url',
 			[
-				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'ajax_url'            => admin_url( 'admin-ajax.php' ),
+				'block_editor_active' => $active,
 			]
 		);
 	}

@@ -42,13 +42,13 @@ class LLMS_Attendance_Opions {
      */
     public function llmsat_admin_notices() {
 
-		$screen = get_current_screen();
-		$updated = false;
+		$screen   = get_current_screen();
+		$updated  = false;
         if( $screen->base != 'lifterlms_page_lifterlms-attendance-management-options' ) {
             return;
 		}
 		
-		if( $_GET[ 'settings-updated' ] ) {
+		if( isset( $_GET[ 'settings-updated' ] ) ) {
 			$updated =  $_GET[ 'settings-updated' ];
 		}
         if( isset( $_POST['llmsat_settings_submit'] ) || $updated  == true ) {
@@ -223,7 +223,11 @@ class LLMS_Attendance_Opions {
      */
     function remove_footer_admin ( $footer_text ) {
         if( isset( $_GET['page'] ) && ( $_GET['page'] == 'lifterlms-attendance-management-options' ) ) {
-            _e( 'Fueled by <a href="http://www.wordpress.org" target="_blank">WordPress</a> | developed and designed by <a href="https://profiles.wordpress.org/muhammadfaizanhaidar/" target="_blank">Muhammad Faizan Haidar</a></p>', LLMS_At_TEXT_DOMAIN );
+			_e( 'Fueled by <a href="http://www.wordpress.org" target="_blank">WordPress</a> | developed and designed by 
+			<a href="https://profiles.wordpress.org/muhammadfaizanhaidar/" target="_blank">Muhammad Faizan Haidar</a>
+			</p>',
+			LLMS_At_TEXT_DOMAIN 
+		);
         } else {
             return $footer_text;
         }

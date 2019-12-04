@@ -56,7 +56,7 @@ class LLMS_AT_Metabox {
         $students_information_text = __( 'Students Attendance Information ', LLMS_At_TEXT_DOMAIN );
         $students_information_text = apply_filters( 'llmsat_students_attendance_information_text', $students_information_text );
         add_meta_box( 'llmsat-metabox-id', $disallow_attendance_text,           array( $this, 'show_attendance_meta_box' ), 'course', 'side', 'high' );
-        add_meta_box( 'llmsat-students-metabox-id', $students_information_text, array( $this, 'show_student_listing_meta_box' ), 'course', 'advanced', 'high' )
+        add_meta_box( 'llmsat-students-metabox-id', $students_information_text, array( $this, 'show_student_listing_meta_box' ), 'course', 'advanced', 'high' );
     }
 
     public function show_student_listing_meta_box () {

@@ -1,15 +1,16 @@
-# LifterLMS Attendance Management Addon
+# LifterLMS Attendance Management System
+
 Contributors: lifterlms , attendance
 Tags: lifterlms, attendance, mark, award, reward, engagement, submission, nomination
 Requires at least: 4.0
 Tested up to: 5.3
 Stable tag: 1.0.0
 
-The LifterLMS Attendance Management addon lets your user to mark their attendances in different courses.Admin & users can keep track of their attendances. You can now make your e-learning platform even more engaging.
+The LifterLMS Attendance Management System addon lets your user to mark their attendances in different courses.Admin & users can keep track of their attendances. You can now make your e-learning platform even more engaging.
 
 ## Description
 
-The LifterLMS Attendance Management addon lets your user to mark their attendances in different courses. Admin & users can keep track of their attendances. You can now make your e-learning platform even more engaging.
+The LifterLMS Attendance Management System addon lets your user to mark their attendances in different courses. Admin & users can keep track of their attendances. You can now make your e-learning platform even more engaging.
 
 **Prerequisites**
 
@@ -35,9 +36,9 @@ Before installation please make sure you have latest LifterLMS installed.
 
 ## FAQ
 
-**Can I use “LifterLMS Attendance Management” addon and any other attendance addon simultaneously?**
+**Can I use “LifterLMS Attendance Management System” and any other attendance system simultaneously?**
 
-Yes, you can use “LifterLMS Attendance Management”  addon and any other attendance addon at the same time.
+Yes, you can use “LifterLMS Attendance Management System”  addon and any other attendance system addon at the same time.
 
 ## Changelog
 

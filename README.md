@@ -42,5 +42,5 @@ Yes, you can use “LifterLMS Attendance Management”  addon and any other atte
 
 ## Changelog
 
-**1.0**
+**1.0.0**
 - Intial release

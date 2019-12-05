@@ -154,7 +154,6 @@ class LLMS_Attendance {
 		add_action( 'wp_enqueue_scripts',    [ $this, 'frontend_enqueue_scripts' ], 11 );
 		add_filter( 'plugin_action_links_' . LLMS_At_BASE_DIR, [ $this, 'settings_link' ], 10, 1 );
 		add_action( 'plugins_loaded',        [ $this, 'upgrade' ] );
-		//add_action( 'plugins_loaded', add_filter( 'gettext', [ $this, 'activation_message' ], 99, 3 ) );
 		add_filter( 'lifterlms_integrations', array( $this, 'register_integration' ), 10, 1 );
 	}
 
@@ -169,32 +168,6 @@ class LLMS_Attendance {
 		$integrations[] = 'LifterLMS_Attendance_Integration';
 
 		return $integrations;
-	}
-
-	/**
-	 * Translate the "Plugin activated." string
-	 *
-	 * @param [type] $translated_text
-	 * @param [type] $untranslated_text
-	 * @param [type] $domain
-	 *
-	 * @return void
-	 */
-
-	public function activation_message( $translated_text, $untranslated_text, $domain ) {
-		$old = [
-			"Plugin <strong>activated</strong>.",
-			"Selected plugins <strong>activated</strong>.",
-		];
-
-		$new = "The Core is stable and the Plugin is <strong>deactivated</strong>";
-
-		if ( ! class_exists( 'LifterLMS' ) && in_array( __( $untranslated_text, LLMS_At_TEXT_DOMAIN ), __( $old, LLMS_At_TEXT_DOMAIN ), true ) ) {
-			$translated_text = __( $new, LLMS_At_TEXT_DOMAIN );
-			remove_filter( current_filter(), __FUNCTION__, 99 );
-		}
-
-		return $translated_text;
 	}
 
 	/**

@@ -34,7 +34,6 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 		$users_array = array();
 		$args        = array();
 		$users     	 = "";
-		$students    = "";
 		if( !empty( $search_term ) ) {
 			$searchcol = array(
 				'ID',

@@ -64,7 +64,7 @@ class LLMS_Attendance_Opions {
 	public function llmsat_admin_settings_save() {
 		if( isset( $_POST['llmsat_settings_submit'] ) ) {
 
-            $llmsat_options    = array();
+            $llmsat_options  = array();
 
 			$delete_settings = isset( $_POST['llmsat_delete_attendance'] ) ? $_POST['llmsat_delete_attendance'] : 'no';
 

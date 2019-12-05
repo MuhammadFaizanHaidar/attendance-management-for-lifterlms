@@ -32,10 +32,11 @@ class LLMS_AT_Metabox {
      */
     public function llms_attendance_add_query_string( $post_id, $post, $update ) {
 		$post_type    = get_post_type($post);
-		$search_term  = isset( $_POST['s'] ) ? trim( $_POST['s'] ) : "";
+        $search_term  = isset( $_POST['s'] ) ? trim( $_POST['s'] ) : "";
+        $search_term  = sanitize_text_field( $search_term );
 		if ( $search_term == "" ) {
 
-			$search_term  = isset( $_GET['s'] ) ? trim( $_GET['s'] ) : "";
+            $search_term  = isset( $_GET['s'] ) ? trim( $_GET['s'] ) : "";
 		}
 		if ( ( $post_type == 'course' )  && $search_term != "" ) {
 
@@ -101,7 +102,7 @@ class LLMS_AT_Metabox {
     public function save_meta_box( $post_id ) {
 
         $post_type          = get_post_type( $post_id );
-        $meta_field_value_1 = $_POST['llmsatck1'];
+        $meta_field_value_1 = sanitize_text_field( $_POST['llmsatck1'] );
         if( trim( $post_type ) == 'course' ) {
             update_post_meta( $post_id, 'llmsatck1', $meta_field_value_1 );
         }

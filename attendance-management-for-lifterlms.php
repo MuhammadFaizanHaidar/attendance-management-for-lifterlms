@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: LifterLMS Attendance Management Addon
- * Plugin URI:  https://github.com/MuhammadFaizanHaidar/lifterlms-attendance-management-addon
+ * Plugin Name: Attendance Management For LifterLMS
+ * Plugin URI:  https://github.com/MuhammadFaizanHaidar/attendance-management-for-lifterlms
  * Description: This addon will provide the Attendance functionality for LifterLMS registered users
  * Version:     1.0.0
  * Author:      Muhammad Faizan Haidar
- * Author URI:  https://profiles.wordpress.org/muhammadfaizanhaidar/
+ * Author URI:  https:faizanhaidar.com
  * Text Domain: llms-attendance
  * License: GNU AGPL
  */

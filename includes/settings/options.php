@@ -1,12 +1,12 @@
 <?php
 /**
- * LifterLMS Attendance Management Addon
+ * Attendance Management For LifterLMS Addon
  *
- * Displays the LifterLMS Attendance Management Options.
+ * Displays the Attendance Management For LifterLMS Options.
  *
  * @author   Muhammad Faizan Haidar
  * @category Admin
- * @package  LifterLMS Attendance Management/Plugin Options
+ * @package  Attendance Management For LifterLMS/Plugin Options
  */
 
 
@@ -89,8 +89,8 @@ class LLMS_Attendance_Opions {
 
 		add_submenu_page(
 			'lifterlms',
-			__( 'LifterLMS Attendance Management', LLMS_At_TEXT_DOMAIN ),
-			__( 'LifterLMS Attendance Management', LLMS_At_TEXT_DOMAIN ),
+			__( 'Attendance Management For LifterLMS', LLMS_At_TEXT_DOMAIN ),
+			__( 'Attendance Management For LifterLMS', LLMS_At_TEXT_DOMAIN ),
 			'manage_options',
 			'lifterlms-attendance-management-options',
 			[ $this, 'LLMS_Attendance' ]
@@ -168,7 +168,7 @@ class LLMS_Attendance_Opions {
 	    ?>
         <div id="wrap" class="llmsat-settings-wrapper">
             <div id="icon-options-general" class="icon32"></div>
-            <h1><?php echo __( 'LifterLMS Attendance Management Settings', LLMS_At_TEXT_DOMAIN ); ?></h1>
+            <h1><?php echo __( 'Attendance Management For LifterLMS Settings', LLMS_At_TEXT_DOMAIN ); ?></h1>
 
             <div class="nav-tab-wrapper">
                 <?php
@@ -224,7 +224,7 @@ class LLMS_Attendance_Opions {
     function remove_footer_admin ( $footer_text ) {
         if( isset( $_GET['page'] ) && ( $_GET['page'] == 'lifterlms-attendance-management-options' ) ) {
 			_e( 'Fueled by <a href="http://www.wordpress.org" target="_blank">WordPress</a> | developed and designed by 
-			<a href="https://profiles.wordpress.org/muhammadfaizanhaidar/" target="_blank">Muhammad Faizan Haidar</a>
+			<a href="https:faizanhaidar.com/" target="_blank">Muhammad Faizan Haidar</a>
 			</p>',
 			LLMS_At_TEXT_DOMAIN 
 		);

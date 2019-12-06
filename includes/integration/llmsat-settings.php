@@ -33,14 +33,14 @@ class LLMS_Attendance_Settings {
 		);
 
 		$content[] = array(
-			'title' => __( 'LifterLMS Attendance Management Addon General Settings', LLMS_At_TEXT_DOMAIN ),
+			'title' => __( 'Attendance Management For LifterLMS Addon General Settings', LLMS_At_TEXT_DOMAIN ),
 			'type'  => 'title',
 			'desc'  => '',
 			'id'    => 'lifterlms_attendance_options'
 		);
 
 		$content[] = array(
-			'desc' 		=> __( 'Use LifterLMS Attendance Management Addon.', LLMS_At_TEXT_DOMAIN ),
+			'desc' 		=> __( 'Use Attendance Management For LifterLMS Addon.', LLMS_At_TEXT_DOMAIN ),
 			'default'	=> 'no',
 			'id' 		=> 'llms_integration_lifterlms_attendance_enabled',
 			'type' 		=> 'checkbox',
@@ -67,7 +67,7 @@ class LLMS_Attendance_Settings {
 		);
 
 		$content[] = array(
-			'title' => __( 'LifterLMS Attendance Management Addon Shortcodes', LLMS_At_TEXT_DOMAIN ),
+			'title' => __( 'Attendance Management For LifterLMS Addon Shortcodes', LLMS_At_TEXT_DOMAIN ),
 			'type'  => 'title',
 			'desc'  => '',
 			'id'    => 'lifterlms_attendance_shortcodes'

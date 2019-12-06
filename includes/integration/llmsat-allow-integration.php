@@ -2,7 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * LifterLMS Attendance Integration Class
+ * Attendance Management For LifterLMS Integration Class
  */
 class LifterLMS_Attendance_Integration extends LLMS_Abstract_Integration {
 

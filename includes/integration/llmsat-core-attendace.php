@@ -1,9 +1,9 @@
 <?php
 /**
- * LifterLMS Attendance Management Core
+ * Attendance Management For LifterLMS Core
  *
  * @author   Muhammad Faizan Haidar
- * @package  LifterLMS Attendance Management Core
+ * @package  Attendance Management For LifterLMS Core
  * @version  1.0
  */
 

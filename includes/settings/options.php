@@ -29,11 +29,26 @@ class LLMS_Attendance_Opions {
      */
 	public function __construct() {
 
-	    $this->page_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'general';
-		add_action( 'admin_menu', [ $this, 'llmsat_menu' ] );
-		add_action( 'admin_notices', [ $this, 'llmsat_admin_notices' ] );
-		add_action( 'admin_post_llmsat_admin_settings', [ $this, 'llmsat_admin_settings_save' ] );
-        add_filter( 'admin_footer_text', [ $this, 'remove_footer_admin' ] );
+	    $this->page_tab = sanitize_text_field( isset( $_GET['tab'] ) ? $_GET['tab'] : 'general' );
+		add_action( 
+			'admin_menu', 
+			[ $this, 'llmsat_menu' ]
+		);
+
+		add_action( 
+			'admin_notices', 
+			[ $this, 'llmsat_admin_notices' ] 
+		);
+
+		add_action( 
+			'admin_post_llmsat_admin_settings', 
+			[ $this, 'llmsat_admin_settings_save' ] 
+		);
+
+        add_filter( 
+			'admin_footer_text', 
+			[ $this, 'remove_footer_admin' ] 
+		);
 	}
 
 	
@@ -49,7 +64,7 @@ class LLMS_Attendance_Opions {
 		}
 		
 		if( isset( $_GET[ 'settings-updated' ] ) ) {
-			$updated =  $_GET[ 'settings-updated' ];
+			$updated = sanitize_text_field( $_GET[ 'settings-updated' ] );
 		}
         if( isset( $_POST['llmsat_settings_submit'] ) || $updated  == true ) {
             $class = 'notice notice-success is-dismissible';
@@ -72,8 +87,8 @@ class LLMS_Attendance_Opions {
 
 
             update_option( 'llmsat_options', $llmsat_options );
-			wp_safe_redirect( add_query_arg( 'settings-updated', 'true', $_POST['_wp_http_referer'] ) );
-			$class = 'bedg-notice hidden notice notice-success is-dismissible';
+			wp_safe_redirect( add_query_arg( 'settings-updated', 'true', sanitize_text_field( $_POST['_wp_http_referer'] ) ) );
+			$class = 'llmsat-notice hidden notice notice-success is-dismissible';
 			$message = __( 'Settings Updated.', LLMS_At_TEXT_DOMAIN );
 
 			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
@@ -222,13 +237,15 @@ class LLMS_Attendance_Opions {
      * @return mixed
      */
     function remove_footer_admin ( $footer_text ) {
-        if( isset( $_GET['page'] ) && ( $_GET['page'] == 'lifterlms-attendance-management-options' ) ) {
+        if( isset( $_GET['page'] ) && ( sanitize_text_field( $_GET['page'] ) == 'lifterlms-attendance-management-options' ) ) {
 			_e( 'Fueled by <a href="http://www.wordpress.org" target="_blank">WordPress</a> | developed and designed by 
 			<a href="https:faizanhaidar.com/" target="_blank">Muhammad Faizan Haidar</a>
 			</p>',
 			LLMS_At_TEXT_DOMAIN 
 		);
+
         } else {
+
             return $footer_text;
         }
     }

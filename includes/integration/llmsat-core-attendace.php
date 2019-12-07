@@ -25,9 +25,23 @@ class LLMS_AT_Core {
     }
 
     private function hooks() {
-        add_action( 'lifterlms_single_course_before_summary',           array( $this,'add_content_before_course_summary' ), 10, 0);
-        add_action( 'wp_ajax_llmsat_attendance_btn_ajax_action',        array( $this, 'llmsat_attendance_btn_ajax_action' ), 10 );
-        add_action( 'wp_ajax_nopriv_llmsat_attendance_btn_ajax_action', array( $this, 'llmsat_attendance_btn_ajax_action' ), 10);
+        add_action( 
+            'lifterlms_single_course_before_summary',           
+            array( $this,'add_content_before_course_summary' ), 
+            10, 
+            0
+        );
+
+        add_action( 
+            'wp_ajax_llmsat_attendance_btn_ajax_action',   
+            array( $this, 'llmsat_attendance_btn_ajax_action' ),
+            10 
+        );
+
+        add_action( 'wp_ajax_nopriv_llmsat_attendance_btn_ajax_action', 
+            array( $this, 'llmsat_attendance_btn_ajax_action' ), 
+            10
+        );
     }
 
     /**
@@ -91,7 +105,7 @@ class LLMS_AT_Core {
      */
     public function llmsat_attendance_btn_ajax_action() {
         
-        $user_id   = sanitize_text_field( $_POST['uid'] );
+        $user_id   = intval( sanitize_text_field( $_POST['uid'] ) );
         $course_id = sanitize_text_field( $_POST['pid'] );
         if ( $user_id && $course_id ) {
             
@@ -130,55 +144,22 @@ class LLMS_AT_Core {
                 update_user_meta( $user_id, $meta_key, $student_data );
                 update_user_meta( $user_id, $meta_key_count, $count );
                 $success_message =  __( "Attendance marked successfully", LLMS_At_TEXT_DOMAIN );
+
                 echo apply_filters( "llms_attendance_success_message", $success_message )."1";
-                //$this->show_notification( 'marked_successfully' );
                 exit;
             }
 
         } else {
             $failed_message = __( "Attendance was not marked successfully", LLMS_At_TEXT_DOMAIN );
+
             echo apply_filters( "llms_attendance_failed_message", $failed_message )."2";
-            //$this->show_notification( 'attendance_failed' );
             exit;
         }
         $already_marked = __( "You are already marked present", LLMS_At_TEXT_DOMAIN );
+
         echo apply_filters( "llms_attendance_already_marked_message", $already_marked )."3";
-        //$this->show_notification( 'already_marked' );
+       
         exit;
-    }
-
-    /**
-     * @param string $error_code
-     */
-    function show_notification( $error_code = '' ) {
-
-        $redirect_url = add_query_arg( 'bos-llms-gw-error', $error_code, $_POST['_wp_http_referer'] );
-        wp_safe_redirect( $redirect_url, 302 );
-        exit;
-    }
-
-    function alert_error() {
-
-        if ( ( isset( $_GET['bos-llms-gw-error'] ) ) && ( !empty( $_GET['bos-llms-gw-error'] ) ) ) {
-
-            $message = '';
-
-
-        if( $_GET['bos-llms-gw-error'] == 'marked_successfully' || $_GET['bos-llms-gw-error'] == 'already_marked' ) {
-            $message = __( 'The Point Type you have chosen, has not enough points to unlock this course', LLMS_At_TEXT_DOMAIN );
-        }
-        ?>
-
-        <script type="text/javascript">
-            jQuery( document ).ready( function() {
-                console.log("ok");
-
-                jQuery( '<p class="llmsat-error"><?php echo $message; ?></p>' ).insertBefore( '.llmsat-attendance-btn' );
-    
-            });
-        </script>
-        <?php }
-        echo "success";
     }
 }
 return new LLMS_AT_Core();

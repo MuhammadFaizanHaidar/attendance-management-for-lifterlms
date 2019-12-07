@@ -10,8 +10,16 @@ class LLMS_Attendance_Settings {
 	 * Constructor
 	 */
 	public function __construct() { 
-		add_filter( 'lifterlms_integrations_settings_lifterlms_attendance', array( $this, 'integration_settings' ) );
-		add_action( 'lifterlms_settings_save_integrations',       array( $this, 'save' ), 10 );
+		add_filter( 
+			'lifterlms_integrations_settings_lifterlms_attendance', 
+			[ $this, 'integration_settings' ] 
+		);
+		
+		add_action( 
+			'lifterlms_settings_save_integrations',
+			[ $this, 'save' ], 
+			10 
+		);
 
 	}
 

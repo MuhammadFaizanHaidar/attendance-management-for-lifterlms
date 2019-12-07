@@ -22,8 +22,15 @@ class LLMS_At_Short_Code {
 
     private function hooks() {
         
-        add_shortcode( 'llmsat_top_attendant',      array( $this, 'display_top_attendant' ) ) ;
-        add_shortcode( 'llmsat_student_attendance', array( $this, 'display_student_attendance' ) ) ;
+        add_shortcode( 
+            'llmsat_top_attendant',
+            [ $this, 'display_top_attendant' ] 
+        );
+
+        add_shortcode( 
+            'llmsat_student_attendance',
+            [ $this, 'display_student_attendance' ] 
+        );
     }
     
     /**
@@ -43,10 +50,10 @@ class LLMS_At_Short_Code {
     
         ob_start();
 
-        $today_year  = absint( ltrim( rtrim( $atts['year'] ) ) ) ;
-        $today_month = absint( ltrim( rtrim( $atts['month'] ) ) ) ;
-        $course_id   = absint ( ltrim( rtrim( $atts['course_id'] ) ) ) ;
-        $students_count   = absint( ltrim( rtrim( $atts['students'] ) ) ) ;   
+        $today_year  = absint( ltrim( rtrim( sanitize_text_field( $atts['year'] ) ) ) );
+        $today_month = absint( ltrim( rtrim( sanitize_text_field( $atts['month'] ) ) ) );
+        $course_id   = absint ( ltrim( rtrim( sanitize_text_field( $atts['course_id'] ) ) ) );
+        $students_count   = absint( ltrim( rtrim( sanitize_text_field( $atts['students'] ) ) ) );   
 
         if ( empty( $today_year ) ) {
             $today_year = $today_year_e;
@@ -126,10 +133,10 @@ class LLMS_At_Short_Code {
     
         ob_start();
         $blogtime    = current_time( 'mysql' );
-        $today_year  = absint( ltrim( rtrim( $atts['year'] ) ) ) ;
-        $today_month = absint( ltrim( rtrim( $atts['month'] ) ) ) ;
-        $course_id   = absint( ltrim( rtrim( $atts['course_id'] ) ) );
-        $user_id     = absint( ltrim( rtrim( $atts['user_id'] ) ) );
+        $today_year  = absint( ltrim( rtrim( sanitize_text_field( $atts['year'] ) ) ) );
+        $today_month = absint( ltrim( rtrim( sanitize_text_field( $atts['month'] ) ) ) );
+        $course_id   = absint( ltrim( rtrim( sanitize_text_field( $atts['course_id'] ) ) ) );
+        $user_id     = absint( ltrim( rtrim( sanitize_text_field( $atts['user_id'] ) ) ) );
         if( empty( $user_id ) ) {
             $user_id = absint( ltrim( rtrim( $user_ID ) ) );
         }

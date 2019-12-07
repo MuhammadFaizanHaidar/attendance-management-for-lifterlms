@@ -16,10 +16,29 @@ class LLMS_AT_Metabox {
     
     private function hooks() {
 
-        add_action( 'add_meta_boxes', array( $this, 'register_attendance_meta_boxes' ) );
-        add_action( 'save_post',      array( $this, 'save_meta_box' ) );
-        add_action( 'save_post', [ $this, 'llms_attendance_add_query_string'], 100, 3 );
-        add_action( 'post_updated', [ $this, 'llms_attendance_add_query_string' ], 10, 3 ); 
+        add_action( 
+            'add_meta_boxes', 
+            [ $this, 'register_attendance_meta_boxes' ]
+        );
+
+        add_action( 
+            'save_post',      
+            [ $this, 'save_meta_box' ]
+        );
+        
+        add_action( 
+            'save_post', 
+            [ $this, 'llms_attendance_add_query_string'], 
+            100, 
+            3 
+        );
+
+        add_action( 
+            'post_updated', 
+            [ $this, 'llms_attendance_add_query_string' ], 
+            10, 
+            3 
+        ); 
     }
 
     /**
@@ -37,10 +56,11 @@ class LLMS_AT_Metabox {
 		if ( $search_term == "" ) {
 
             $search_term  = isset( $_GET['s'] ) ? trim( $_GET['s'] ) : "";
-		}
+        }
+        $search_term = sanitize_text_field( $search_term );
 		if ( ( $post_type == 'course' )  && $search_term != "" ) {
 
-			wp_safe_redirect( add_query_arg( 's', $search_term, $_POST['_wp_http_referer'] ) );
+			wp_safe_redirect( add_query_arg( 's', $search_term, sanitize_text_field( $_POST['_wp_http_referer'] ) ) );
 			exit;
         }
         return;
@@ -56,8 +76,23 @@ class LLMS_AT_Metabox {
         $disallow_attendance_text = apply_filters( 'llmsat_disallow_attendance_text', $disallow_attendance_text );
         $students_information_text = __( 'Students Attendance Information ', LLMS_At_TEXT_DOMAIN );
         $students_information_text = apply_filters( 'llmsat_students_attendance_information_text', $students_information_text );
-        add_meta_box( 'llmsat-metabox-id', $disallow_attendance_text,           array( $this, 'show_attendance_meta_box' ), 'course', 'side', 'high' );
-        add_meta_box( 'llmsat-students-metabox-id', $students_information_text, array( $this, 'show_student_listing_meta_box' ), 'course', 'advanced', 'high' );
+        add_meta_box( 
+            'llmsat-metabox-id', 
+            $disallow_attendance_text,          
+            [ $this, 'show_attendance_meta_box' ], 
+            'course', 
+            'side', 
+            'high' 
+        );
+
+        add_meta_box( 
+            'llmsat-students-metabox-id',
+            $students_information_text, 
+            [ $this, 'show_student_listing_meta_box' ], 
+            'course', 
+            'advanced', 
+            'high' 
+        );
     }
 
     public function show_student_listing_meta_box () {
@@ -66,7 +101,7 @@ class LLMS_AT_Metabox {
         $students  = llms_get_enrolled_students( $course->get( 'id' ), 'enrolled' );
         $disallow  = get_post_meta( $course_id, 'llmsatck1', true );
         if ( $disallow == 'on' ) {
-            echo '<div class="llmsat-error"><h2> Turn off the disallow attendance option to enlist enrolled students attendance information.</h2></div>';
+            echo '<div class="llmsat-error"><h2>'.__( 'Turn off the disallow attendance option to enlist enrolled students attendance information.', LLMS_At_TEXT_DOMAIN ).' </h2></div>';
             return;
         }
         do_action( 'llmsat_student_dashboard_before_my_attendance' );

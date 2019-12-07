@@ -48,7 +48,7 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 				'fields'         => 'ID', 
 				'orderby'        => $orderby , 
 				'order'          => $order , 
-				'search'         => $_REQUEST["s"] ,
+				'search'         => intval( sanitize_text_field( $_REQUEST["s"] ) ) ,
 				'search_columns' => $searchcol
 				);
 			} else {
@@ -136,13 +136,17 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 		$orderby = isset( $_GET['orderby'] ) ? trim( $_GET['orderby'] ): "";
 		$order   = isset( $_GET['order'] ) ? trim( $_GET['order'] ) : "";
 
+		$order   = sanitize_text_field( $order );
+		$orderby = sanitize_text_field( $orderby );
+
 		$search_term  = isset( $_POST['s'] ) ? trim( $_POST['s'] ) : "";
 		$search_term  = isset( $_GET['s'] ) ? trim( $_GET['s'] ) : "";
 		if( $search_term == "" ) {
 
 			$search_term  = isset( $_GET['s'] ) ? trim( $_GET['s'] ) : "";
 		}
-	
+		
+		$search_term  = sanitize_text_field( $search_term );
 		$datas        = $this->list_table_data_fun( $orderby, $order, $search_term );
 
 
@@ -166,10 +170,10 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 
 		$columns = array(
 			"cb"                => "<input type='checkbox'/>",
-			"id"                => "ID",
-			"title"             => "Enrolled Students",
-			"attendance_count"  => "Attendance Count",
-			"attendance_percen" => "Attendance Percentage",		
+			"id"                => __( "ID", LLMS_At_TEXT_DOMAIN ),
+			"title"             => __( "Enrolled Students", LLMS_At_TEXT_DOMAIN  ),
+			"attendance_count"  => __( "Attendance Count", LLMS_At_TEXT_DOMAIN ),
+			"attendance_percen" => __( "Attendance Percentage", LLMS_At_TEXT_DOMAIN ),		
 		);
 
 		return $columns;

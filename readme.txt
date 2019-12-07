@@ -9,11 +9,11 @@ License: GPLv2 or later
 Requires PHP: 7.2
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-The Attendance Management For LifterLMS addon lets your user to mark their attendances in different courses.Admin & users can keep track of their attendances. You can now make your e-learning platform even more engaging.
+The Attendance Management For LifterLMS addon lets your users to mark their attendances in different courses.Admin & users can keep track of their attendances. You can now make your e-learning platform even more engaging.
 
 == Description ==
 
-The Attendance Management For LifterLMS addon lets your user to mark their attendances in different courses. Admin & users can keep track of their attendances. You can now make your e-learning platform even more engaging.
+The Attendance Management For LifterLMS addon lets your users to mark their attendances in different courses. Admin & users can keep track of their attendances. You can now make your e-learning platform even more engaging.
 
 == Prerequisite: ==
 

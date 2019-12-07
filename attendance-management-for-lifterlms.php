@@ -1,13 +1,23 @@
 <?php
 /**
+ * Attendance Management For LifterLMS WordPress Plugin
+ * 
+ * @package Attendance Management For LifterLMS/Main
+ * 
+ * @since 1.0.0
+ * @version 1.0.0
+ * 
  * Plugin Name: Attendance Management For LifterLMS
  * Plugin URI:  https://github.com/MuhammadFaizanHaidar/attendance-management-for-lifterlms
- * Description: This addon will provide the Attendance functionality for LifterLMS registered users
+ * Description: This addon provides the Attendance functionality for LifterLMS registered users
  * Version:     1.0.0
  * Author:      Muhammad Faizan Haidar
- * Author URI:  https:faizanhaidar.com
+ * Author URI:  https://faizanhaidar.com
  * Text Domain: llms-attendance
- * License: GNU AGPL
+ * License: 	GNU AGPL
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
+ * Requires at least: 4.8
+ * Tested up to: 5.3.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +32,10 @@ register_deactivation_hook( __FILE__, [ 'LLMS_Attendance', 'deactivation' ] );
  */
 class LLMS_Attendance {
 
+	/**
+	 * Attendance Management For LifterLMS Addon Version
+	 * @var const string
+	 */
 	const VERSION = '1.0.0';
 
 	/**
@@ -267,7 +281,7 @@ function llmsat_ready() {
 
 	if ( ! class_exists( 'LifterLMS' ) ) {
 		$class   = 'notice is-dismissible error';
-		$message = __( 'LifterLMS Attendance add-on requires <a href="https://wordpress.org/plugins/lifterlms/" 
+		$message = __( 'Attendance Management For LifterLMS add-on requires <a href="https://wordpress.org/plugins/lifterlms/" 
 			target="_BLANK">LifterLMS</a> plugin to be activated.', 
 			'llms-attendance' 
 		);

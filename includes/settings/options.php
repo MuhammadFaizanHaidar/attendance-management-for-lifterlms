@@ -81,9 +81,9 @@ class LLMS_Attendance_Opions {
 
             $llmsat_options  = array();
 
-			$delete_settings = isset( $_POST['llmsat_delete_attendance'] ) ? $_POST['llmsat_delete_attendance'] : 'no';
+			$delete_settings = sanitize_text_field( isset( $_POST['llmsat_delete_attendance'] ) ? $_POST['llmsat_delete_attendance'] : 'no' );
 
-			$llmsat_options['llmsat_delete_attendance'] = sanitize_text_field( $delete_settings );
+			$llmsat_options['llmsat_delete_attendance'] = $delete_settings;
 
 
             update_option( 'llmsat_options', $llmsat_options );

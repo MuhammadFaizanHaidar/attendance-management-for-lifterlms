@@ -51,13 +51,12 @@ class LLMS_AT_Metabox {
      */
     public function llms_attendance_add_query_string( $post_id, $post, $update ) {
 		$post_type    = get_post_type($post);
-        $search_term  = isset( $_POST['s'] ) ? trim( $_POST['s'] ) : "";
-        $search_term  = sanitize_text_field( $search_term );
+        $search_term  = sanitize_text_field( isset( $_POST['s'] ) ? trim( $_POST['s'] ) : "" );
 		if ( $search_term == "" ) {
 
-            $search_term  = isset( $_GET['s'] ) ? trim( $_GET['s'] ) : "";
+            $search_term  = sanitize_text_field( isset( $_GET['s'] ) ? trim( $_GET['s'] ) : "" );
         }
-        $search_term = sanitize_text_field( $search_term );
+
 		if ( ( $post_type == 'course' )  && $search_term != "" ) {
 
 			wp_safe_redirect( add_query_arg( 's', $search_term, sanitize_text_field( $_POST['_wp_http_referer'] ) ) );

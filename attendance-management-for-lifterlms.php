@@ -14,7 +14,7 @@
  * Author:      Muhammad Faizan Haidar
  * Author URI:  https://faizanhaidar.com
  * Text Domain: llms-attendance
- * License: 	GNU AGPL
+ * License: 	GPLv3
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Requires at least: 4.8
  * Tested up to: 5.3.0
@@ -62,7 +62,7 @@ class LLMS_Attendance {
 	 *
 	 * @return void
 	 */
-	public function activation() {
+	public static function activation() {
 		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return;
 		}
@@ -80,7 +80,7 @@ class LLMS_Attendance {
 	 *
 	 * @return void
 	 */
-	public function deactivation() {
+	public static function deactivation() {
 		delete_option( 'llmsat_version' );
 
 		return false;

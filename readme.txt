@@ -47,14 +47,15 @@ Before installation please make sure you have latest LifterLMS installed.
 
 == Screenshots ==
 
-1. Plugin settings assets/lifter-lms-settings-page-1.png
-2. Enable/disable plugin assets/lifterlms-settings-page-2.png
-3. Delete attendance data on uninstall assets/delete-on-uninstall.png
-4. Students can mark their attendances by cliking this button assets/mark-present.png
-5. Listing of students attendance in course edit pages assets/student-attendance-information.png
-6. Shortcodes to display attendance information assets/shortcodes1.png
-7. Display Attendance Information using shortcodes assets/attendance-display.png
-8. Admin can disallow attendance on specific courses assets/disallow-attendance.png
+1. Plugin settings 
+2. Enable/disable plugin 
+3. Delete attendance data on uninstall 
+4. Students can mark their attendances by cliking this button 
+5. Listing of students attendance in course edit pages 
+6. Shortcodes to display attendance information 
+7. Display Attendance Information using shortcodes 
+8. Admin can disallow attendance on specific courses students will not be able to mark attendance
+9. Disallow attendance
 
 == FAQ ==
 

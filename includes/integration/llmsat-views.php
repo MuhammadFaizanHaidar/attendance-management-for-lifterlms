@@ -133,20 +133,16 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 	//prepare_items
 	public function prepare_items() {
 
-		$orderby = isset( $_GET['orderby'] ) ? trim( $_GET['orderby'] ): "";
-		$order   = isset( $_GET['order'] ) ? trim( $_GET['order'] ) : "";
+		$orderby = sanitize_text_field( isset( $_GET['orderby'] ) ? trim( $_GET['orderby'] ): "" );
+		$order   = sanitize_text_field( isset( $_GET['order'] ) ? trim( $_GET['order'] ) : "" );
 
-		$order   = sanitize_text_field( $order );
-		$orderby = sanitize_text_field( $orderby );
 
-		$search_term  = isset( $_POST['s'] ) ? trim( $_POST['s'] ) : "";
-		$search_term  = isset( $_GET['s'] ) ? trim( $_GET['s'] ) : "";
+		$search_term  = sanitize_text_field( isset( $_POST['s'] ) ? trim( $_POST['s'] ) : "" );
 		if( $search_term == "" ) {
 
-			$search_term  = isset( $_GET['s'] ) ? trim( $_GET['s'] ) : "";
+			$search_term  = sanitize_text_field( isset( $_GET['s'] ) ? trim( $_GET['s'] ) : "" );
 		}
 		
-		$search_term  = sanitize_text_field( $search_term );
 		$datas        = $this->list_table_data_fun( $orderby, $order, $search_term );
 
 

@@ -4,10 +4,11 @@ muhammadfaizanhaidar, fahdi
 ## Tags: 
 lifterlms, attendance, mark, award, reward, engagement, submission, nomination
 ## Requires at least:
- 4.0
+4.0
 ## Donate link: 
 https://faizanhaidar.com
-## Tested up to: 7.2
+## Tested up to: 
+7.2
 ## Stable tag: 
 1.0.1
 ## License: 

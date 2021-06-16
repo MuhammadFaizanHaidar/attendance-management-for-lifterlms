@@ -61,3 +61,6 @@ Yes, you can use “Attendance Management For LifterLMS”  addon and any other 
 
 **1.0.0**
 - Intial release
+**1.0.1**
+- Added compatibility with latest version of WordPress and LifterLMS.
+- Replaced text domain constant with string.

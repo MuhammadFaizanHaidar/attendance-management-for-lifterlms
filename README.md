@@ -3,8 +3,8 @@ Contributors: muhammadfaizanhaidar, fahdi
 Tags: lifterlms, attendance, mark, award, reward, engagement, submission, nomination
 Requires at least: 4.0
 Donate link: https://faizanhaidar.com
-Tested up to: 5.3
-Stable tag: 1.0.0
+Tested up to: 7.2
+Stable tag: 1.0.1
 License: GPLv2 or later
 Requires PHP: 7.2
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -61,3 +61,6 @@ Yes, you can use “Attendance Management For LifterLMS”  addon and any other 
 
 **1.0.0**
 - Intial release
+**1.0.1**
+- Added compatibility with latest version of WordPress and LifterLMS.
+- Replaced text domain constant with string.

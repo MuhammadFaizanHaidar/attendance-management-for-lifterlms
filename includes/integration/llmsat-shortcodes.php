@@ -85,12 +85,12 @@ class LLMS_At_Short_Code {
                     $attendance = $count/intval( $today_day ) * 100;
                 } 
                 ?>
-                <li><span class=""><b><?php echo __( 'Number '. intval ( $st_count + 1 ) .' Attendant for the course '.get_the_title( $course_id ).' :', LLMS_At_TEXT_DOMAIN );?> </b></span>
+                <li><span class=""><b><?php echo __( 'Number '. intval ( $st_count + 1 ) .' Attendant for the course '.get_the_title( $course_id ).' :', 'llms-attendance' );?> </b></span>
                     <ul class="llmsat-dicey">
-                        <li><?php echo __( "<b>Student Name</b> : ". $student->display_name,  LLMS_At_TEXT_DOMAIN ); ?></li>
-                        <li><?php echo __( "<b>Course Name</b>       : ". get_the_title( $course_id ),   LLMS_At_TEXT_DOMAIN ); ?></li>
-                        <li><?php echo __( "<b>Attendance</b>   : ". round( $attendance )." %", LLMS_At_TEXT_DOMAIN ); ?></li>
-                        <li><?php echo __( "<b>Attendance For the Month Of </b> : ". $monthName." ".$today_year, LLMS_At_TEXT_DOMAIN ); ?></li>
+                        <li><?php echo __( "<b>Student Name</b> : ". $student->display_name,  'llms-attendance' ); ?></li>
+                        <li><?php echo __( "<b>Course Name</b>       : ". get_the_title( $course_id ),   'llms-attendance' ); ?></li>
+                        <li><?php echo __( "<b>Attendance</b>   : ". round( $attendance )." %", 'llms-attendance' ); ?></li>
+                        <li><?php echo __( "<b>Attendance For the Month Of </b> : ". $monthName." ".$today_year, 'llms-attendance' ); ?></li>
                     </ul>
         
                 <?php
@@ -102,7 +102,7 @@ class LLMS_At_Short_Code {
         } else {
             ?>
             <ul class="llmsat-dicey">
-            <li> <?php  echo __('<b>No student found in this course</b>', LLMS_At_TEXT_DOMAIN ); ?></li> 
+            <li> <?php  echo __('<b>No student found in this course</b>', 'llms-attendance' ); ?></li> 
             </ul>
             <?php
         }?>
@@ -164,13 +164,13 @@ class LLMS_At_Short_Code {
             $attendance = $count/intval( $today_day ) * 100;
             ?>
             <ul id="">
-            <li><span class=""><b><?php echo __( 'Attendance of '.$user->display_name ." :", LLMS_At_TEXT_DOMAIN );?> </b></span>
+            <li><span class=""><b><?php echo __( 'Attendance of '.$user->display_name ." :", 'llms-attendance' );?> </b></span>
                 <ul class="llmsat-dicey">
     
-                    <li><?php echo __( "<b>Student Name</b> : ". $user->display_name,         LLMS_At_TEXT_DOMAIN ); ?></li>
-                    <li><?php echo __( "<b>Course Name</b>  : ". get_the_title( $course_id ), LLMS_At_TEXT_DOMAIN ); ?></li>
-                    <li><?php echo __( "<b>Attendance</b>   : ". round( $attendance )." %",   LLMS_At_TEXT_DOMAIN ); ?></li>
-                    <li><?php echo __( "<b>Attendance For The Month Of </b> : ". $monthName." ".$today_year, LLMS_At_TEXT_DOMAIN ); ?></li>
+                    <li><?php echo __( "<b>Student Name</b> : ". $user->display_name,         'llms-attendance' ); ?></li>
+                    <li><?php echo __( "<b>Course Name</b>  : ". get_the_title( $course_id ), 'llms-attendance' ); ?></li>
+                    <li><?php echo __( "<b>Attendance</b>   : ". round( $attendance )." %",   'llms-attendance' ); ?></li>
+                    <li><?php echo __( "<b>Attendance For The Month Of </b> : ". $monthName." ".$today_year, 'llms-attendance' ); ?></li>
                 </ul>
             </li>
             </ul>
@@ -178,12 +178,12 @@ class LLMS_At_Short_Code {
         } elseif( $user && $has_access ) {
             ?>
             <ul id="">
-                <li><span class=""><b><?php echo __( 'Attendance of '.$user->display_name ." :", LLMS_At_TEXT_DOMAIN );?> </b></span>
+                <li><span class=""><b><?php echo __( 'Attendance of '.$user->display_name ." :", 'llms-attendance' );?> </b></span>
                     <ul class="llmsat-dicey">
-                        <li><?php echo __( "<b>Student Name </b>: ". $user->display_name,        LLMS_At_TEXT_DOMAIN ); ?></li>
-                        <li><?php echo __( "<b>Course Name </b> : ". get_the_title( $course_id ),LLMS_At_TEXT_DOMAIN ); ?></li>
-                        <li><?php echo __( "<b>Attendance </b>  : 0 %", LLMS_At_TEXT_DOMAIN ); ?></li>
-                        <li><?php echo __( "<b>Attendance For The month of ". $monthName." ".$today_year, LLMS_At_TEXT_DOMAIN ); ?></li>
+                        <li><?php echo __( "<b>Student Name </b>: ". $user->display_name,        'llms-attendance' ); ?></li>
+                        <li><?php echo __( "<b>Course Name </b> : ". get_the_title( $course_id ),'llms-attendance' ); ?></li>
+                        <li><?php echo __( "<b>Attendance </b>  : 0 %", 'llms-attendance' ); ?></li>
+                        <li><?php echo __( "<b>Attendance For The month of ". $monthName." ".$today_year, 'llms-attendance' ); ?></li>
                     </ul>
                 </li>
             </ul>
@@ -191,16 +191,16 @@ class LLMS_At_Short_Code {
         } else {
             ?>
             <ul id="">
-                <li><span class=""><b><?php echo __( 'Invalid student ID or course ID :', LLMS_At_TEXT_DOMAIN );?> </b></span>
+                <li><span class=""><b><?php echo __( 'Invalid student ID or course ID :', 'llms-attendance' );?> </b></span>
                     <ul class="llmsat-dicey">
-                        <li><?php if( !$user ) { echo __( "<b>Student Name </b>: Student does not exist",        LLMS_At_TEXT_DOMAIN );}else {
-                            echo __( "<b>Student Name </b>: ".$user->display_name, LLMS_At_TEXT_DOMAIN );
+                        <li><?php if( !$user ) { echo __( "<b>Student Name </b>: Student does not exist",        'llms-attendance' );}else {
+                            echo __( "<b>Student Name </b>: ".$user->display_name, 'llms-attendance' );
                         } ?></li>
-                        <li><?php if( $course_id ) { echo __( "<b>Course Name </b>: ". get_the_title( $course_id ), LLMS_At_TEXT_DOMAIN ); } else {
-                            echo __( "<b>Course Name </b>:Course does not exist", LLMS_At_TEXT_DOMAIN );
+                        <li><?php if( $course_id ) { echo __( "<b>Course Name </b>: ". get_the_title( $course_id ), 'llms-attendance' ); } else {
+                            echo __( "<b>Course Name </b>:Course does not exist", 'llms-attendance' );
                         }?></li>
-                        <li><?php echo __( "<b>Attendance </b>: Invalid data ",   LLMS_At_TEXT_DOMAIN ); if( $course_id && !$has_access ) { ?></li>
-                        <li><?php echo __( "<b>Enrollment    : </b>Student is not enrolled in this course", LLMS_At_TEXT_DOMAIN ); }?></li>
+                        <li><?php echo __( "<b>Attendance </b>: Invalid data ",   'llms-attendance' ); if( $course_id && !$has_access ) { ?></li>
+                        <li><?php echo __( "<b>Enrollment    : </b>Student is not enrolled in this course", 'llms-attendance' ); }?></li>
                     </ul>
                 </li>
             </ul>

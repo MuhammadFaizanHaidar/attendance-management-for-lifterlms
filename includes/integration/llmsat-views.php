@@ -14,8 +14,8 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 	public function __construct() {
 
 		parent::__construct( [
-			'singular' => __( 'LLMS Student', LLMS_At_TEXT_DOMAIN ), //singular name of the listed records
-			'plural'   => __( 'LLMS Students', LLMS_At_TEXT_DOMAIN ), //plural name of the listed records
+			'singular' => __( 'LLMS Student', 'llms-attendance' ), //singular name of the listed records
+			'plural'   => __( 'LLMS Students', 'llms-attendance' ), //plural name of the listed records
 			'ajax'     => false //does this table support ajax?
 		] );
 	}
@@ -166,10 +166,10 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 
 		$columns = array(
 			"cb"                => "<input type='checkbox'/>",
-			"id"                => __( "ID", LLMS_At_TEXT_DOMAIN ),
-			"title"             => __( "Enrolled Students", LLMS_At_TEXT_DOMAIN  ),
-			"attendance_count"  => __( "Attendance Count", LLMS_At_TEXT_DOMAIN ),
-			"attendance_percen" => __( "Attendance Percentage", LLMS_At_TEXT_DOMAIN ),		
+			"id"                => __( "ID", 'llms-attendance' ),
+			"title"             => __( "Enrolled Students", 'llms-attendance'  ),
+			"attendance_count"  => __( "Attendance Count", 'llms-attendance' ),
+			"attendance_percen" => __( "Attendance Percentage", 'llms-attendance' ),		
 		);
 
 		return $columns;

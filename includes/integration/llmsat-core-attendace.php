@@ -86,7 +86,7 @@ class LLMS_AT_Core {
         // if ( null != $count_value ) {
         //     delete_user_meta( $user_id, $count_key, $count_value );
         // }
-        $attendance_button_text = __( "Mark Present", LLMS_At_TEXT_DOMAIN );
+        $attendance_button_text = __( "Mark Present", 'llms-attendance' );
         $attendance_button_text = apply_filters( "llms_attendance_button_text", $attendance_button_text );
         $output = "";
 
@@ -107,6 +107,7 @@ class LLMS_AT_Core {
         
         $user_id   = intval( sanitize_text_field( $_POST['uid'] ) );
         $course_id = sanitize_text_field( $_POST['pid'] );
+        
         if ( $user_id && $course_id ) {
             
             $blogtime     = current_time( 'mysql' );
@@ -121,20 +122,22 @@ class LLMS_AT_Core {
             $first_mark_value = $today_year. "-". $today_month."-".$today_day."-".$course_id;
             $days             = cal_days_in_month( CAL_GREGORIAN, $today_month, $today_year );
             $attendance       = get_user_meta( $user_id, $meta_key, true );
-
-            if ( null !== get_user_meta( $user_id, $meta_key_count, true ) ) {
+            
+           
+            if ( null != get_user_meta( $user_id, $meta_key_count, true ) ) {
                 $count = get_user_meta( $user_id, $meta_key_count, true );
                 $count = $count + 1;
             } else {
                 $count = 1;
             }
+            
             /**
              * Mark First Attendance Date 
              */
             if ( null == get_user_meta( $user_id, $first_mark_key, true ) ) {
                 update_user_meta( $user_id, $first_mark_key, $first_mark_value );
             }
-
+            
             /**
              * Check if attendacne is not marked double
              */
@@ -143,19 +146,19 @@ class LLMS_AT_Core {
                 do_action( 'lifterlms_mark_attendance', $user_id, $course_id, $user_attendance, $count );
                 update_user_meta( $user_id, $meta_key, $student_data );
                 update_user_meta( $user_id, $meta_key_count, $count );
-                $success_message =  __( "Attendance marked successfully", LLMS_At_TEXT_DOMAIN );
+                $success_message =  __( "Attendance marked successfully", 'llms-attendance' );
 
                 echo apply_filters( "llms_attendance_success_message", $success_message )."1";
                 exit;
             }
 
         } else {
-            $failed_message = __( "Attendance was not marked successfully", LLMS_At_TEXT_DOMAIN );
+            $failed_message = __( "Attendance was not marked successfully", 'llms-attendance' );
 
             echo apply_filters( "llms_attendance_failed_message", $failed_message )."2";
             exit;
         }
-        $already_marked = __( "You are already marked present", LLMS_At_TEXT_DOMAIN );
+        $already_marked = __( "You are already marked present", 'llms-attendance' );
 
         echo apply_filters( "llms_attendance_already_marked_message", $already_marked )."3";
        

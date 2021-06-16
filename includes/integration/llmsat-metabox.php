@@ -71,9 +71,9 @@ class LLMS_AT_Metabox {
      * @return void
      */
     public function register_attendance_meta_boxes() {
-        $disallow_attendance_text = __( 'DisAllow Attendance ', LLMS_At_TEXT_DOMAIN );
+        $disallow_attendance_text = __( 'DisAllow Attendance ', 'llms-attendance' );
         $disallow_attendance_text = apply_filters( 'llmsat_disallow_attendance_text', $disallow_attendance_text );
-        $students_information_text = __( 'Students Attendance Information ', LLMS_At_TEXT_DOMAIN );
+        $students_information_text = __( 'Students Attendance Information ', 'llms-attendance' );
         $students_information_text = apply_filters( 'llmsat_students_attendance_information_text', $students_information_text );
         add_meta_box( 
             'llmsat-metabox-id', 
@@ -100,7 +100,7 @@ class LLMS_AT_Metabox {
         $students  = llms_get_enrolled_students( $course->get( 'id' ), 'enrolled' );
         $disallow  = get_post_meta( $course_id, 'llmsatck1', true );
         if ( $disallow == 'on' ) {
-            echo '<div class="llmsat-error"><h2>'.__( 'Turn off the disallow attendance option to enlist enrolled students attendance information.', LLMS_At_TEXT_DOMAIN ).' </h2></div>';
+            echo '<div class="llmsat-error"><h2>'.__( 'Turn off the disallow attendance option to enlist enrolled students attendance information.', 'llms-attendance' ).' </h2></div>';
             return;
         }
         do_action( 'llmsat_student_dashboard_before_my_attendance' );

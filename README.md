@@ -6,8 +6,7 @@ lifterlms, attendance, mark, award, reward, engagement, submission, nomination
 ## Requires at least:
  4.0
 ## Donate link: 
-https://faizanhai
-dar.com
+https://faizanhaidar.com
 ## Tested up to: 7.2
 ## Stable tag: 
 1.0.1

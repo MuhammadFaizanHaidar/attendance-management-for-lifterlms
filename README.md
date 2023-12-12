@@ -10,7 +10,7 @@ https://faizanhaidar.com
 ## Tested up to: 
 6.4.2
 ## Stable tag: 
-1.0.1
+1.0.2
 ## License: 
 GPLv2 or later
 ## Requires PHP: 

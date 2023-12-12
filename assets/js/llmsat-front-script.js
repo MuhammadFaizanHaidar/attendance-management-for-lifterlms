@@ -27,8 +27,11 @@ function llmsat_attendance_btn_ajax( postId, usrid ) {
 			console.log(suffix[0]);
 			if ( suffix[0] == "2" ) {
 				jQuery("#llmsat-ajax-response-id span").addClass( 'llmsat-error' );
+				jQuery('#llmsat-ajax-response-id').fadeOut('1300000');
 			} else if( suffix[0] == "1" || suffix[0] == "3") {
 				jQuery("#llmsat-ajax-response-id span").addClass( 'llmsat-success' );
+				jQuery('#llmsat-mark-present-id').fadeOut('slow');
+				//jQuery('#llmsat-ajax-response-id').fadeOut('1300000', 'linear');
 			}
 			jQuery("#llmsat-ajax-response-id span").html( response.replace(/\d+/g, '') );
 		}

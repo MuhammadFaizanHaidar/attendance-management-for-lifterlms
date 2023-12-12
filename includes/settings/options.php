@@ -24,76 +24,75 @@ class LLMS_Attendance_Opions {
 
 	public $page_tab;
 
-    /**
-     * LLMS_Attendance_Opions constructor.
-     */
+	/**
+	 * LLMS_Attendance_Opions constructor.
+	 */
 	public function __construct() {
 
-	    $this->page_tab = sanitize_text_field( isset( $_GET['tab'] ) ? $_GET['tab'] : 'general' );
-		add_action( 
-			'admin_menu', 
-			[ $this, 'llmsat_menu' ]
+		$this->page_tab = sanitize_text_field( isset( $_GET['tab'] ) ? $_GET['tab'] : 'general' );
+		add_action(
+			'admin_menu',
+			array( $this, 'llmsat_menu' )
 		);
 
-		add_action( 
-			'admin_notices', 
-			[ $this, 'llmsat_admin_notices' ] 
+		add_action(
+			'admin_notices',
+			array( $this, 'llmsat_admin_notices' )
 		);
 
-		add_action( 
-			'admin_post_llmsat_admin_settings', 
-			[ $this, 'llmsat_admin_settings_save' ] 
+		add_action(
+			'admin_post_llmsat_admin_settings',
+			array( $this, 'llmsat_admin_settings_save' )
 		);
 
-        add_filter( 
-			'admin_footer_text', 
-			[ $this, 'remove_footer_admin' ] 
+		add_filter(
+			'admin_footer_text',
+			array( $this, 'remove_footer_admin' )
 		);
 	}
 
-	
-	/**
-     * Display Notices
-     */
-    public function llmsat_admin_notices() {
 
-		$screen   = get_current_screen();
-		$updated  = false;
-        if( $screen->base != 'lifterlms_page_lifterlms-attendance-management-options' ) {
-            return;
+	/**
+	 * Display Notices
+	 */
+	public function llmsat_admin_notices() {
+
+		$screen  = get_current_screen();
+		$updated = false;
+		if ( $screen->base != 'lifterlms_page_lifterlms-attendance-management-options' ) {
+			return;
 		}
-		
-		if( isset( $_GET[ 'settings-updated' ] ) ) {
-			$updated = sanitize_text_field( $_GET[ 'settings-updated' ] );
+
+		if ( isset( $_GET['settings-updated'] ) ) {
+			$updated = sanitize_text_field( $_GET['settings-updated'] );
 		}
-        if( isset( $_POST['llmsat_settings_submit'] ) || $updated  == true ) {
-            $class = 'notice notice-success is-dismissible';
-            $message = __( 'Settings Saved', 'llms-attendance' );
-            printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
-        }
-    }
+		if ( isset( $_POST['llmsat_settings_submit'] ) || $updated == true ) {
+			$class   = 'notice notice-success is-dismissible';
+			$message = esc_html__( 'Settings Saved', 'llms-attendance' );
+			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+		}
+	}
 
 	/**
 	 * Save Plugin's Settings
 	 */
 	public function llmsat_admin_settings_save() {
-		if( isset( $_POST['llmsat_settings_submit'] ) ) {
+		if ( isset( $_POST['llmsat_settings_submit'] ) ) {
 
-            $llmsat_options  = array();
+			$llmsat_options = array();
 
 			$delete_settings = sanitize_text_field( isset( $_POST['llmsat_delete_attendance'] ) ? $_POST['llmsat_delete_attendance'] : 'no' );
 
 			$llmsat_options['llmsat_delete_attendance'] = $delete_settings;
 
-
-            update_option( 'llmsat_options', $llmsat_options );
+			update_option( 'llmsat_options', $llmsat_options );
 			wp_safe_redirect( add_query_arg( 'settings-updated', 'true', sanitize_text_field( $_POST['_wp_http_referer'] ) ) );
-			$class = 'llmsat-notice hidden notice notice-success is-dismissible';
-			$message = __( 'Settings Updated.', 'llms-attendance' );
+			$class   = 'llmsat-notice hidden notice notice-success is-dismissible';
+			$message = esc_html__( 'Settings Updated.', 'llms-attendance' );
 
 			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 			exit;
-        }
+		}
 
 	}
 
@@ -104,29 +103,33 @@ class LLMS_Attendance_Opions {
 
 		add_submenu_page(
 			'lifterlms',
-			__( 'Attendance Management For LifterLMS', 'llms-attendance' ),
-			__( 'Attendance Management For LifterLMS', 'llms-attendance' ),
+			esc_html__( 'Attendance Management For LifterLMS', 'llms-attendance' ),
+			esc_html__( 'Attendance Management For LifterLMS', 'llms-attendance' ),
 			'manage_options',
 			'lifterlms-attendance-management-options',
-			[ $this, 'LLMS_Attendance' ]
+			array( $this, 'LLMS_Attendance' )
 		);
 	}
 
 	/**
 	 * Fields Generator
 	 *
-	 * @param string $label
+	 * @param string     $label
 	 * @param $name
 	 * @param $field_type
-	 * @param string $field_value
-	 * @param string $hint
-	 * @param string $before_text
-	 * @param string $after_text
+	 * @param string     $field_value
+	 * @param string     $hint
+	 * @param string     $before_text
+	 * @param string     $after_text
 	 */
 	public function create_fields( $label = '', $name, $field_type, $field_value = '', $checked = '', $hint = '', $before_text = '', $after_text = '' ) {
 
-		if ( empty( $field_type ) || is_null( $field_type ) ) return;
-		if ( empty( $name ) || is_null( $name ) ) return;
+		if ( empty( $field_type ) || is_null( $field_type ) ) {
+			return;
+		}
+		if ( empty( $name ) || is_null( $name ) ) {
+			return;
+		}
 
 		if ( 'checkbox' === $field_type ) {
 
@@ -180,75 +183,76 @@ class LLMS_Attendance_Opions {
 	 */
 	public function LLMS_Attendance() {
 
-	    ?>
-        <div id="wrap" class="llmsat-settings-wrapper">
-            <div id="icon-options-general" class="icon32"></div>
-            <h1><?php echo __( 'Attendance Management For LifterLMS Settings', 'llms-attendance' ); ?></h1>
+		?>
+		<div id="wrap" class="llmsat-settings-wrapper">
+			<div id="icon-options-general" class="icon32"></div>
+			<h1><?php esc_html__( 'Attendance Management For LifterLMS Settings', 'llms-attendance' ); ?></h1>
 
-            <div class="nav-tab-wrapper">
-                <?php
-                $llmsat_settings_sections = $this->llmsat_get_setting_sections();
-                foreach( $llmsat_settings_sections as $key => $llmsat_settings_section ) {
-                    ?>
-                    <a href="?page=lifterlms-attendance-management-options&tab=<?php echo $key; ?>"
-                       class="nav-tab <?php echo $this->page_tab == $key ? 'nav-tab-active' : ''; ?>">
-                        <i class="fa <?php echo $llmsat_settings_section['icon']; ?>" aria-hidden="true"></i>
-                        <?php _e( $llmsat_settings_section['title'], 'llms-attendance' ); ?>
-                    </a>
-                    <?php
-                }
-                ?>
-            </div>
+			<div class="nav-tab-wrapper">
+				<?php
+				$llmsat_settings_sections = $this->llmsat_get_setting_sections();
+				foreach ( $llmsat_settings_sections as $key => $llmsat_settings_section ) {
+					?>
+					<a href="?page=lifterlms-attendance-management-options&tab=<?php echo $key; ?>"
+					   class="nav-tab <?php echo $this->page_tab == $key ? 'nav-tab-active' : ''; ?>">
+						<i class="fa <?php echo $llmsat_settings_section['icon']; ?>" aria-hidden="true"></i>
+						<?php _e( $llmsat_settings_section['title'], 'llms-attendance' ); ?>
+					</a>
+					<?php
+				}
+				?>
+			</div>
 
-            <?php
-            foreach( $llmsat_settings_sections as $key => $llmsat_settings_section ) {
-                if( $this->page_tab == $key ) {
-                    include( 'templates/' . $key . '.php' );
-                }
-            }
-            ?>
-        </div>
+			<?php
+			foreach ( $llmsat_settings_sections as $key => $llmsat_settings_section ) {
+				if ( $this->page_tab == $key ) {
+					include 'templates/' . $key . '.php';
+				}
+			}
+			?>
+		</div>
 		<?php
 	}
 
-    /**
-     * LLMS_Attendance Settings Sections
-     *
-     * @return mixed|void
-     */
-    public function llmsat_get_setting_sections() {
+	/**
+	 * LLMS_Attendance Settings Sections
+	 *
+	 * @return mixed|void
+	 */
+	public function llmsat_get_setting_sections() {
 
-        $llmsat_settings_sections = array(
+		$llmsat_settings_sections = array(
 			'general' => array(
-                'title' => __( 'General Option', 'llms-attendance' ),
-                'icon' => 'dashicons-admin-generic',
-            ),
-        );
-
-        return apply_filters( 'llmsat_settings_sections', $llmsat_settings_sections );
-
-    }
-	
-
-    /**
-     * Add footer branding
-     *
-     * @param $footer_text
-     * @return mixed
-     */
-    function remove_footer_admin ( $footer_text ) {
-        if( isset( $_GET['page'] ) && ( sanitize_text_field( $_GET['page'] ) == 'lifterlms-attendance-management-options' ) ) {
-			_e( 'Fueled by <a href="http://www.wordpress.org" target="_blank">WordPress</a> | developed and designed by 
-			<a href="https:faizanhaidar.com/" target="_blank">Muhammad Faizan Haidar</a>
-			</p>',
-			'llms-attendance' 
+				'title' => esc_html__( 'General Option', 'llms-attendance' ),
+				'icon'  => 'dashicons-admin-generic',
+			),
 		);
 
-        } else {
+		return apply_filters( 'llmsat_settings_sections', $llmsat_settings_sections );
 
-            return $footer_text;
-        }
-    }
+	}
+
+
+	/**
+	 * Add footer branding
+	 *
+	 * @param $footer_text
+	 * @return mixed
+	 */
+	function remove_footer_admin( $footer_text ) {
+		if ( isset( $_GET['page'] ) && ( sanitize_text_field( $_GET['page'] ) == 'lifterlms-attendance-management-options' ) ) {
+			_e(
+				'Fueled by <a href="http://www.wordpress.org" target="_blank">WordPress</a> | developed and designed by 
+			<a href="https:faizanhaidar.com/" target="_blank">Muhammad Faizan Haidar</a>
+			</p>',
+				'llms-attendance'
+			);
+
+		} else {
+
+			return $footer_text;
+		}
+	}
 }
 
 $GLOBALS['LLMS_Attendance_Opions'] = new LLMS_Attendance_Opions();

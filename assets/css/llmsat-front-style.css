@@ -131,3 +131,7 @@ ul, #llmsat-myUL {
     color: black;
     content: "\2680";
   }
+
+  .llmsat-btn{
+    text-align: center
+  }

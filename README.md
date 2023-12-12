@@ -8,7 +8,7 @@ lifterlms, attendance, mark, award, reward, engagement, submission, nomination
 ## Donate link: 
 https://faizanhaidar.com
 ## Tested up to: 
-7.2
+6.4.2
 ## Stable tag: 
 1.0.1
 ## License: 
@@ -74,3 +74,10 @@ Yes, you can use “Attendance Management For LifterLMS”  addon and any other 
 **1.0.1**
 - Added compatibility with latest version of WordPress and LifterLMS.
 - Replaced text domain constant with string.
+
+**1.0.2**
+- Added WordPress coding standards.
+- Added css style to Mark Present button.
+- Removed unused code.
+- Added function definations.
+- Added isset check for 'llmsatck1' meta key.

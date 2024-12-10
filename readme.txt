@@ -3,8 +3,8 @@ Contributors: muhammadfaizanhaidar, fahdi
 Tags: lifterlms, attendance, mark, award, reward, engagement, submission, nomination
 Requires at least: 4.0
 Donate link: https://faizanhaidar.com
-Tested up to: 6.4.2
-Stable tag: 1.0.2
+Tested up to: 6.7.1
+Stable tag: 1.0.3
 License: GPLv2 or later
 Requires PHP: 7.2
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -42,7 +42,7 @@ Attendance Management For LifterLMS Requires
 + WordPress 4.0 or later
 Before installation please make sure you have latest LifterLMS installed.
 
-1. Upload the plugin files to the `/wp-content/plugins/` directory, or install the plugin through the WordPress plugins screen directly.
+1. Upload the plugin files to the /wp-content/plugins/ directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
 
 == Screenshots ==
@@ -59,31 +59,42 @@ Before installation please make sure you have latest LifterLMS installed.
 
 == FAQ ==
 
-**Can I use “Attendance Management For LifterLMS” addon and any other attendance addon simultaneously?**
+*Can I use “Attendance Management For LifterLMS” addon and any other attendance addon simultaneously?*
 
 Yes, you can use “Attendance Management For LifterLMS”  addon and any other attendance addon at the same time.
 
 == Upgrade Notice ==
-**1.0.0**
-- Intial release
-**1.0.1**
-- Added compatibility with latest version of WordPress and LifterLMS.
-- Replaced text domain constant with string.
-**1.0.2**
+*1.0.3*
+- Tested with latest versions of WordPress and LifterLMS.
+- Added LifterLMS activation requirement in plugin boiler plate.
+
+*1.0.2*
 - Added WordPress coding standards.
 - Added css style to Mark Present button.
 - Removed unused code.
 - Added function definations.
 
-== Changelog ==
-**1.0.0**
-- Intial release
-**1.0.1**
+*1.0.1*
 - Added compatibility with latest version of WordPress and LifterLMS.
 - Replaced text domain constant with string.
-**1.0.2**
+
+*1.0.0*
+- Intial release
+
+== Changelog ==
+*1.0.3*
+- Tested with latest versions of WordPress and LifterLMS.
+- Added LifterLMS activation requirement in plugin boiler plate.
+
+*1.0.2*
 - Added WordPress coding standards.
 - Added css style to Mark Present button.
 - Removed unused code.
 - Added function definations.
-- Added isset check for 'llmsatck1' meta key.
+
+*1.0.1*
+- Added compatibility with latest version of WordPress and LifterLMS.
+- Replaced text domain constant with string.
+
+*1.0.0*
+- Intial release

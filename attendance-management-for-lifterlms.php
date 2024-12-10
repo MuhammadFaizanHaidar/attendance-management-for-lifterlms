@@ -10,13 +10,14 @@
  * Plugin Name: Attendance Management For LifterLMS
  * Plugin URI:  https://github.com/MuhammadFaizanHaidar/attendance-management-for-lifterlms
  * Description: This addon provides the Attendance functionality for LifterLMS registered users
- * Version:     1.0.2
+ * Version:     1.0.3
  * Author:      Muhammad Faizan Haidar
  * Author URI:  https://faizanhaidar.com
  * Text Domain: llms-attendance
  * License:     GPLv3
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Requires at least: 4.8
+ * Requires Plugins: lifterlms
  * Tested up to: 8.0.0
  */
 
@@ -37,14 +38,14 @@ class LLMS_Attendance {
 	 *
 	 * @var const string
 	 */
-	const VERSION = '1.0.2';
+	const VERSION = '1.0.3';
 
 	/**
 	 * @var self
 	 */
 	private static $instance = null;
 
-	
+
 	/**
 	 * Self Instance
 	 *
@@ -165,7 +166,6 @@ class LLMS_Attendance {
 
 			require_once LLMS_At_INCLUDES_DIR . 'settings/options.php';
 		}
-
 	}
 
 	/**
@@ -239,7 +239,7 @@ class LLMS_Attendance {
 		}
 	}
 
-	
+
 	/**
 	 * Enqueue scripts on frontend
 	 *
@@ -320,7 +320,7 @@ function llmsat_ready() {
 /**
  * Plugin Initiation.
  *
- * @return void/bool
+ * @return bool
  */
 function LLMS_Attendance() {
 	if ( ! class_exists( 'LifterLMS' ) ) {

@@ -8,9 +8,9 @@ lifterlms, attendance, mark, award, reward, engagement, submission, nomination
 ## Donate link: 
 https://faizanhaidar.com
 ## Tested up to: 
-6.4.2
+6.7.1
 ## Stable tag: 
-1.0.2
+1.0.3
 ## License: 
 GPLv2 or later
 ## Requires PHP: 
@@ -24,11 +24,11 @@ The Attendance Management For LifterLMS addon lets your user to mark their atten
 
 The Attendance Management For LifterLMS addon lets your user to mark their attendances in different courses. Admin & users can keep track of their attendances. You can now make your e-learning platform even more engaging.
 
-**Prerequisites**
+*Prerequisites*
 
 - LifterLMS
 
-**Features**
+*Features*
 
 - This addon provides Attendance functionality for LifterLMS registered users.
 - Students can mark their attendances and can view their attendances( count & percentages ).
@@ -44,7 +44,7 @@ The Attendance Management For LifterLMS addon lets your user to mark their atten
 
 Before installation please make sure you have latest LifterLMS installed.
 
-1. Upload the plugin files to the `/wp-content/plugins/` directory, or install the plugin through the WordPress plugins screen directly.
+1. Upload the plugin files to the /wp-content/plugins/ directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
 
 ## Screenshots ##
@@ -62,22 +62,24 @@ Before installation please make sure you have latest LifterLMS installed.
 
 ## FAQ ##
 
-**Can I use “Attendance Management For LifterLMS” addon and any other attendance addon simultaneously?**
+*Can I use “Attendance Management For LifterLMS” addon and any other attendance addon simultaneously?*
 
 Yes, you can use “Attendance Management For LifterLMS”  addon and any other attendance addon at the same time.
 
 ## Changelog ##
 
-**1.0.0**
-- Intial release.
-- 
-**1.0.1**
-- Added compatibility with latest version of WordPress and LifterLMS.
-- Replaced text domain constant with string.
-
-**1.0.2**
+*1.0.3*
+- Tested with latest versions of WordPress and LifterLMS.
+- Added LifterLMS activation requirement in plugin boiler plate.
+*1.0.2*
 - Added WordPress coding standards.
 - Added css style to Mark Present button.
 - Removed unused code.
 - Added function definations.
-- Added isset check for 'llmsatck1' meta key.
+
+*1.0.1*
+- Added compatibility with latest version of WordPress and LifterLMS.
+- Replaced text domain constant with string.
+
+*1.0.0*
+- Intial release

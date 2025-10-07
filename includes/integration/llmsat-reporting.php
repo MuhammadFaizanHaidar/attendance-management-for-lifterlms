@@ -24,7 +24,7 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Initialize hooks
+	 * Initialize hooks.
 	 */
 	private function hooks() {
 		add_action( 'admin_menu', array( $this, 'add_reporting_menu' ) );
@@ -35,17 +35,17 @@ class LLMS_AT_Reporting {
 		add_action( 'wp_ajax_llmsat_get_student_stats', array( $this, 'get_student_stats_ajax' ) );
 		add_action( 'llmsat_daily_attendance_check', array( $this, 'check_low_attendance' ) );
 
-		// Schedule daily attendance check
+		// Schedule daily attendance check.
 		if ( ! wp_next_scheduled( 'llmsat_daily_attendance_check' ) ) {
 			wp_schedule_event( time(), 'daily', 'llmsat_daily_attendance_check' );
 		}
 	}
 
 	/**
-	 * Add reporting menu to admin
+	 * Add reporting menu to admin.
 	 */
 	public function add_reporting_menu() {
-		// Only add menu if reporting is enabled
+		// Only add menu if reporting is enabled.
 		if ( 'yes' !== get_option( 'llms_integration_reporting_enabled', 'yes' ) ) {
 			return;
 		}
@@ -61,14 +61,14 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Enqueue reporting scripts and styles
+	 * Enqueue reporting scripts and styles.
 	 */
 	public function enqueue_reporting_scripts( $hook ) {
 		if ( 'course_page_llms-attendance-reports' !== $hook ) {
 			return;
 		}
 
-		// Chart.js for data visualization
+		// Chart.js for data visualization.
 		wp_enqueue_script(
 			'chart-js',
 			'https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js',
@@ -77,7 +77,7 @@ class LLMS_AT_Reporting {
 			true
 		);
 
-		// Custom reporting script
+		// Custom reporting script.
 		wp_enqueue_script(
 			'llmsat-reporting-script',
 			LLMS_At_ASSETS_URL . 'js/llmsat-reporting.js',
@@ -86,7 +86,7 @@ class LLMS_AT_Reporting {
 			true
 		);
 
-		// Reporting styles
+		// Reporting styles.
 		wp_enqueue_style(
 			'llmsat-reporting-style',
 			LLMS_At_ASSETS_URL . 'css/llmsat-reporting.css',
@@ -94,7 +94,7 @@ class LLMS_AT_Reporting {
 			LLMS_Attendance::VERSION
 		);
 
-		// Localize script for AJAX
+		// Localize script for AJAX.
 		wp_localize_script(
 			'llmsat-reporting-script',
 			'llmsat_reporting_ajax',
@@ -107,15 +107,15 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Get attendance data for charts
+	 * Get attendance data for charts.
 	 */
 	public function get_attendance_data_ajax() {
 		check_ajax_referer( 'llmsat_reporting_nonce', 'nonce' );
 
 		$course_id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
-		$date_from = isset( $_POST['date_from'] ) ? sanitize_text_field( $_POST['date_from'] ) : '';
-		$date_to   = isset( $_POST['date_to'] ) ? sanitize_text_field( $_POST['date_to'] ) : '';
-		$period    = isset( $_POST['period'] ) ? sanitize_text_field( $_POST['period'] ) : 'monthly';
+		$date_from = isset( $_POST['date_from'] ) ? sanitize_text_field( wp_unslash( $_POST['date_from'] ) ) : '';
+		$date_to   = isset( $_POST['date_to'] ) ? sanitize_text_field( wp_unslash( $_POST['date_to'] ) ) : '';
+		$period    = isset( $_POST['period'] ) ? sanitize_text_field( wp_unslash( $_POST['period'] ) ) : 'monthly';
 
 		$data = $this->get_attendance_chart_data( $course_id, $date_from, $date_to, $period );
 
@@ -123,7 +123,7 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Get course statistics
+	 * Get course statistics.
 	 */
 	public function get_course_stats_ajax() {
 		check_ajax_referer( 'llmsat_reporting_nonce', 'nonce' );
@@ -131,10 +131,10 @@ class LLMS_AT_Reporting {
 		$course_id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
 
 		if ( $course_id > 0 ) {
-			// Single course statistics
+			// Single course statistics.
 			$stats = $this->get_course_attendance_stats( $course_id );
 		} else {
-			// All courses statistics
+			// All courses statistics.
 			$stats = $this->get_all_courses_attendance_stats();
 		}
 
@@ -142,7 +142,7 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Get student statistics
+	 * Get student statistics.
 	 */
 	public function get_student_stats_ajax() {
 		check_ajax_referer( 'llmsat_reporting_nonce', 'nonce' );
@@ -155,7 +155,7 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Export attendance data
+	 * Export attendance data.
 	 */
 	public function export_attendance_data() {
 		check_ajax_referer( 'llmsat_reporting_nonce', 'nonce' );
@@ -173,7 +173,7 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Get attendance chart data
+	 * Get attendance chart data.
 	 */
 	private function get_attendance_chart_data( $course_id = 0, $date_from = '', $date_to = '', $period = 'monthly' ) {
 		global $wpdb;
@@ -191,15 +191,15 @@ class LLMS_AT_Reporting {
 			),
 		);
 
-		// Set default date range if not provided
+		// Set default date range if not provided.
 		if ( empty( $date_from ) ) {
-			$date_from = date( 'Y-m-01' ); // First day of current month
+			$date_from = date( 'Y-m-01' ); // First day of current month.
 		}
 		if ( empty( $date_to ) ) {
-			$date_to = date( 'Y-m-t' ); // Last day of current month
+			$date_to = date( 'Y-m-t' ); // Last day of current month.
 		}
 
-		// Get courses to analyze
+		// Get courses to analyze.
 		$courses = array();
 		if ( $course_id > 0 ) {
 			$courses[] = $course_id;
@@ -215,7 +215,7 @@ class LLMS_AT_Reporting {
 			$courses      = $course_posts;
 		}
 
-		// Generate data based on period
+		// Generate data based on period.
 		switch ( $period ) {
 			case 'daily':
 				$data = $this->get_daily_attendance_data( $courses, $date_from, $date_to );
@@ -233,7 +233,7 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Get daily attendance data
+	 * Get daily attendance data.
 	 */
 	private function get_daily_attendance_data( $courses, $date_from, $date_to ) {
 		$labels           = array();
@@ -286,7 +286,7 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Get weekly attendance data
+	 * Get weekly attendance data.
 	 */
 	private function get_weekly_attendance_data( $courses, $date_from, $date_to ) {
 		$labels           = array();
@@ -295,7 +295,7 @@ class LLMS_AT_Reporting {
 		$current_date = new DateTime( $date_from );
 		$end_date     = new DateTime( $date_to );
 
-		// Start from the beginning of the week
+		// Start from the beginning of the week.
 		$current_date->modify( 'monday this week' );
 
 		while ( $current_date <= $end_date ) {
@@ -357,7 +357,7 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Get monthly attendance data
+	 * Get monthly attendance data.
 	 */
 	private function get_monthly_attendance_data( $courses, $date_from, $date_to ) {
 		$labels           = array();
@@ -366,7 +366,7 @@ class LLMS_AT_Reporting {
 		$current_date = new DateTime( $date_from );
 		$end_date     = new DateTime( $date_to );
 
-		// Start from the beginning of the month
+		// Start from the beginning of the month.
 		$current_date->modify( 'first day of this month' );
 
 		while ( $current_date <= $end_date ) {
@@ -387,7 +387,7 @@ class LLMS_AT_Reporting {
 					$month_present = false;
 					$check_date    = clone $month_start;
 
-					// Check each day of the month
+					// Check each day of the month.
 					while ( $check_date <= $month_end ) {
 						$attendance_key = $check_date->format( 'Y-m-d' ) . '-' . $course_id;
 						$attendance     = get_user_meta( $student_id, $attendance_key, true );
@@ -428,7 +428,7 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Get course attendance statistics
+	 * Get course attendance statistics.
 	 */
 	private function get_course_attendance_stats( $course_id ) {
 		if ( $course_id <= 0 ) {
@@ -458,14 +458,14 @@ class LLMS_AT_Reporting {
 				continue;
 			}
 
-			// Check today's attendance
+			// Check today's attendance.
 			$today_key        = $current_date . '-' . $course_id;
 			$today_attendance = get_user_meta( $student_id, $today_key, true );
 			if ( ! empty( $today_attendance ) ) {
 				++$stats['present_today'];
 			}
 
-			// Calculate monthly attendance
+			// Calculate monthly attendance.
 			$monthly_key   = $current_month . '-' . $course_id;
 			$monthly_count = get_user_meta( $student_id, $monthly_key, true );
 			$monthly_count = intval( $monthly_count );
@@ -474,24 +474,24 @@ class LLMS_AT_Reporting {
 				++$stats['present_this_month'];
 			}
 
-			// Calculate attendance percentage based on actual possible days
-			// Get the first attendance date for this student
+			// Calculate attendance percentage based on actual possible days.
+			// Get the first attendance date for this student.
 			$first_mark_key   = 'first_mark' . '-' . $course_id;
 			$first_attendance = get_user_meta( $student_id, $first_mark_key, true );
 
 			if ( ! empty( $first_attendance ) ) {
-				// Parse the first attendance date
+				// Parse the first attendance date.
 				list( $first_year, $first_month, $first_day ) = explode( '-', $first_attendance );
 				$first_date                                   = new DateTime( $first_year . '-' . $first_month . '-' . $first_day );
 				$today_date                                   = new DateTime( $current_date );
 
-				// Calculate days since first attendance
+				// Calculate days since first attendance.
 				$days_since_first = $first_date->diff( $today_date )->days + 1;
 
-				// Calculate percentage based on actual possible days
+				// Calculate percentage based on actual possible days.
 				$attendance_percentage = $days_since_first > 0 ? ( $monthly_count / $days_since_first ) * 100 : 0;
 			} else {
-				// If no first attendance date, use current day of month as fallback
+				// If no first attendance date, use current day of month as fallback.
 				$attendance_percentage = $current_day > 0 ? ( $monthly_count / $current_day ) * 100 : 0;
 			}
 
@@ -503,7 +503,7 @@ class LLMS_AT_Reporting {
 			);
 		}
 
-		// Sort by attendance percentage
+		// Sort by attendance percentage..
 		usort(
 			$student_attendance,
 			function ( $a, $b ) {
@@ -518,7 +518,7 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Get all courses attendance statistics
+	 * Get all courses attendance statistics.
 	 */
 	private function get_all_courses_attendance_stats() {
 		$courses = get_posts(
@@ -549,14 +549,14 @@ class LLMS_AT_Reporting {
 					continue;
 				}
 
-				// Check today's attendance
+				// Check today's attendance.
 				$today_key        = $current_date . '-' . $course_id;
 				$today_attendance = get_user_meta( $student_id, $today_key, true );
 				if ( ! empty( $today_attendance ) ) {
 					++$present_today;
 				}
 
-				// Calculate monthly attendance
+				// Calculate monthly attendance.
 				$monthly_key   = $current_month . '-' . $course_id;
 				$monthly_count = get_user_meta( $student_id, $monthly_key, true );
 				$monthly_count = intval( $monthly_count );
@@ -565,27 +565,27 @@ class LLMS_AT_Reporting {
 					++$present_this_month;
 				}
 
-				// Calculate attendance percentage based on actual possible days
+				// Calculate attendance percentage. based on actual possible days.
 				$first_mark_key   = 'first_mark' . '-' . $course_id;
 				$first_attendance = get_user_meta( $student_id, $first_mark_key, true );
 
 				if ( ! empty( $first_attendance ) ) {
-					// Parse the first attendance date
+					// Parse the first attendance date.
 					list( $first_year, $first_month, $first_day ) = explode( '-', $first_attendance );
 					$first_date                                   = new DateTime( $first_year . '-' . $first_month . '-' . $first_day );
 					$today_date                                   = new DateTime( $current_date );
 
-					// Calculate days since first attendance
+					// Calculate days since first attendance.
 					$days_since_first = $first_date->diff( $today_date )->days + 1;
 
-					// Calculate percentage based on actual possible days
+					// Calculate percentage based on actual possible days.
 					$attendance_percentage = $days_since_first > 0 ? ( $monthly_count / $days_since_first ) * 100 : 0;
 				} else {
-					// If no first attendance date, use current day of month as fallback
+					// If no first attendance date, use current day of month as fallback.
 					$attendance_percentage = $current_day > 0 ? ( $monthly_count / $current_day ) * 100 : 0;
 				}
 
-				// Store student data for top performers
+				// Store student data for top performers.
 				$all_student_attendance[] = array(
 					'student_id'            => $student_id,
 					'student_name'          => $user->display_name,
@@ -595,7 +595,7 @@ class LLMS_AT_Reporting {
 			}
 		}
 
-		// Sort by attendance percentage
+		// Sort by attendance percentage.
 		usort(
 			$all_student_attendance,
 			function ( $a, $b ) {
@@ -615,7 +615,7 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Get student attendance statistics
+	 * Get student attendance statistics.
 	 */
 	private function get_student_attendance_stats( $student_id, $course_id ) {
 		if ( $student_id <= 0 ) {
@@ -640,35 +640,35 @@ class LLMS_AT_Reporting {
 		);
 
 		if ( $course_id > 0 ) {
-			// Single course stats
+			// Single course stats.
 			$monthly_key      = $current_month . '-' . $course_id;
 			$attendance_count = get_user_meta( $student_id, $monthly_key, true );
 			$attendance_count = intval( $attendance_count );
 
-			// Calculate attendance percentage based on actual possible days
+			// Calculate attendance percentage based on actual possible days.
 			$first_mark_key   = 'first_mark' . '-' . $course_id;
 			$first_attendance = get_user_meta( $student_id, $first_mark_key, true );
 
 			if ( ! empty( $first_attendance ) ) {
-				// Parse the first attendance date
+				// Parse the first attendance date.
 				list( $first_year, $first_month, $first_day ) = explode( '-', $first_attendance );
 				$first_date                                   = new DateTime( $first_year . '-' . $first_month . '-' . $first_day );
 				$today_date                                   = new DateTime( $current_date );
 
-				// Calculate days since first attendance
+				// Calculate days since first attendance.
 				$days_since_first = $first_date->diff( $today_date )->days + 1;
 
-				// Calculate percentage based on actual possible days
+				// Calculate percentage based on actual possible days.
 				$attendance_percentage = $days_since_first > 0 ? ( $attendance_count / $days_since_first ) * 100 : 0;
 			} else {
-				// If no first attendance date, use current day of month as fallback
+				// If no first attendance date, use current day of month as fallback.
 				$attendance_percentage = $current_day > 0 ? ( $attendance_count / $current_day ) * 100 : 0;
 			}
 
 			$stats['attendance_count']      = $attendance_count;
 			$stats['attendance_percentage'] = round( $attendance_percentage, 1 );
 		} else {
-			// All courses stats
+			// All courses stats.
 			$courses = get_posts(
 				array(
 					'post_type'      => 'course',
@@ -718,7 +718,7 @@ class LLMS_AT_Reporting {
 
 		$output = fopen( 'php://output', 'w' );
 
-		// CSV headers
+		// CSV headers.
 		fputcsv(
 			$output,
 			array(
@@ -731,7 +731,7 @@ class LLMS_AT_Reporting {
 			)
 		);
 
-		// Get courses to export
+		// Get courses to export.
 		$courses = array();
 		if ( $course_id > 0 ) {
 			$courses[] = $course_id;
@@ -747,7 +747,7 @@ class LLMS_AT_Reporting {
 			$courses      = $course_posts;
 		}
 
-		// Export data
+		// Export data.
 		foreach ( $courses as $course ) {
 			$enrolled_students = llms_get_enrolled_students( $course );
 			$course_name       = get_the_title( $course );
@@ -758,7 +758,7 @@ class LLMS_AT_Reporting {
 					continue;
 				}
 
-				// Calculate attendance for date range
+				// Calculate attendance for date range.
 				$attendance_count      = $this->calculate_attendance_in_range( $student_id, $course, $date_from, $date_to );
 				$total_days            = $this->get_total_days_in_range( $date_from, $date_to );
 				$attendance_percentage = $total_days > 0 ? round( ( $attendance_count / $total_days ) * 100, 1 ) : 0;
@@ -785,8 +785,8 @@ class LLMS_AT_Reporting {
 	 * Export data to PDF (basic implementation)
 	 */
 	private function export_pdf( $course_id, $date_from, $date_to ) {
-		// For now, we'll create a simple HTML-based PDF
-		// In a production environment, you might want to use a proper PDF library like TCPDF or mPDF
+		// For now, we'll create a simple HTML-based PDF.
+		// In a production environment, you might want to use a proper PDF library like TCPDF or mPDF.
 
 		$filename = 'attendance-report-' . date( 'Y-m-d' ) . '.html';
 
@@ -800,7 +800,7 @@ class LLMS_AT_Reporting {
 		echo '<p>Generated on: ' . date( 'Y-m-d H:i:s' ) . '</p>';
 		echo '<p>Date Range: ' . $date_from . ' to ' . $date_to . '</p>';
 
-		// Get courses to export
+		// Get courses to export.
 		$courses = array();
 		if ( $course_id > 0 ) {
 			$courses[] = $course_id;
@@ -961,7 +961,7 @@ class LLMS_AT_Reporting {
 	 * Check for low attendance and send email alerts
 	 */
 	public function check_low_attendance() {
-		// Only run if email alerts are enabled
+		// Only run if email alerts are enabled.
 		if ( 'yes' !== get_option( 'llms_integration_email_alerts_enabled', 'no' ) ) {
 			return;
 		}
@@ -970,7 +970,7 @@ class LLMS_AT_Reporting {
 		$current_month = date( 'Y-n' );
 		$current_day   = date( 'j' );
 
-		// Get all courses
+		// Get all courses.
 		$courses = get_posts(
 			array(
 				'post_type'      => 'course',
@@ -989,7 +989,7 @@ class LLMS_AT_Reporting {
 					continue;
 				}
 
-				// Calculate attendance percentage
+				// Calculate attendance percentage.
 				$monthly_key      = $current_month . '-' . $course->ID;
 				$attendance_count = get_user_meta( $student_id, $monthly_key, true );
 				$attendance_count = intval( $attendance_count );
@@ -1005,7 +1005,7 @@ class LLMS_AT_Reporting {
 				}
 			}
 
-			// Send email if there are students with low attendance
+			// Send email if there are students with low attendance.
 			if ( ! empty( $low_attendance_students ) ) {
 				$this->send_low_attendance_email( $course, $low_attendance_students, $threshold );
 			}

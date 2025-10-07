@@ -164,13 +164,13 @@ class LLMS_Attendance {
 
 		if ( file_exists( LLMS_At_INCLUDES_DIR . 'integration/llmsat-reporting.php' ) ) {
 
-require_once LLMS_At_INCLUDES_DIR . 'integration/llmsat-reporting.php';
-require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-database.php';
-require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-migration.php';
-require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-hybrid-manager.php';
-require_once LLMS_At_INCLUDES_DIR . 'testing/llmsat-testing-framework.php';
-require_once LLMS_At_INCLUDES_DIR . 'testing/llmsat-test-suite.php';
-require_once LLMS_At_INCLUDES_DIR . 'testing/llmsat-cli-testing.php';
+			require_once LLMS_At_INCLUDES_DIR . 'integration/llmsat-reporting.php';
+			require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-database.php';
+			require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-migration.php';
+			require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-hybrid-manager.php';
+			require_once LLMS_At_INCLUDES_DIR . 'testing/llmsat-testing-framework.php';
+			require_once LLMS_At_INCLUDES_DIR . 'testing/llmsat-test-suite.php';
+			require_once LLMS_At_INCLUDES_DIR . 'testing/llmsat-cli-testing.php';
 		}
 
 		if ( file_exists( LLMS_At_INCLUDES_DIR . 'settings/options.php' ) ) {

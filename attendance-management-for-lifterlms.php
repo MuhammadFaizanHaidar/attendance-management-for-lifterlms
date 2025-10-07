@@ -72,12 +72,82 @@ class LLMS_Attendance {
 			return;
 		}
 
+		// Update plugin version.
 		update_option( 'llmsat_version', self::VERSION );
 		$default_values = get_option( 'llmsat_version' );
 		if ( empty( $default_values ) ) {
 			$form_data = array();
 			update_option( 'llmsat_version', $form_data );
 		}
+
+		// Create database tables on activation.
+		self::create_database_tables();
+		
+		// Set default migration status.
+		if ( ! get_option( 'llmsat_migration_status' ) ) {
+			update_option( 'llmsat_migration_status', 'not_started' );
+		}
+		
+		// Set default database version.
+		if ( ! get_option( 'llmsat_db_version' ) ) {
+			update_option( 'llmsat_db_version', '1.0' );
+		}
+	}
+
+	/**
+	 * Create database tables during activation.
+	 *
+	 * @return void
+	 */
+	private static function create_database_tables() {
+		// Include the database class.
+		require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-database.php';
+		
+		// Create the database instance and tables.
+		$database = new LLMS_AT_Database();
+		$database->create_tables();
+		
+		// Log successful table creation.
+		error_log( 'LLMS Attendance: Database tables created successfully during activation.' );
+	}
+
+	/**
+	 * Handle plugin upgrades and database migrations.
+	 *
+	 * @return void
+	 */
+	public function upgrade() {
+		$installed_version = get_option( 'llmsat_version', '0.0.0' );
+		$current_version = self::VERSION;
+
+		// If versions are the same, no upgrade needed.
+		if ( version_compare( $installed_version, $current_version, '>=' ) ) {
+			return;
+		}
+
+		// Include database class for upgrades.
+		require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-database.php';
+		$database = new LLMS_AT_Database();
+
+		// Check if database tables exist, create if not.
+		if ( ! $database->table_exists() ) {
+			$database->create_tables();
+			error_log( 'LLMS Attendance: Database tables created during upgrade.' );
+		}
+
+		// Update version.
+		update_option( 'llmsat_version', $current_version );
+		
+		// Set default options if not set.
+		if ( ! get_option( 'llmsat_migration_status' ) ) {
+			update_option( 'llmsat_migration_status', 'not_started' );
+		}
+		
+		if ( ! get_option( 'llmsat_db_version' ) ) {
+			update_option( 'llmsat_db_version', '1.0' );
+		}
+
+		error_log( "LLMS Attendance: Upgraded from {$installed_version} to {$current_version}" );
 	}
 
 	/**

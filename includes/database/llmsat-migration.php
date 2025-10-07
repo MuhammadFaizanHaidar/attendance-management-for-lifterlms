@@ -53,14 +53,6 @@ class LLMS_AT_Migration {
 		$table_stats = $this->db->get_table_stats();
 		$migration_status = get_option( 'llmsat_migration_status', 'not_started' );
 		
-		// If table doesn't exist, create it first.
-		if ( ! $this->db->table_exists() ) {
-			$this->db->create_tables();
-		}
-		
-		// Get fresh stats after ensuring table exists.
-		$table_stats = $this->db->get_table_stats();
-		
 		// Ensure we have valid stats arrays.
 		if ( ! is_array( $meta_stats ) ) {
 			$meta_stats = array(

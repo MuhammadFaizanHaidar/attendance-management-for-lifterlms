@@ -65,13 +65,14 @@
 .llmsat-filters select,
 .llmsat-filters input[type="date"] {
     padding: 8px 12px;
-    border: 1px solid #ddd;
+    border: 1px solid #444;
     border-radius: 4px;
     font-size: 14px;
     min-width: 120px;
-    background-color: #ffffff;
-    color: #23282d;
+    background-color: #2c3338;
+    color: #ffffff;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .llmsat-filters select option {
@@ -80,15 +81,11 @@
     padding: 8px 12px;
 }
 
-.llmsat-filters select:hover {
-    border-color: #0073aa;
-    background-color: #f8f9fa;
-}
-
+.llmsat-filters select:hover,
 .llmsat-filters input[type="date"]:hover {
     border-color: #0073aa;
     background-color: #ffffff;
-    color: #23282d;
+    color: #0073aa;
 }
 
 .llmsat-filters select:focus,
@@ -97,48 +94,20 @@
     outline: none;
     box-shadow: 0 0 0 1px #0073aa;
     background-color: #ffffff;
+    color: #0073aa;
 }
 
 .llmsat-filters select:active,
 .llmsat-filters input[type="date"]:active {
     background-color: #ffffff;
+    color: #0073aa;
+}
+
+/* Ensure dropdown options have proper contrast */
+.llmsat-filters select option {
+    background-color: #ffffff;
     color: #23282d;
-}
-
-/* Specific styling for period filter */
-.llmsat-filters select#period-filter {
-    background-color: #ffffff !important;
-    color: #23282d !important;
-    border: 1px solid #ddd !important;
-}
-
-.llmsat-filters select#period-filter:focus {
-    border-color: #0073aa !important;
-    background-color: #ffffff !important;
-    color: #23282d !important;
-}
-
-.llmsat-filters select#period-filter option {
-    background-color: #ffffff !important;
-    color: #23282d !important;
-}
-
-/* Specific styling for date inputs */
-.llmsat-filters input[type="date"] {
-    background-color: #ffffff !important;
-    color: #23282d !important;
-}
-
-.llmsat-filters input[type="date"]:hover {
-    background-color: #ffffff !important;
-    color: #23282d !important;
-    border-color: #0073aa !important;
-}
-
-.llmsat-filters input[type="date"]:focus {
-    background-color: #ffffff !important;
-    color: #23282d !important;
-    border-color: #0073aa !important;
+    padding: 8px 12px;
 }
 
 .llmsat-export-options {

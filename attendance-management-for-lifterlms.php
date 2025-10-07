@@ -161,15 +161,6 @@ class LLMS_Attendance {
 		return false;
 	}
 
-	/**
-	 * Upgrade function hook
-	 *
-	 * @return void
-	 */
-	public function upgrade() {
-		if ( get_option( 'llmsat_version' ) != self::VERSION ) {
-		}
-	}
 
 	/**
 	 * Setup Constants

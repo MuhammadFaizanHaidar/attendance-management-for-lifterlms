@@ -34,7 +34,7 @@ class LLMS_AT_Reporting {
 		add_action( 'wp_ajax_llmsat_get_course_stats', array( $this, 'get_course_stats_ajax' ) );
 		add_action( 'wp_ajax_llmsat_get_student_stats', array( $this, 'get_student_stats_ajax' ) );
 		add_action( 'llmsat_daily_attendance_check', array( $this, 'check_low_attendance' ) );
-		
+
 		// Schedule daily attendance check
 		if ( ! wp_next_scheduled( 'llmsat_daily_attendance_check' ) ) {
 			wp_schedule_event( time(), 'daily', 'llmsat_daily_attendance_check' );
@@ -141,8 +141,8 @@ class LLMS_AT_Reporting {
 		check_ajax_referer( 'llmsat_reporting_nonce', 'nonce' );
 
 		$student_id = isset( $_POST['student_id'] ) ? intval( $_POST['student_id'] ) : 0;
-		$course_id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
-		$stats     = $this->get_student_attendance_stats( $student_id, $course_id );
+		$course_id  = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
+		$stats      = $this->get_student_attendance_stats( $student_id, $course_id );
 
 		wp_send_json_success( $stats );
 	}
@@ -197,13 +197,15 @@ class LLMS_AT_Reporting {
 		if ( $course_id > 0 ) {
 			$courses[] = $course_id;
 		} else {
-			$course_posts = get_posts( array(
-				'post_type'      => 'course',
-				'post_status'    => 'publish',
-				'posts_per_page' => -1,
-				'fields'         => 'ids',
-			) );
-			$courses = $course_posts;
+			$course_posts = get_posts(
+				array(
+					'post_type'      => 'course',
+					'post_status'    => 'publish',
+					'posts_per_page' => -1,
+					'fields'         => 'ids',
+				)
+			);
+			$courses      = $course_posts;
 		}
 
 		// Generate data based on period
@@ -227,33 +229,33 @@ class LLMS_AT_Reporting {
 	 * Get daily attendance data
 	 */
 	private function get_daily_attendance_data( $courses, $date_from, $date_to ) {
-		$labels = array();
+		$labels           = array();
 		$attendance_rates = array();
 
 		$current_date = new DateTime( $date_from );
-		$end_date = new DateTime( $date_to );
+		$end_date     = new DateTime( $date_to );
 
 		while ( $current_date <= $end_date ) {
 			$date_str = $current_date->format( 'Y-m-d' );
 			$labels[] = $current_date->format( 'M j' );
 
-			$total_students = 0;
+			$total_students   = 0;
 			$present_students = 0;
 
 			foreach ( $courses as $course_id ) {
 				$enrolled_students = llms_get_enrolled_students( $course_id );
-				$total_students += count( $enrolled_students );
+				$total_students   += count( $enrolled_students );
 
 				foreach ( $enrolled_students as $student_id ) {
 					$attendance_key = $current_date->format( 'Y-m-d' ) . '-' . $course_id;
-					$attendance = get_user_meta( $student_id, $attendance_key, true );
+					$attendance     = get_user_meta( $student_id, $attendance_key, true );
 					if ( ! empty( $attendance ) ) {
-						$present_students++;
+						++$present_students;
 					}
 				}
 			}
 
-			$rate = $total_students > 0 ? ( $present_students / $total_students ) * 100 : 0;
+			$rate               = $total_students > 0 ? ( $present_students / $total_students ) * 100 : 0;
 			$attendance_rates[] = round( $rate, 1 );
 
 			$current_date->add( new DateInterval( 'P1D' ) );
@@ -277,37 +279,37 @@ class LLMS_AT_Reporting {
 	 * Get weekly attendance data
 	 */
 	private function get_weekly_attendance_data( $courses, $date_from, $date_to ) {
-		$labels = array();
+		$labels           = array();
 		$attendance_rates = array();
 
 		$current_date = new DateTime( $date_from );
-		$end_date = new DateTime( $date_to );
+		$end_date     = new DateTime( $date_to );
 
 		// Start from the beginning of the week
 		$current_date->modify( 'monday this week' );
 
 		while ( $current_date <= $end_date ) {
 			$week_start = clone $current_date;
-			$week_end = clone $current_date;
+			$week_end   = clone $current_date;
 			$week_end->add( new DateInterval( 'P6D' ) );
 
 			$labels[] = $week_start->format( 'M j' ) . ' - ' . $week_end->format( 'M j' );
 
-			$total_students = 0;
+			$total_students   = 0;
 			$present_students = 0;
 
 			foreach ( $courses as $course_id ) {
 				$enrolled_students = llms_get_enrolled_students( $course_id );
-				$total_students += count( $enrolled_students );
+				$total_students   += count( $enrolled_students );
 
 				foreach ( $enrolled_students as $student_id ) {
 					$week_present = false;
-					$check_date = clone $week_start;
+					$check_date   = clone $week_start;
 
 					// Check each day of the week
 					for ( $i = 0; $i < 7; $i++ ) {
 						$attendance_key = $check_date->format( 'Y-m-d' ) . '-' . $course_id;
-						$attendance = get_user_meta( $student_id, $attendance_key, true );
+						$attendance     = get_user_meta( $student_id, $attendance_key, true );
 						if ( ! empty( $attendance ) ) {
 							$week_present = true;
 							break;
@@ -316,12 +318,12 @@ class LLMS_AT_Reporting {
 					}
 
 					if ( $week_present ) {
-						$present_students++;
+						++$present_students;
 					}
 				}
 			}
 
-			$rate = $total_students > 0 ? ( $present_students / $total_students ) * 100 : 0;
+			$rate               = $total_students > 0 ? ( $present_students / $total_students ) * 100 : 0;
 			$attendance_rates[] = round( $rate, 1 );
 
 			$current_date->add( new DateInterval( 'P7D' ) );
@@ -345,37 +347,37 @@ class LLMS_AT_Reporting {
 	 * Get monthly attendance data
 	 */
 	private function get_monthly_attendance_data( $courses, $date_from, $date_to ) {
-		$labels = array();
+		$labels           = array();
 		$attendance_rates = array();
 
 		$current_date = new DateTime( $date_from );
-		$end_date = new DateTime( $date_to );
+		$end_date     = new DateTime( $date_to );
 
 		// Start from the beginning of the month
 		$current_date->modify( 'first day of this month' );
 
 		while ( $current_date <= $end_date ) {
 			$month_start = clone $current_date;
-			$month_end = clone $current_date;
+			$month_end   = clone $current_date;
 			$month_end->modify( 'last day of this month' );
 
 			$labels[] = $current_date->format( 'M Y' );
 
-			$total_students = 0;
+			$total_students   = 0;
 			$present_students = 0;
 
 			foreach ( $courses as $course_id ) {
 				$enrolled_students = llms_get_enrolled_students( $course_id );
-				$total_students += count( $enrolled_students );
+				$total_students   += count( $enrolled_students );
 
 				foreach ( $enrolled_students as $student_id ) {
 					$month_present = false;
-					$check_date = clone $month_start;
+					$check_date    = clone $month_start;
 
 					// Check each day of the month
 					while ( $check_date <= $month_end ) {
 						$attendance_key = $check_date->format( 'Y-m-d' ) . '-' . $course_id;
-						$attendance = get_user_meta( $student_id, $attendance_key, true );
+						$attendance     = get_user_meta( $student_id, $attendance_key, true );
 						if ( ! empty( $attendance ) ) {
 							$month_present = true;
 							break;
@@ -384,12 +386,12 @@ class LLMS_AT_Reporting {
 					}
 
 					if ( $month_present ) {
-						$present_students++;
+						++$present_students;
 					}
 				}
 			}
 
-			$rate = $total_students > 0 ? ( $present_students / $total_students ) * 100 : 0;
+			$rate               = $total_students > 0 ? ( $present_students / $total_students ) * 100 : 0;
 			$attendance_rates[] = round( $rate, 1 );
 
 			$current_date->add( new DateInterval( 'P1M' ) );
@@ -418,11 +420,11 @@ class LLMS_AT_Reporting {
 		}
 
 		$enrolled_students = llms_get_enrolled_students( $course_id );
-		$total_students = count( $enrolled_students );
+		$total_students    = count( $enrolled_students );
 
-		$current_date = date( 'Y-m-d' );
+		$current_date  = date( 'Y-m-d' );
 		$current_month = date( 'Y-m' );
-		$current_day = date( 'd' );
+		$current_day   = date( 'd' );
 
 		$stats = array(
 			'total_students'     => $total_students,
@@ -441,38 +443,59 @@ class LLMS_AT_Reporting {
 			}
 
 			// Check today's attendance
-			$today_key = $current_date . '-' . $course_id;
+			$today_key        = $current_date . '-' . $course_id;
 			$today_attendance = get_user_meta( $student_id, $today_key, true );
 			if ( ! empty( $today_attendance ) ) {
-				$stats['present_today']++;
+				++$stats['present_today'];
 			}
 
 			// Calculate monthly attendance
-			$monthly_key = $current_month . '-' . $course_id;
+			$monthly_key   = $current_month . '-' . $course_id;
 			$monthly_count = get_user_meta( $student_id, $monthly_key, true );
 			$monthly_count = intval( $monthly_count );
 
 			if ( $monthly_count > 0 ) {
-				$stats['present_this_month']++;
+				++$stats['present_this_month'];
 			}
 
-			// Calculate attendance percentage
-			$attendance_percentage = $current_day > 0 ? ( $monthly_count / $current_day ) * 100 : 0;
+			// Calculate attendance percentage based on actual possible days
+			// Get the first attendance date for this student
+			$first_mark_key   = 'first_mark' . '-' . $course_id;
+			$first_attendance = get_user_meta( $student_id, $first_mark_key, true );
+
+			if ( ! empty( $first_attendance ) ) {
+				// Parse the first attendance date
+				list( $first_year, $first_month, $first_day ) = explode( '-', $first_attendance );
+				$first_date                                   = new DateTime( $first_year . '-' . $first_month . '-' . $first_day );
+				$today_date                                   = new DateTime( $current_date );
+
+				// Calculate days since first attendance
+				$days_since_first = $first_date->diff( $today_date )->days + 1;
+
+				// Calculate percentage based on actual possible days
+				$attendance_percentage = $days_since_first > 0 ? ( $monthly_count / $days_since_first ) * 100 : 0;
+			} else {
+				// If no first attendance date, use current day of month as fallback
+				$attendance_percentage = $current_day > 0 ? ( $monthly_count / $current_day ) * 100 : 0;
+			}
 
 			$student_attendance[] = array(
-				'student_id'   => $student_id,
-				'student_name' => $user->display_name,
-				'attendance_count' => $monthly_count,
+				'student_id'            => $student_id,
+				'student_name'          => $user->display_name,
+				'attendance_count'      => $monthly_count,
 				'attendance_percentage' => round( $attendance_percentage, 1 ),
 			);
 		}
 
 		// Sort by attendance percentage
-		usort( $student_attendance, function( $a, $b ) {
-			return $b['attendance_percentage'] <=> $a['attendance_percentage'];
-		});
+		usort(
+			$student_attendance,
+			function ( $a, $b ) {
+				return $b['attendance_percentage'] <=> $a['attendance_percentage'];
+			}
+		);
 
-		$stats['top_performers'] = array_slice( $student_attendance, 0, 5 );
+		$stats['top_performers']     = array_slice( $student_attendance, 0, 5 );
 		$stats['average_attendance'] = $total_students > 0 ? round( ( $stats['present_this_month'] / $total_students ) * 100, 1 ) : 0;
 
 		return $stats;
@@ -491,58 +514,80 @@ class LLMS_AT_Reporting {
 			return array();
 		}
 
-		$current_date = date( 'Y-m-d' );
+		$current_date  = date( 'Y-m-d' );
 		$current_month = date( 'Y-m' );
-		$current_day = date( 'd' );
+		$current_day   = date( 'd' );
 
 		$stats = array(
-			'student_name'      => $user->display_name,
-			'student_id'        => $student_id,
-			'attendance_count'  => 0,
+			'student_name'          => $user->display_name,
+			'student_id'            => $student_id,
+			'attendance_count'      => 0,
 			'attendance_percentage' => 0,
-			'attendance_history' => array(),
+			'attendance_history'    => array(),
 		);
 
 		if ( $course_id > 0 ) {
 			// Single course stats
-			$monthly_key = $current_month . '-' . $course_id;
+			$monthly_key      = $current_month . '-' . $course_id;
 			$attendance_count = get_user_meta( $student_id, $monthly_key, true );
 			$attendance_count = intval( $attendance_count );
 
-			$stats['attendance_count'] = $attendance_count;
-			$stats['attendance_percentage'] = $current_day > 0 ? round( ( $attendance_count / $current_day ) * 100, 1 ) : 0;
+			// Calculate attendance percentage based on actual possible days
+			$first_mark_key   = 'first_mark' . '-' . $course_id;
+			$first_attendance = get_user_meta( $student_id, $first_mark_key, true );
+
+			if ( ! empty( $first_attendance ) ) {
+				// Parse the first attendance date
+				list( $first_year, $first_month, $first_day ) = explode( '-', $first_attendance );
+				$first_date                                   = new DateTime( $first_year . '-' . $first_month . '-' . $first_day );
+				$today_date                                   = new DateTime( $current_date );
+
+				// Calculate days since first attendance
+				$days_since_first = $first_date->diff( $today_date )->days + 1;
+
+				// Calculate percentage based on actual possible days
+				$attendance_percentage = $days_since_first > 0 ? ( $attendance_count / $days_since_first ) * 100 : 0;
+			} else {
+				// If no first attendance date, use current day of month as fallback
+				$attendance_percentage = $current_day > 0 ? ( $attendance_count / $current_day ) * 100 : 0;
+			}
+
+			$stats['attendance_count']      = $attendance_count;
+			$stats['attendance_percentage'] = round( $attendance_percentage, 1 );
 		} else {
 			// All courses stats
-			$courses = get_posts( array(
-				'post_type'      => 'course',
-				'post_status'    => 'publish',
-				'posts_per_page' => -1,
-				'fields'         => 'ids',
-			) );
+			$courses = get_posts(
+				array(
+					'post_type'      => 'course',
+					'post_status'    => 'publish',
+					'posts_per_page' => -1,
+					'fields'         => 'ids',
+				)
+			);
 
 			$total_attendance = 0;
-			$total_possible = 0;
+			$total_possible   = 0;
 
 			foreach ( $courses as $course ) {
 				$enrolled_students = llms_get_enrolled_students( $course );
 				if ( in_array( $student_id, $enrolled_students ) ) {
-					$monthly_key = $current_month . '-' . $course;
+					$monthly_key      = $current_month . '-' . $course;
 					$attendance_count = get_user_meta( $student_id, $monthly_key, true );
 					$attendance_count = intval( $attendance_count );
 
 					$total_attendance += $attendance_count;
-					$total_possible += $current_day;
+					$total_possible   += $current_day;
 
 					$stats['attendance_history'][] = array(
-						'course_id'   => $course,
-						'course_name' => get_the_title( $course ),
-						'attendance_count' => $attendance_count,
+						'course_id'             => $course,
+						'course_name'           => get_the_title( $course ),
+						'attendance_count'      => $attendance_count,
 						'attendance_percentage' => $current_day > 0 ? round( ( $attendance_count / $current_day ) * 100, 1 ) : 0,
 					);
 				}
 			}
 
-			$stats['attendance_count'] = $total_attendance;
+			$stats['attendance_count']      = $total_attendance;
 			$stats['attendance_percentage'] = $total_possible > 0 ? round( ( $total_attendance / $total_possible ) * 100, 1 ) : 0;
 		}
 
@@ -561,33 +606,38 @@ class LLMS_AT_Reporting {
 		$output = fopen( 'php://output', 'w' );
 
 		// CSV headers
-		fputcsv( $output, array(
-			__( 'Student Name', 'llms-attendance' ),
-			__( 'Student Email', 'llms-attendance' ),
-			__( 'Course Name', 'llms-attendance' ),
-			__( 'Attendance Count', 'llms-attendance' ),
-			__( 'Attendance Percentage', 'llms-attendance' ),
-			__( 'Date Range', 'llms-attendance' ),
-		) );
+		fputcsv(
+			$output,
+			array(
+				__( 'Student Name', 'llms-attendance' ),
+				__( 'Student Email', 'llms-attendance' ),
+				__( 'Course Name', 'llms-attendance' ),
+				__( 'Attendance Count', 'llms-attendance' ),
+				__( 'Attendance Percentage', 'llms-attendance' ),
+				__( 'Date Range', 'llms-attendance' ),
+			)
+		);
 
 		// Get courses to export
 		$courses = array();
 		if ( $course_id > 0 ) {
 			$courses[] = $course_id;
 		} else {
-			$course_posts = get_posts( array(
-				'post_type'      => 'course',
-				'post_status'    => 'publish',
-				'posts_per_page' => -1,
-				'fields'         => 'ids',
-			) );
-			$courses = $course_posts;
+			$course_posts = get_posts(
+				array(
+					'post_type'      => 'course',
+					'post_status'    => 'publish',
+					'posts_per_page' => -1,
+					'fields'         => 'ids',
+				)
+			);
+			$courses      = $course_posts;
 		}
 
 		// Export data
 		foreach ( $courses as $course ) {
 			$enrolled_students = llms_get_enrolled_students( $course );
-			$course_name = get_the_title( $course );
+			$course_name       = get_the_title( $course );
 
 			foreach ( $enrolled_students as $student_id ) {
 				$user = get_userdata( $student_id );
@@ -596,18 +646,21 @@ class LLMS_AT_Reporting {
 				}
 
 				// Calculate attendance for date range
-				$attendance_count = $this->calculate_attendance_in_range( $student_id, $course, $date_from, $date_to );
-				$total_days = $this->get_total_days_in_range( $date_from, $date_to );
+				$attendance_count      = $this->calculate_attendance_in_range( $student_id, $course, $date_from, $date_to );
+				$total_days            = $this->get_total_days_in_range( $date_from, $date_to );
 				$attendance_percentage = $total_days > 0 ? round( ( $attendance_count / $total_days ) * 100, 1 ) : 0;
 
-				fputcsv( $output, array(
-					$user->display_name,
-					$user->user_email,
-					$course_name,
-					$attendance_count,
-					$attendance_percentage . '%',
-					$date_from . ' to ' . $date_to,
-				) );
+				fputcsv(
+					$output,
+					array(
+						$user->display_name,
+						$user->user_email,
+						$course_name,
+						$attendance_count,
+						$attendance_percentage . '%',
+						$date_from . ' to ' . $date_to,
+					)
+				);
 			}
 		}
 
@@ -621,9 +674,9 @@ class LLMS_AT_Reporting {
 	private function export_pdf( $course_id, $date_from, $date_to ) {
 		// For now, we'll create a simple HTML-based PDF
 		// In a production environment, you might want to use a proper PDF library like TCPDF or mPDF
-		
+
 		$filename = 'attendance-report-' . date( 'Y-m-d' ) . '.html';
-		
+
 		header( 'Content-Type: text/html' );
 		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
 
@@ -639,13 +692,15 @@ class LLMS_AT_Reporting {
 		if ( $course_id > 0 ) {
 			$courses[] = $course_id;
 		} else {
-			$course_posts = get_posts( array(
-				'post_type'      => 'course',
-				'post_status'    => 'publish',
-				'posts_per_page' => -1,
-				'fields'         => 'ids',
-			) );
-			$courses = $course_posts;
+			$course_posts = get_posts(
+				array(
+					'post_type'      => 'course',
+					'post_status'    => 'publish',
+					'posts_per_page' => -1,
+					'fields'         => 'ids',
+				)
+			);
+			$courses      = $course_posts;
 		}
 
 		echo '<table>';
@@ -653,7 +708,7 @@ class LLMS_AT_Reporting {
 
 		foreach ( $courses as $course ) {
 			$enrolled_students = llms_get_enrolled_students( $course );
-			$course_name = get_the_title( $course );
+			$course_name       = get_the_title( $course );
 
 			foreach ( $enrolled_students as $student_id ) {
 				$user = get_userdata( $student_id );
@@ -661,8 +716,8 @@ class LLMS_AT_Reporting {
 					continue;
 				}
 
-				$attendance_count = $this->calculate_attendance_in_range( $student_id, $course, $date_from, $date_to );
-				$total_days = $this->get_total_days_in_range( $date_from, $date_to );
+				$attendance_count      = $this->calculate_attendance_in_range( $student_id, $course, $date_from, $date_to );
+				$total_days            = $this->get_total_days_in_range( $date_from, $date_to );
 				$attendance_percentage = $total_days > 0 ? round( ( $attendance_count / $total_days ) * 100, 1 ) : 0;
 
 				echo '<tr>';
@@ -683,15 +738,15 @@ class LLMS_AT_Reporting {
 	 * Calculate attendance count in date range
 	 */
 	private function calculate_attendance_in_range( $student_id, $course_id, $date_from, $date_to ) {
-		$count = 0;
+		$count        = 0;
 		$current_date = new DateTime( $date_from );
-		$end_date = new DateTime( $date_to );
+		$end_date     = new DateTime( $date_to );
 
 		while ( $current_date <= $end_date ) {
 			$attendance_key = $current_date->format( 'Y-m-d' ) . '-' . $course_id;
-			$attendance = get_user_meta( $student_id, $attendance_key, true );
+			$attendance     = get_user_meta( $student_id, $attendance_key, true );
 			if ( ! empty( $attendance ) ) {
-				$count++;
+				++$count;
 			}
 			$current_date->add( new DateInterval( 'P1D' ) );
 		}
@@ -703,8 +758,8 @@ class LLMS_AT_Reporting {
 	 * Get total days in date range
 	 */
 	private function get_total_days_in_range( $date_from, $date_to ) {
-		$start = new DateTime( $date_from );
-		$end = new DateTime( $date_to );
+		$start    = new DateTime( $date_from );
+		$end      = new DateTime( $date_to );
 		$interval = $start->diff( $end );
 		return $interval->days + 1;
 	}
@@ -723,11 +778,13 @@ class LLMS_AT_Reporting {
 					<select id="course-filter">
 						<option value="0"><?php echo esc_html__( 'All Courses', 'llms-attendance' ); ?></option>
 						<?php
-						$courses = get_posts( array(
-							'post_type'      => 'course',
-							'post_status'    => 'publish',
-							'posts_per_page' => -1,
-						) );
+						$courses = get_posts(
+							array(
+								'post_type'      => 'course',
+								'post_status'    => 'publish',
+								'posts_per_page' => -1,
+							)
+						);
 						foreach ( $courses as $course ) {
 							echo '<option value="' . $course->ID . '">' . esc_html( $course->post_title ) . '</option>';
 						}
@@ -796,19 +853,21 @@ class LLMS_AT_Reporting {
 			return;
 		}
 
-		$threshold = intval( get_option( 'llms_integration_low_attendance_threshold', 70 ) );
+		$threshold     = intval( get_option( 'llms_integration_low_attendance_threshold', 70 ) );
 		$current_month = date( 'Y-n' );
-		$current_day = date( 'j' );
+		$current_day   = date( 'j' );
 
 		// Get all courses
-		$courses = get_posts( array(
-			'post_type'      => 'course',
-			'post_status'    => 'publish',
-			'posts_per_page' => -1,
-		) );
+		$courses = get_posts(
+			array(
+				'post_type'      => 'course',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+			)
+		);
 
 		foreach ( $courses as $course ) {
-			$enrolled_students = llms_get_enrolled_students( $course->ID );
+			$enrolled_students       = llms_get_enrolled_students( $course->ID );
 			$low_attendance_students = array();
 
 			foreach ( $enrolled_students as $student_id ) {
@@ -818,7 +877,7 @@ class LLMS_AT_Reporting {
 				}
 
 				// Calculate attendance percentage
-				$monthly_key = $current_month . '-' . $course->ID;
+				$monthly_key      = $current_month . '-' . $course->ID;
 				$attendance_count = get_user_meta( $student_id, $monthly_key, true );
 				$attendance_count = intval( $attendance_count );
 
@@ -826,9 +885,9 @@ class LLMS_AT_Reporting {
 
 				if ( $attendance_percentage < $threshold ) {
 					$low_attendance_students[] = array(
-						'student' => $user,
+						'student'               => $user,
 						'attendance_percentage' => round( $attendance_percentage, 1 ),
-						'attendance_count' => $attendance_count,
+						'attendance_count'      => $attendance_count,
 					);
 				}
 			}
@@ -846,27 +905,27 @@ class LLMS_AT_Reporting {
 	private function send_low_attendance_email( $course, $low_attendance_students, $threshold ) {
 		$course_name = $course->post_title;
 		$admin_email = get_option( 'admin_email' );
-		$site_name = get_bloginfo( 'name' );
+		$site_name   = get_bloginfo( 'name' );
 
-		$subject = sprintf( 
-			__( '[%s] Low Attendance Alert - %s', 'llms-attendance' ), 
-			$site_name, 
-			$course_name 
+		$subject = sprintf(
+			__( '[%1$s] Low Attendance Alert - %2$s', 'llms-attendance' ),
+			$site_name,
+			$course_name
 		);
 
-		$message = sprintf( 
-			__( 'Low attendance alert for course: %s', 'llms-attendance' ), 
-			$course_name 
+		$message = sprintf(
+			__( 'Low attendance alert for course: %s', 'llms-attendance' ),
+			$course_name
 		) . "\n\n";
 
-		$message .= sprintf( 
-			__( 'The following students have attendance below %d%%:', 'llms-attendance' ), 
-			$threshold 
+		$message .= sprintf(
+			__( 'The following students have attendance below %d%%:', 'llms-attendance' ),
+			$threshold
 		) . "\n\n";
 
 		foreach ( $low_attendance_students as $student_data ) {
-			$message .= sprintf( 
-				__( '• %s: %d%% (%d days)', 'llms-attendance' ),
+			$message .= sprintf(
+				__( '• %1$s: %2$d%% (%3$d days)', 'llms-attendance' ),
 				$student_data['student']->display_name,
 				$student_data['attendance_percentage'],
 				$student_data['attendance_count']

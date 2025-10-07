@@ -345,7 +345,7 @@ class LLMS_AT_Migration {
 				COUNT(DISTINCT user_id) as unique_users,
 				COUNT(DISTINCT SUBSTRING_INDEX(meta_key, '-', -1)) as unique_courses
 			FROM {$wpdb->usermeta} 
-			WHERE meta_key LIKE 'llmsat_attendance_%'",
+			WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]+$'",
 			ARRAY_A
 		);
 

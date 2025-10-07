@@ -265,11 +265,14 @@ class LLMS_AT_Reporting {
 			'labels'   => $labels,
 			'datasets' => array(
 				array(
-					'label'           => __( 'Daily Attendance Rate (%)', 'llms-attendance' ),
-					'data'            => $attendance_rates,
-					'borderColor'     => '#0073aa',
-					'backgroundColor' => 'rgba(0, 115, 170, 0.1)',
-					'tension'         => 0.1,
+					'label'                => __( 'Daily Attendance Rate (%)', 'llms-attendance' ),
+					'data'                 => $attendance_rates,
+					'borderColor'          => '#00a0d2',
+					'backgroundColor'      => 'rgba(0, 160, 210, 0.2)',
+					'pointBackgroundColor' => '#00a0d2',
+					'pointBorderColor'     => '#ffffff',
+					'pointBorderWidth'     => 2,
+					'tension'              => 0.1,
 				),
 			),
 		);
@@ -306,7 +309,7 @@ class LLMS_AT_Reporting {
 					$week_present = false;
 					$check_date   = clone $week_start;
 
-					// Check each day of the week
+					// Check each day of the week.
 					for ( $i = 0; $i < 7; $i++ ) {
 						$attendance_key = $check_date->format( 'Y-m-d' ) . '-' . $course_id;
 						$attendance     = get_user_meta( $student_id, $attendance_key, true );
@@ -333,11 +336,14 @@ class LLMS_AT_Reporting {
 			'labels'   => $labels,
 			'datasets' => array(
 				array(
-					'label'           => __( 'Weekly Attendance Rate (%)', 'llms-attendance' ),
-					'data'            => $attendance_rates,
-					'borderColor'     => '#0073aa',
-					'backgroundColor' => 'rgba(0, 115, 170, 0.1)',
-					'tension'         => 0.1,
+					'label'                => __( 'Weekly Attendance Rate (%)', 'llms-attendance' ),
+					'data'                 => $attendance_rates,
+					'borderColor'          => '#00a0d2',
+					'backgroundColor'      => 'rgba(0, 160, 210, 0.2)',
+					'pointBackgroundColor' => '#00a0d2',
+					'pointBorderColor'     => '#ffffff',
+					'pointBorderWidth'     => 2,
+					'tension'              => 0.1,
 				),
 			),
 		);
@@ -401,11 +407,14 @@ class LLMS_AT_Reporting {
 			'labels'   => $labels,
 			'datasets' => array(
 				array(
-					'label'           => __( 'Monthly Attendance Rate (%)', 'llms-attendance' ),
-					'data'            => $attendance_rates,
-					'borderColor'     => '#0073aa',
-					'backgroundColor' => 'rgba(0, 115, 170, 0.1)',
-					'tension'         => 0.1,
+					'label'                => __( 'Monthly Attendance Rate (%)', 'llms-attendance' ),
+					'data'                 => $attendance_rates,
+					'borderColor'          => '#00a0d2',
+					'backgroundColor'      => 'rgba(0, 160, 210, 0.2)',
+					'pointBackgroundColor' => '#00a0d2',
+					'pointBorderColor'     => '#ffffff',
+					'pointBorderWidth'     => 2,
+					'tension'              => 0.1,
 				),
 			),
 		);

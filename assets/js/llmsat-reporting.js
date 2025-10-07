@@ -118,15 +118,27 @@ jQuery(document).ready(function($) {
                         font: {
                             size: 14,
                             weight: 'bold'
-                        }
+                        },
+                        color: '#ffffff'
                     },
                     legend: {
                         display: true,
-                        position: 'top'
+                        position: 'top',
+                        labels: {
+                            color: '#ffffff',
+                            font: {
+                                size: 12
+                            }
+                        }
                     },
                     tooltip: {
                         mode: 'index',
                         intersect: false,
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        borderColor: '#0073aa',
+                        borderWidth: 1,
                         callbacks: {
                             label: function(context) {
                                 return context.dataset.label + ': ' + context.parsed.y + '%';
@@ -142,12 +154,18 @@ jQuery(document).ready(function($) {
                             text: getXAxisLabel(),
                             font: {
                                 size: 12
-                            }
+                            },
+                            color: '#ffffff'
                         },
                         ticks: {
                             font: {
                                 size: 11
-                            }
+                            },
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)',
+                            lineWidth: 1
                         }
                     },
                     y: {
@@ -157,7 +175,8 @@ jQuery(document).ready(function($) {
                             text: 'Attendance Rate (%)',
                             font: {
                                 size: 12
-                            }
+                            },
+                            color: '#ffffff'
                         },
                         min: 0,
                         max: 100,
@@ -165,9 +184,14 @@ jQuery(document).ready(function($) {
                             font: {
                                 size: 11
                             },
+                            color: '#ffffff',
                             callback: function(value) {
                                 return value + '%';
                             }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)',
+                            lineWidth: 1
                         }
                     }
                 },

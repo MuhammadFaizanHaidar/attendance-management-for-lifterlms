@@ -29,6 +29,8 @@ class LLMS_AT_Migration {
 		add_action( 'admin_menu', array( $this, 'add_migration_page' ) );
 		add_action( 'wp_ajax_llmsat_start_migration', array( $this, 'start_migration' ) );
 		add_action( 'wp_ajax_llmsat_check_migration_status', array( $this, 'check_migration_status' ) );
+		add_action( 'wp_ajax_llmsat_cleanup_meta', array( $this, 'cleanup_meta_data' ) );
+		add_action( 'wp_ajax_llmsat_force_cleanup', array( $this, 'force_cleanup_meta_data' ) );
 	}
 
 	/**
@@ -49,23 +51,23 @@ class LLMS_AT_Migration {
 	 * Display migration page.
 	 */
 	public function migration_page() {
-		$meta_stats = $this->get_meta_stats();
-		$table_stats = $this->db->get_table_stats();
+		$meta_stats       = $this->get_meta_stats();
+		$table_stats      = $this->db->get_table_stats();
 		$migration_status = get_option( 'llmsat_migration_status', 'not_started' );
-		
+
 		// Ensure we have valid stats arrays.
 		if ( ! is_array( $meta_stats ) ) {
 			$meta_stats = array(
-				'total_records' => 0,
-				'unique_users' => 0,
+				'total_records'  => 0,
+				'unique_users'   => 0,
 				'unique_courses' => 0,
 			);
 		}
-		
+
 		if ( ! is_array( $table_stats ) ) {
 			$table_stats = array(
-				'total_records' => 0,
-				'unique_users' => 0,
+				'total_records'  => 0,
+				'unique_users'   => 0,
 				'unique_courses' => 0,
 			);
 		}
@@ -87,6 +89,37 @@ class LLMS_AT_Migration {
 						<p><strong><?php echo esc_html( $meta_stats['total_records'] ); ?></strong> <?php esc_html_e( 'attendance records', 'llms-attendance' ); ?></p>
 						<p><strong><?php echo esc_html( $meta_stats['unique_users'] ); ?></strong> <?php esc_html_e( 'unique students', 'llms-attendance' ); ?></p>
 						<p><strong><?php echo esc_html( $meta_stats['unique_courses'] ); ?></strong> <?php esc_html_e( 'unique courses', 'llms-attendance' ); ?></p>
+						
+						<?php if ( $meta_stats['total_records'] > 0 ): ?>
+						<div style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 4px;">
+							<h4>Debug: Remaining Meta Keys</h4>
+							<?php
+							global $wpdb;
+							$remaining_keys = $wpdb->get_results(
+								"SELECT meta_key, user_id, meta_value FROM {$wpdb->usermeta} 
+								WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]+$' 
+								ORDER BY meta_key LIMIT 10"
+							);
+							
+							if ( $remaining_keys ) {
+								echo '<ul>';
+								foreach ( $remaining_keys as $key ) {
+									echo '<li><strong>' . esc_html( $key->meta_key ) . '</strong> (User: ' . esc_html( $key->user_id ) . ', Value: ' . esc_html( $key->meta_value ) . ')</li>';
+								}
+								echo '</ul>';
+								
+								$total_remaining = $wpdb->get_var(
+									"SELECT COUNT(*) FROM {$wpdb->usermeta} 
+									WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]+$'"
+								);
+								
+								if ( $total_remaining > 10 ) {
+									echo '<p><em>... and ' . esc_html( $total_remaining - 10 ) . ' more records</em></p>';
+								}
+							}
+							?>
+						</div>
+						<?php endif; ?>
 					</div>
 					
 					<div class="stat-box">
@@ -104,6 +137,7 @@ class LLMS_AT_Migration {
 				<div id="migration-status">
 					<p><strong><?php esc_html_e( 'Status:', 'llms-attendance' ); ?></strong> 
 					<span id="status-text"><?php echo esc_html( ucfirst( $migration_status ) ); ?></span></p>
+					<p><strong><?php esc_html_e( 'Debug Info:', 'llms-attendance' ); ?></strong> Migration Status = "<?php echo esc_html( $migration_status ); ?>"</p>
 				</div>
 
 				<div id="migration-progress" style="display: none;">
@@ -114,14 +148,28 @@ class LLMS_AT_Migration {
 				</div>
 
 				<div class="migration-actions">
-					<?php if ( 'completed' !== $migration_status ) : ?>
+					<?php if ( 'completed' !== $migration_status && 'cleanup_completed' !== $migration_status ) : ?>
 						<button id="start-migration" class="button button-primary">
 							<?php esc_html_e( 'Start Migration', 'llms-attendance' ); ?>
 						</button>
-					<?php else : ?>
+					<?php elseif ( 'completed' === $migration_status ) : ?>
 						<button id="cleanup-meta" class="button button-secondary">
 							<?php esc_html_e( 'Clean Up Meta Data', 'llms-attendance' ); ?>
 						</button>
+					<?php elseif ( 'cleanup_completed' === $migration_status ) : ?>
+						<p class="notice notice-success">
+							<?php esc_html_e( 'Migration and cleanup completed successfully! All data is now stored in the custom table.', 'llms-attendance' ); ?>
+						</p>
+						
+						<?php if ( $meta_stats['total_records'] > 0 ): ?>
+						<div class="notice notice-warning">
+							<p><strong><?php esc_html_e( 'Warning:', 'llms-attendance' ); ?></strong> 
+							<?php esc_html_e( 'Some meta data is still present. You can force cleanup to remove it.', 'llms-attendance' ); ?></p>
+							<button type="button" id="force-cleanup" class="button button-secondary">
+								<?php esc_html_e( 'Force Cleanup Meta Data', 'llms-attendance' ); ?>
+							</button>
+						</div>
+						<?php endif; ?>
 					<?php endif; ?>
 				</div>
 			</div>
@@ -184,6 +232,34 @@ class LLMS_AT_Migration {
 				startMigration();
 			});
 
+			$('#cleanup-meta').on('click', function() {
+				cleanupMetaData();
+			});
+
+			$('#force-cleanup').on('click', function() {
+				forceCleanupMetaData();
+			});
+
+			$('#reset-migration').on('click', function() {
+				resetMigration();
+			});
+
+			$('#create-test-data').on('click', function() {
+				createTestData();
+			});
+
+			$('#enroll-students').on('click', function() {
+				enrollStudentsInCoursesWithAttendance();
+			});
+
+			$('#clear-test-data').on('click', function() {
+				clearTestData();
+			});
+
+			$('#create-table').on('click', function() {
+				createTable();
+			});
+
 			function startMigration() {
 				$('#migration-progress').show();
 				$('#start-migration').prop('disabled', true);
@@ -225,6 +301,71 @@ class LLMS_AT_Migration {
 				$('#progress-fill').css('width', percent + '%');
 				$('#progress-text').text(message);
 			}
+
+			function cleanupMetaData() {
+				if (!confirm('Are you sure you want to delete all meta data? This action cannot be undone and will permanently remove all attendance data from user meta tables.')) {
+					return;
+				}
+
+				$('#cleanup-meta').prop('disabled', true).text('Cleaning up...');
+
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: {
+						action: 'llmsat_cleanup_meta',
+						nonce: '<?php echo wp_create_nonce( 'llmsat_migration' ); ?>'
+					},
+					success: function(response) {
+						if (response.success) {
+							alert(response.data.message);
+							$('#cleanup-meta').hide();
+							$('#status-text').text('Cleanup Completed');
+							// Refresh the page to update stats
+							location.reload();
+						} else {
+							alert('Cleanup failed: ' + response.data.message);
+							$('#cleanup-meta').prop('disabled', false).text('Clean Up Meta Data');
+						}
+					},
+					error: function() {
+						alert('Cleanup failed due to server error');
+						$('#cleanup-meta').prop('disabled', false).text('Clean Up Meta Data');
+					}
+				});
+			}
+
+			function forceCleanupMetaData() {
+				if (!confirm('Are you sure you want to force cleanup all remaining meta data? This action cannot be undone and will permanently remove all attendance data from user meta tables.')) {
+					return;
+				}
+
+				$('#force-cleanup').prop('disabled', true).text('Force Cleaning...');
+
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: {
+						action: 'llmsat_force_cleanup',
+						nonce: '<?php echo wp_create_nonce( 'llmsat_migration' ); ?>'
+					},
+					success: function(response) {
+						if (response.success) {
+							alert(response.data.message);
+							$('#force-cleanup').hide();
+							// Refresh the page to update stats
+							location.reload();
+						} else {
+							alert('Force cleanup failed: ' + response.data.message);
+							$('#force-cleanup').prop('disabled', false).text('Force Cleanup Meta Data');
+						}
+					},
+					error: function() {
+						alert('Force cleanup failed due to server error');
+						$('#force-cleanup').prop('disabled', false).text('Force Cleanup Meta Data');
+					}
+				});
+			}
 		});
 		</script>
 		<?php
@@ -236,7 +377,7 @@ class LLMS_AT_Migration {
 	public function start_migration() {
 		check_ajax_referer( 'llmsat_migration', 'nonce' );
 
-		$offset = intval( $_POST['offset'] );
+		$offset     = intval( $_POST['offset'] );
 		$batch_size = 100;
 
 		// Get meta records to migrate.
@@ -244,11 +385,18 @@ class LLMS_AT_Migration {
 
 		if ( empty( $meta_records ) ) {
 			update_option( 'llmsat_migration_status', 'completed' );
-			wp_send_json_success( array(
-				'completed' => true,
-				'progress' => 100,
-				'message' => 'Migration completed successfully!'
-			) );
+
+			// Enable custom table usage after successful migration.
+			$hybrid_manager = new LLMS_AT_Hybrid_Manager();
+			$hybrid_manager->enable_custom_table();
+
+			wp_send_json_success(
+				array(
+					'completed' => true,
+					'progress'  => 100,
+					'message'   => 'Migration completed successfully! Custom table is now active.',
+				)
+			);
 		}
 
 		// Migrate batch.
@@ -256,14 +404,16 @@ class LLMS_AT_Migration {
 
 		// Calculate progress.
 		$total_meta = $this->get_total_meta_records();
-		$progress = min( 100, ( ( $offset + $batch_size ) / $total_meta ) * 100 );
+		$progress   = min( 100, ( ( $offset + $batch_size ) / $total_meta ) * 100 );
 
-		wp_send_json_success( array(
-			'completed' => false,
-			'progress' => $progress,
-			'message' => sprintf( 'Migrated %d records...', $migrated ),
-			'next_offset' => $offset + $batch_size
-		) );
+		wp_send_json_success(
+			array(
+				'completed'   => false,
+				'progress'    => $progress,
+				'message'     => sprintf( 'Migrated %d records...', $migrated ),
+				'next_offset' => $offset + $batch_size,
+			)
+		);
 	}
 
 	/**
@@ -276,10 +426,9 @@ class LLMS_AT_Migration {
 			$wpdb->prepare(
 				"SELECT user_id, meta_key, meta_value 
 				FROM {$wpdb->usermeta} 
-				WHERE meta_key LIKE %s 
+				WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]+$'
 				ORDER BY user_id, meta_key 
 				LIMIT %d OFFSET %d",
-				'%-%-%-%',
 				$limit,
 				$offset
 			),
@@ -296,23 +445,26 @@ class LLMS_AT_Migration {
 		$migrated = 0;
 
 		foreach ( $meta_records as $record ) {
-			$meta_key = $record['meta_key'];
+			$meta_key   = $record['meta_key'];
 			$meta_value = maybe_unserialize( $record['meta_value'] );
 
 			// Parse meta key: Y-m-d-course_id.
-			if ( preg_match( '/^(\d{4}-\d{2}-\d{2})-(\d+)$/', $meta_key, $matches ) ) {
+			if ( preg_match( '/^(\d{4}-\d{1,2}-\d{1,2})-(\d+)$/', $meta_key, $matches ) ) {
 				$attendance_date = $matches[1];
-				$course_id = $matches[2];
-				$user_id = $record['user_id'];
+				$course_id       = $matches[2];
+				$user_id         = $record['user_id'];
+
+				// Normalize date format to Y-m-d (with leading zeros).
+				$attendance_date = date( 'Y-m-d', strtotime( $attendance_date ) );
 
 				// Extract attendance time from meta value.
 				$attendance_time = isset( $meta_value['time'] ) ? $meta_value['time'] : $attendance_date . ' 00:00:00';
 
 				// Insert into custom table.
 				$result = $this->db->insert_attendance( $user_id, $course_id, $attendance_date, $attendance_time );
-				
+
 				if ( $result ) {
-					$migrated++;
+					++$migrated;
 				}
 			}
 		}
@@ -327,7 +479,7 @@ class LLMS_AT_Migration {
 		global $wpdb;
 
 		$count = $wpdb->get_var(
-			"SELECT COUNT(*) FROM {$wpdb->usermeta} WHERE meta_key LIKE '%-%-%-%'"
+			"SELECT COUNT(*) FROM {$wpdb->usermeta} WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]+$'"
 		);
 
 		return intval( $count );
@@ -352,12 +504,94 @@ class LLMS_AT_Migration {
 		// Ensure we return a valid array.
 		if ( ! is_array( $stats ) ) {
 			return array(
-				'total_records' => 0,
-				'unique_users' => 0,
+				'total_records'  => 0,
+				'unique_users'   => 0,
 				'unique_courses' => 0,
 			);
 		}
 
 		return $stats;
+	}
+
+	/**
+	 * Clean up meta data after successful migration.
+	 */
+	public function cleanup_meta_data() {
+		check_ajax_referer( 'llmsat_migration', 'nonce' );
+
+		// Check if migration is completed
+		$migration_status = get_option( 'llmsat_migration_status', 'not_started' );
+		if ( 'completed' !== $migration_status ) {
+			wp_send_json_error( array( 'message' => 'Migration must be completed before cleaning up meta data.' ) );
+		}
+
+		// Get meta records to delete
+		global $wpdb;
+		
+		// Delete attendance meta records
+		$deleted_attendance = $wpdb->query(
+			"DELETE FROM {$wpdb->usermeta} WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]+$'"
+		);
+
+		// Delete monthly count meta records
+		$deleted_monthly = $wpdb->query(
+			"DELETE FROM {$wpdb->usermeta} WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]+$'"
+		);
+
+		// Delete first mark meta records
+		$deleted_first_mark = $wpdb->query(
+			"DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'first_mark-%'"
+		);
+
+		$total_deleted = $deleted_attendance + $deleted_monthly + $deleted_first_mark;
+
+		// Update migration status to indicate cleanup is done
+		update_option( 'llmsat_migration_status', 'cleanup_completed' );
+		
+		// Enable custom table usage after cleanup
+		update_option( 'llmsat_use_custom_table', true );
+
+		wp_send_json_success( array(
+			'message' => sprintf( 'Meta data cleanup completed! Deleted %d meta records.', $total_deleted ),
+			'deleted_attendance' => $deleted_attendance,
+			'deleted_monthly' => $deleted_monthly,
+			'deleted_first_mark' => $deleted_first_mark,
+			'total_deleted' => $total_deleted
+		) );
+	}
+
+	/**
+	 * Force cleanup meta data (bypasses migration status check).
+	 */
+	public function force_cleanup_meta_data() {
+		check_ajax_referer( 'llmsat_migration', 'nonce' );
+
+		// Get meta records to delete
+		global $wpdb;
+		
+		// Delete attendance meta records
+		$deleted_attendance = $wpdb->query(
+			"DELETE FROM {$wpdb->usermeta} WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]+$'"
+		);
+
+		// Delete monthly count meta records
+		$deleted_monthly = $wpdb->query(
+			"DELETE FROM {$wpdb->usermeta} WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]+$'"
+		);
+
+		// Delete first mark meta records
+		$deleted_first_mark = $wpdb->query(
+			"DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'first_mark-%'"
+		);
+
+		$total_deleted = $deleted_attendance + $deleted_monthly + $deleted_first_mark;
+
+		wp_send_json_success( array(
+			'message' => sprintf( 'Force cleanup completed! Deleted %d meta records.', $total_deleted ),
+			'deleted_attendance' => $deleted_attendance,
+			'deleted_monthly' => $deleted_monthly,
+			'deleted_first_mark' => $deleted_first_mark,
+			'total_deleted' => $total_deleted
+		) );
 	}
 }

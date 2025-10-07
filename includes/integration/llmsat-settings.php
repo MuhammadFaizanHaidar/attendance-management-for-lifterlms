@@ -64,6 +64,22 @@ class LLMS_Attendance_Settings {
 		);
 
 		$content[] = array(
+			'title' => __( 'Roles That Can Mark Attendance for Students', 'llms-attendance' ),
+			'type'  => 'multiselect',
+			'desc'  => '<br>' . __( 'Select which user roles can mark attendance for students in courses. Hold Ctrl/Cmd to select multiple roles.', 'llms-attendance' ) . '</br>',
+			'id'    => 'llms_integration_attendance_marking_roles',
+			'options' => array(
+				'instructor' => __( 'Instructor', 'llms-attendance' ),
+				'instructors_assistant' => __( 'Instructor\'s Assistant', 'llms-attendance' ),
+				'lms_manager' => __( 'LMS Manager', 'llms-attendance' ),
+				'administrator' => __( 'Administrator', 'llms-attendance' ),
+				'editor' => __( 'Editor', 'llms-attendance' ),
+				'author' => __( 'Author', 'llms-attendance' ),
+			),
+			'default' => array( 'instructor', 'lms_manager', 'administrator' ),
+		);
+
+		$content[] = array(
 			'type' => 'sectionend',
 			'id'   => 'lifterlms_attendance_options',
 		);

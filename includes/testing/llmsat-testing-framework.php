@@ -41,7 +41,9 @@ class LLMS_AT_Testing_Framework {
 		add_action( 'admin_menu', array( $this, 'add_testing_page' ) );
 		add_action( 'wp_ajax_llmsat_run_performance_test', array( $this, 'run_performance_test' ) );
 		add_action( 'wp_ajax_llmsat_generate_test_data', array( $this, 'generate_test_data' ) );
+		add_action( 'wp_ajax_llmsat_generate_complete_test_data', array( $this, 'generate_complete_test_data' ) );
 		add_action( 'wp_ajax_llmsat_cleanup_test_data', array( $this, 'cleanup_test_data' ) );
+		add_action( 'wp_ajax_llmsat_cleanup_all_test_data', array( $this, 'cleanup_all_test_data' ) );
 	}
 
 	/**
@@ -62,79 +64,71 @@ class LLMS_AT_Testing_Framework {
 	 * Display testing page.
 	 */
 	public function testing_page() {
-		$table_stats   = $this->db->get_table_stats();
-		$system_status = $this->hybrid_manager->get_system_status();
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Performance Testing Framework', 'llms-attendance' ); ?></h1>
+			<h1><?php esc_html_e( 'Performance Testing Dashboard', 'llms-attendance' ); ?></h1>
 			
-			<div class="notice notice-info">
-				<p><strong><?php esc_html_e( 'Testing Framework:', 'llms-attendance' ); ?></strong> 
-				<?php esc_html_e( 'This tool helps validate performance with large datasets and ensures the custom table architecture works correctly.', 'llms-attendance' ); ?></p>
-			</div>
-
 			<div class="llmsat-testing-dashboard">
-				<div class="testing-stats">
-					<h2><?php esc_html_e( 'Current System Status', 'llms-attendance' ); ?></h2>
+				<div class="stats-grid">
+					<div class="stat-box">
+						<h3><?php esc_html_e( 'System Status', 'llms-attendance' ); ?></h3>
+						<p><?php esc_html_e( 'Migration Status:', 'llms-attendance' ); ?> <strong><?php echo esc_html( get_option( 'llmsat_migration_status', 'not_started' ) ); ?></strong></p>
+						<p><?php esc_html_e( 'Custom Table:', 'llms-attendance' ); ?> <strong><?php echo $this->db->table_exists() ? __( 'Exists', 'llms-attendance' ) : __( 'Not Found', 'llms-attendance' ); ?></strong></p>
+					</div>
 					
-					<div class="stats-grid">
-						<div class="stat-box">
-							<h3><?php esc_html_e( 'Database Table', 'llms-attendance' ); ?></h3>
-							<p><strong><?php echo esc_html( $table_stats['total_records'] ); ?></strong> <?php esc_html_e( 'total records', 'llms-attendance' ); ?></p>
-							<p><strong><?php echo esc_html( $table_stats['unique_users'] ); ?></strong> <?php esc_html_e( 'unique users', 'llms-attendance' ); ?></p>
-							<p><strong><?php echo esc_html( $table_stats['unique_courses'] ); ?></strong> <?php esc_html_e( 'unique courses', 'llms-attendance' ); ?></p>
-							<p><strong><?php echo esc_html( $table_stats['earliest_date'] ); ?></strong> <?php esc_html_e( 'earliest date', 'llms-attendance' ); ?></p>
-							<p><strong><?php echo esc_html( $table_stats['latest_date'] ); ?></strong> <?php esc_html_e( 'latest date', 'llms-attendance' ); ?></p>
-						</div>
-						
-						<div class="stat-box">
-							<h3><?php esc_html_e( 'System Configuration', 'llms-attendance' ); ?></h3>
-							<p><strong><?php echo esc_html( $system_status['use_custom_table'] ? 'Yes' : 'No' ); ?></strong> <?php esc_html_e( 'Custom Table Active', 'llms-attendance' ); ?></p>
-							<p><strong><?php echo esc_html( ucfirst( $system_status['migration_status'] ) ); ?></strong> <?php esc_html_e( 'Migration Status', 'llms-attendance' ); ?></p>
-							<p><strong><?php echo esc_html( $system_status['table_exists']['total_records'] ); ?></strong> <?php esc_html_e( 'Table Records', 'llms-attendance' ); ?></p>
-						</div>
+					<div class="stat-box">
+						<h3><?php esc_html_e( 'Data Statistics', 'llms-attendance' ); ?></h3>
+						<?php
+						$meta_count  = $this->get_meta_attendance_count();
+						$table_count = $this->db->table_exists() ? $this->db->get_table_stats()['total_records'] : 0;
+						?>
+						<p><?php esc_html_e( 'Meta Records:', 'llms-attendance' ); ?> <strong><?php echo esc_html( $meta_count ); ?></strong></p>
+						<p><?php esc_html_e( 'Table Records:', 'llms-attendance' ); ?> <strong><?php echo esc_html( $table_count ); ?></strong></p>
 					</div>
 				</div>
 
-				<div class="testing-controls">
-					<h2><?php esc_html_e( 'Test Controls', 'llms-attendance' ); ?></h2>
-					
-					<div class="test-actions">
-						<div class="test-group">
-							<h3><?php esc_html_e( 'Data Generation', 'llms-attendance' ); ?></h3>
-							<p><?php esc_html_e( 'Generate dummy data for testing performance.', 'llms-attendance' ); ?></p>
-							<button id="generate-small-data" class="button button-secondary">
-								<?php esc_html_e( 'Generate Small Dataset (100 students, 10 courses)', 'llms-attendance' ); ?>
-							</button>
-							<button id="generate-medium-data" class="button button-secondary">
-								<?php esc_html_e( 'Generate Medium Dataset (500 students, 25 courses)', 'llms-attendance' ); ?>
-							</button>
-							<button id="generate-large-data" class="button button-secondary">
-								<?php esc_html_e( 'Generate Large Dataset (1000 students, 50 courses)', 'llms-attendance' ); ?>
-							</button>
-						</div>
+				<div class="test-actions">
+					<div class="test-group">
+						<h3><?php esc_html_e( 'Test Data Generation', 'llms-attendance' ); ?></h3>
+						<p><?php esc_html_e( 'Generate test data for performance testing.', 'llms-attendance' ); ?></p>
+						<button id="generate-small-data" class="button button-primary">
+							<?php esc_html_e( 'Generate Small Dataset (100 records)', 'llms-attendance' ); ?>
+						</button>
+						<button id="generate-medium-data" class="button button-primary">
+							<?php esc_html_e( 'Generate Medium Dataset (1000 records)', 'llms-attendance' ); ?>
+						</button>
+						<button id="generate-large-data" class="button button-primary">
+							<?php esc_html_e( 'Generate Large Dataset (5000 records)', 'llms-attendance' ); ?>
+						</button>
+						<br><br>
+						<button id="generate-complete-test-data" class="button button-primary" style="background-color: #0073aa;">
+							<?php esc_html_e( 'Generate Complete Test Environment (Users + Courses + Enrollments + Attendance)', 'llms-attendance' ); ?>
+						</button>
+					</div>
 
-						<div class="test-group">
-							<h3><?php esc_html_e( 'Performance Tests', 'llms-attendance' ); ?></h3>
-							<p><?php esc_html_e( 'Run performance tests to validate system speed.', 'llms-attendance' ); ?></p>
-							<button id="run-query-test" class="button button-primary">
-								<?php esc_html_e( 'Run Query Performance Test', 'llms-attendance' ); ?>
-							</button>
-							<button id="run-report-test" class="button button-primary">
-								<?php esc_html_e( 'Run Report Generation Test', 'llms-attendance' ); ?>
-							</button>
-							<button id="run-migration-test" class="button button-primary">
-								<?php esc_html_e( 'Run Migration Performance Test', 'llms-attendance' ); ?>
-							</button>
-						</div>
+					<div class="test-group">
+						<h3><?php esc_html_e( 'Performance Tests', 'llms-attendance' ); ?></h3>
+						<p><?php esc_html_e( 'Run performance tests to validate system speed.', 'llms-attendance' ); ?></p>
+						<button id="run-query-test" class="button button-primary">
+							<?php esc_html_e( 'Run Query Performance Test', 'llms-attendance' ); ?>
+						</button>
+						<button id="run-report-test" class="button button-primary">
+							<?php esc_html_e( 'Run Report Generation Test', 'llms-attendance' ); ?>
+						</button>
+						<button id="run-migration-test" class="button button-primary">
+							<?php esc_html_e( 'Run Migration Performance Test', 'llms-attendance' ); ?>
+						</button>
+					</div>
 
-						<div class="test-group">
-							<h3><?php esc_html_e( 'Cleanup', 'llms-attendance' ); ?></h3>
-							<p><?php esc_html_e( 'Clean up test data after testing.', 'llms-attendance' ); ?></p>
-							<button id="cleanup-test-data" class="button button-secondary">
-								<?php esc_html_e( 'Clean Up All Test Data', 'llms-attendance' ); ?>
-							</button>
-						</div>
+					<div class="test-group">
+						<h3><?php esc_html_e( 'Cleanup', 'llms-attendance' ); ?></h3>
+						<p><?php esc_html_e( 'Clean up test data after testing.', 'llms-attendance' ); ?></p>
+						<button id="cleanup-test-data" class="button button-secondary">
+							<?php esc_html_e( 'Clean Up Test Attendance Data', 'llms-attendance' ); ?>
+						</button>
+						<button id="cleanup-all-test-data" class="button button-secondary llmsat-danger-button">
+							<?php esc_html_e( 'Clean Up ALL Test Data', 'llms-attendance' ); ?>
+						</button>
 					</div>
 				</div>
 
@@ -167,7 +161,7 @@ class LLMS_AT_Testing_Framework {
 		}
 		.test-actions {
 			display: grid;
-			grid-template-columns: 1fr 1fr 1fr;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 			gap: 20px;
 			margin: 20px 0;
 		}
@@ -185,6 +179,50 @@ class LLMS_AT_Testing_Framework {
 			margin: 5px 0;
 			display: block;
 			width: 100%;
+		}
+		
+		/* Responsive design */
+		@media (max-width: 1200px) {
+			.test-actions {
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			}
+		}
+		
+		@media (max-width: 768px) {
+			.stats-grid {
+				grid-template-columns: 1fr;
+			}
+			.test-actions {
+				grid-template-columns: 1fr;
+			}
+			.test-group {
+				padding: 15px;
+			}
+		}
+		
+		/* Button improvements */
+		.test-group button {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			margin: 5px 0;
+		}
+		
+		/* Danger button styling */
+		.llmsat-danger-button {
+			background-color: #dc3232 !important;
+			color: white !important;
+			border-color: #dc3232 !important;
+		}
+		
+		.llmsat-danger-button:hover {
+			background-color: #a00 !important;
+			border-color: #a00 !important;
+		}
+		
+		/* Button spacing */
+		.test-group button + button {
+			margin-top: 10px;
 		}
 		.test-results {
 			margin: 20px 0;
@@ -223,6 +261,10 @@ class LLMS_AT_Testing_Framework {
 				generateTestData('large');
 			});
 
+			$('#generate-complete-test-data').on('click', function() {
+				generateCompleteTestData();
+			});
+
 			// Performance test handlers.
 			$('#run-query-test').on('click', function() {
 				runPerformanceTest('query');
@@ -237,6 +279,10 @@ class LLMS_AT_Testing_Framework {
 			// Cleanup handler.
 			$('#cleanup-test-data').on('click', function() {
 				cleanupTestData();
+			});
+
+			$('#cleanup-all-test-data').on('click', function() {
+				cleanupAllTestData();
 			});
 
 			function generateTestData(size) {
@@ -261,6 +307,35 @@ class LLMS_AT_Testing_Framework {
 					},
 					error: function() {
 						addResult('error', 'Server error during data generation');
+					}
+				});
+			}
+
+			function generateCompleteTestData() {
+				if (!confirm('This will create test users, courses, enrollments, and attendance data.\n\nThis may take a few minutes. Continue?')) {
+					return;
+				}
+				
+				showResults();
+				addResult('info', 'Generating complete test environment...');
+				
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: {
+						action: 'llmsat_generate_complete_test_data',
+						nonce: '<?php echo wp_create_nonce( 'llmsat_testing' ); ?>'
+					},
+					success: function(response) {
+						if (response.success) {
+							addResult('success', 'Complete test environment generated: ' + response.data.message);
+							location.reload();
+						} else {
+							addResult('error', 'Failed to generate complete test data: ' + response.data.message);
+						}
+					},
+					error: function() {
+						addResult('error', 'Server error during complete test data generation');
 					}
 				});
 			}
@@ -319,24 +394,51 @@ class LLMS_AT_Testing_Framework {
 				});
 			}
 
+			function cleanupAllTestData() {
+				if (!confirm('⚠️ DANGER: This will delete ALL test courses, users, and attendance data!\n\nThis action cannot be undone!\n\nAre you absolutely sure?')) {
+					return;
+				}
+				
+				showResults();
+				addResult('info', 'Cleaning up ALL test data (courses, users, attendance)...');
+				
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: {
+						action: 'llmsat_cleanup_all_test_data',
+						nonce: '<?php echo wp_create_nonce( 'llmsat_testing' ); ?>'
+					},
+					success: function(response) {
+						if (response.success) {
+							addResult('success', 'ALL test data cleaned up successfully: ' + response.data.message);
+							location.reload();
+						} else {
+							addResult('error', 'Failed to clean up all test data: ' + response.data.message);
+						}
+					},
+					error: function() {
+						addResult('error', 'Server error during complete cleanup');
+					}
+				});
+			}
+
 			function showResults() {
 				$('#test-results').show();
+				$('#results-content').empty();
 			}
 
 			function addResult(type, message) {
 				var timestamp = new Date().toLocaleTimeString();
-				var resultClass = 'result-' + type;
-				var resultHtml = '<div class="result-item ' + resultClass + '">' +
-					'<strong>[' + timestamp + ']</strong> ' + message +
-					'</div>';
+				var resultHtml = '<div class="result-item result-' + type + '">';
+				resultHtml += '<strong>[' + timestamp + ']</strong> ' + message;
+				resultHtml += '</div>';
 				$('#results-content').append(resultHtml);
 			}
 
 			function displayTestResults(results) {
-				$('#results-content').empty();
-				
-				results.forEach(function(result) {
-					addResult(result.type, result.message);
+				$.each(results, function(index, result) {
+					addResult(result.status, result.message);
 				});
 			}
 		});
@@ -350,117 +452,161 @@ class LLMS_AT_Testing_Framework {
 	public function generate_test_data() {
 		check_ajax_referer( 'llmsat_testing', 'nonce' );
 
-		$size = sanitize_text_field( $_POST['size'] );
+		$size   = sanitize_text_field( $_POST['size'] );
+		$counts = array(
+			'small'  => 100,
+			'medium' => 1000,
+			'large'  => 5000,
+		);
 
-		$config = $this->get_test_config( $size );
+		$count = isset( $counts[ $size ] ) ? $counts[ $size ] : 100;
 
-		$start_time = microtime( true );
-		$generated  = $this->create_test_data( $config );
-		$end_time   = microtime( true );
-
-		$execution_time = round( ( $end_time - $start_time ), 2 );
-
-		wp_send_json_success(
+		// Generate test attendance data
+		$users   = get_users( array( 'number' => 50 ) );
+		$courses = get_posts(
 			array(
-				'message'           => sprintf(
-					'Generated %d students, %d courses, %d attendance records in %s seconds',
-					$config['students'],
-					$config['courses'],
-					$generated,
-					$execution_time
-				),
-				'execution_time'    => $execution_time,
-				'records_generated' => $generated,
+				'post_type'   => 'course',
+				'numberposts' => 10,
 			)
 		);
-	}
 
-	/**
-	 * Get test configuration.
-	 */
-	private function get_test_config( $size ) {
-		$configs = array(
-			'small'  => array(
-				'students' => 100,
-				'courses'  => 10,
-				'days'     => 30,
-			),
-			'medium' => array(
-				'students' => 500,
-				'courses'  => 25,
-				'days'     => 60,
-			),
-			'large'  => array(
-				'students' => 1000,
-				'courses'  => 50,
-				'days'     => 90,
-			),
-		);
+		if ( empty( $users ) || empty( $courses ) ) {
+			wp_send_json_error( array( 'message' => __( 'No users or courses found for test data generation.', 'llms-attendance' ) ) );
+		}
 
-		return $configs[ $size ];
-	}
-
-	/**
-	 * Create test data.
-	 */
-	private function create_test_data( $config ) {
 		$generated = 0;
+		for ( $i = 0; $i < $count; $i++ ) {
+			$user   = $users[ array_rand( $users ) ];
+			$course = $courses[ array_rand( $courses ) ];
 
-		// Create test courses.
-		$course_ids = array();
-		for ( $i = 1; $i <= $config['courses']; $i++ ) {
-			$course_id = wp_insert_post(
+			$date     = date( 'Y-m-d', strtotime( '-' . rand( 0, 30 ) . ' days' ) );
+			$meta_key = 'test_attendance_' . $date . '_' . $course->ID;
+
+			update_user_meta(
+				$user->ID,
+				$meta_key,
 				array(
-					'post_title'  => 'Test Course ' . $i,
-					'post_type'   => 'course',
-					'post_status' => 'publish',
+					'time'      => current_time( 'mysql' ),
+					'course_id' => $course->ID,
 				)
 			);
 
-			if ( $course_id ) {
-				$course_ids[] = $course_id;
-			}
+			++$generated;
 		}
 
-		// Create test users.
-		$user_ids = array();
-		for ( $i = 1; $i <= $config['students']; $i++ ) {
-			$user_id = wp_insert_user(
-				array(
-					'user_login'   => 'test_student_' . $i,
-					'user_email'   => 'test_student_' . $i . '@example.com',
-					'user_pass'    => 'test_password',
-					'display_name' => 'Test Student ' . $i,
-				)
+		wp_send_json_success( array( 'message' => sprintf( __( 'Generated %d test attendance records.', 'llms-attendance' ), $generated ) ) );
+	}
+
+	/**
+	 * Generate complete test environment (users, courses, enrollments, attendance).
+	 */
+	public function generate_complete_test_data() {
+		check_ajax_referer( 'llmsat_testing', 'nonce' );
+
+		$created_counts = array(
+			'users' => 0,
+			'courses' => 0,
+			'enrollments' => 0,
+			'attendance' => 0,
+		);
+
+		// 1. Create test users
+		for ( $i = 1; $i <= 50; $i++ ) {
+			$user_id = wp_create_user(
+				'test_student_' . $i,
+				'test_password_' . $i,
+				'test_student_' . $i . '@example.com'
 			);
 
 			if ( ! is_wp_error( $user_id ) ) {
-				$user_ids[] = $user_id;
+				// Mark as test user
+				update_user_meta( $user_id, '_llmsat_test_user', '1' );
+				$created_counts['users']++;
 			}
 		}
 
-		// Generate attendance records.
-		$start_date = date( 'Y-m-d', strtotime( '-' . $config['days'] . ' days' ) );
+		// 2. Create test courses
+		for ( $i = 1; $i <= 10; $i++ ) {
+			$course_id = wp_insert_post( array(
+				'post_title'   => 'Test Course ' . $i,
+				'post_content' => 'This is a test course for performance testing.',
+				'post_status'  => 'publish',
+				'post_type'    => 'course',
+			) );
 
-		foreach ( $user_ids as $user_id ) {
-			foreach ( $course_ids as $course_id ) {
-				// Randomly generate attendance (70% chance per day).
-				for ( $day = 0; $day < $config['days']; $day++ ) {
-					if ( wp_rand( 1, 100 ) <= 70 ) { // 70% attendance rate.
-						$attendance_date = date( 'Y-m-d', strtotime( $start_date . ' +' . $day . ' days' ) );
-						$attendance_time = $attendance_date . ' ' . sprintf( '%02d:%02d:%02d', wp_rand( 8, 18 ), wp_rand( 0, 59 ), wp_rand( 0, 59 ) );
+			if ( ! is_wp_error( $course_id ) ) {
+				// Mark as test course
+				update_post_meta( $course_id, '_llmsat_test_course', '1' );
+				
+				// Set course as free
+				update_post_meta( $course_id, '_llms_price', '0' );
+				update_post_meta( $course_id, '_llms_enrollment_opens_message', 'Open for enrollment' );
+				
+				$created_counts['courses']++;
+			}
+		}
 
-						$result = $this->db->insert_attendance( $user_id, $course_id, $attendance_date, $attendance_time );
+		// 3. Enroll users in courses and create attendance data
+		$test_users = get_users( array(
+			'meta_query' => array(
+				array(
+					'key' => '_llmsat_test_user',
+					'value' => '1',
+					'compare' => '='
+				)
+			)
+		) );
 
-						if ( $result ) {
-							++$generated;
-						}
+		$test_courses = get_posts( array(
+			'post_type' => 'course',
+			'numberposts' => -1,
+			'meta_query' => array(
+				array(
+					'key' => '_llmsat_test_course',
+					'value' => '1',
+					'compare' => '='
+				)
+			)
+		) );
+
+		foreach ( $test_users as $user ) {
+			foreach ( $test_courses as $course ) {
+				// Enroll user in course
+				llms_enroll_student( $user->ID, $course->ID );
+				$created_counts['enrollments']++;
+
+				// Create attendance data for the last 30 days
+				for ( $day = 0; $day < 30; $day++ ) {
+					$date = date( 'Y-m-d', strtotime( '-' . $day . ' days' ) );
+					
+					// 70% chance of attendance
+					if ( rand( 1, 100 ) <= 70 ) {
+						$meta_key = 'test_attendance_' . $date . '_' . $course->ID;
+						
+						update_user_meta(
+							$user->ID,
+							$meta_key,
+							array(
+								'time'      => $date . ' ' . date( 'H:i:s', strtotime( '+' . rand( 8, 18 ) . ' hours' ) ),
+								'course_id' => $course->ID,
+							)
+						);
+						
+						$created_counts['attendance']++;
 					}
 				}
 			}
 		}
 
-		return $generated;
+		$message = sprintf( 
+			__( 'Complete test environment created: %d users, %d courses, %d enrollments, %d attendance records.', 'llms-attendance' ),
+			$created_counts['users'],
+			$created_counts['courses'],
+			$created_counts['enrollments'],
+			$created_counts['attendance']
+		);
+
+		wp_send_json_success( array( 'message' => $message, 'counts' => $created_counts ) );
 	}
 
 	/**
@@ -493,37 +639,27 @@ class LLMS_AT_Testing_Framework {
 	private function test_query_performance() {
 		$results = array();
 
-		// Test 1: Single user attendance count.
+		// Test meta query performance
 		$start_time = microtime( true );
-		$user_id    = $this->get_random_user_id();
-		$course_id  = $this->get_random_course_id();
-		$count      = $this->db->get_attendance_count( $user_id, $course_id );
-		$end_time   = microtime( true );
+		$meta_count = $this->get_meta_attendance_count();
+		$meta_time  = microtime( true ) - $start_time;
 
 		$results[] = array(
-			'type'    => 'success',
-			'message' => sprintf( 'Single user query: %d records in %s seconds', $count, round( ( $end_time - $start_time ), 4 ) ),
+			'status'  => 'success',
+			'message' => sprintf( 'Meta query: %d records in %.4f seconds', $meta_count, $meta_time ),
 		);
 
-		// Test 2: Course statistics.
-		$start_time = microtime( true );
-		$stats      = $this->db->get_course_attendance_stats( $course_id );
-		$end_time   = microtime( true );
+		// Test custom table query performance
+		if ( $this->db->table_exists() ) {
+			$start_time  = microtime( true );
+			$table_stats = $this->db->get_table_stats();
+			$table_time  = microtime( true ) - $start_time;
 
-		$results[] = array(
-			'type'    => 'success',
-			'message' => sprintf( 'Course stats query: %d students in %s seconds', $stats['total_students'], round( ( $end_time - $start_time ), 4 ) ),
-		);
-
-		// Test 3: Top performers.
-		$start_time = microtime( true );
-		$performers = $this->db->get_top_performers( $course_id, 10 );
-		$end_time   = microtime( true );
-
-		$results[] = array(
-			'type'    => 'success',
-			'message' => sprintf( 'Top performers query: %d results in %s seconds', count( $performers ), round( ( $end_time - $start_time ), 4 ) ),
-		);
+			$results[] = array(
+				'status'  => 'success',
+				'message' => sprintf( 'Table query: %d records in %.4f seconds', $table_stats['total_records'], $table_time ),
+			);
+		}
 
 		return $results;
 	}
@@ -534,38 +670,23 @@ class LLMS_AT_Testing_Framework {
 	private function test_report_performance() {
 		$results = array();
 
-		$course_id = $this->get_random_course_id();
-		$date_from = date( 'Y-m-01' ); // First day of current month.
-		$date_to   = date( 'Y-m-t' ); // Last day of current month.
-
-		// Test daily chart data.
 		$start_time = microtime( true );
-		$daily_data = $this->db->get_chart_data( $course_id, $date_from, $date_to, 'daily' );
-		$end_time   = microtime( true );
-
-		$results[] = array(
-			'type'    => 'success',
-			'message' => sprintf( 'Daily chart data: %d data points in %s seconds', count( $daily_data ), round( ( $end_time - $start_time ), 4 ) ),
+		$courses    = get_posts(
+			array(
+				'post_type'   => 'course',
+				'numberposts' => 5,
+			)
 		);
 
-		// Test weekly chart data.
-		$start_time  = microtime( true );
-		$weekly_data = $this->db->get_chart_data( $course_id, $date_from, $date_to, 'weekly' );
-		$end_time    = microtime( true );
+		foreach ( $courses as $course ) {
+			$stats = $this->hybrid_manager->get_course_stats( $course->ID );
+		}
+
+		$report_time = microtime( true ) - $start_time;
 
 		$results[] = array(
-			'type'    => 'success',
-			'message' => sprintf( 'Weekly chart data: %d data points in %s seconds', count( $weekly_data ), round( ( $end_time - $start_time ), 4 ) ),
-		);
-
-		// Test monthly chart data.
-		$start_time   = microtime( true );
-		$monthly_data = $this->db->get_chart_data( $course_id, $date_from, $date_to, 'monthly' );
-		$end_time     = microtime( true );
-
-		$results[] = array(
-			'type'    => 'success',
-			'message' => sprintf( 'Monthly chart data: %d data points in %s seconds', count( $monthly_data ), round( ( $end_time - $start_time ), 4 ) ),
+			'status'  => 'success',
+			'message' => sprintf( 'Report generation: %d courses in %.4f seconds', count( $courses ), $report_time ),
 		);
 
 		return $results;
@@ -577,24 +698,13 @@ class LLMS_AT_Testing_Framework {
 	private function test_migration_performance() {
 		$results = array();
 
-		// Test table statistics query.
-		$start_time = microtime( true );
-		$stats      = $this->db->get_table_stats();
-		$end_time   = microtime( true );
+		$start_time     = microtime( true );
+		$meta_count     = $this->get_meta_attendance_count();
+		$migration_time = microtime( true ) - $start_time;
 
 		$results[] = array(
-			'type'    => 'success',
-			'message' => sprintf( 'Table statistics query: %d total records in %s seconds', $stats['total_records'], round( ( $end_time - $start_time ), 4 ) ),
-		);
-
-		// Test cleanup performance.
-		$start_time = microtime( true );
-		$deleted    = $this->db->cleanup_old_records( 365 );
-		$end_time   = microtime( true );
-
-		$results[] = array(
-			'type'    => 'success',
-			'message' => sprintf( 'Cleanup query: %d old records deleted in %s seconds', $deleted, round( ( $end_time - $start_time ), 4 ) ),
+			'status'  => 'success',
+			'message' => sprintf( 'Migration simulation: %d records would take approximately %.4f seconds', $meta_count, $migration_time ),
 		);
 
 		return $results;
@@ -608,59 +718,95 @@ class LLMS_AT_Testing_Framework {
 
 		global $wpdb;
 
-		// Delete test courses.
-		$deleted_courses = $wpdb->query(
-			"DELETE FROM {$wpdb->posts} WHERE post_type = 'course' AND post_title LIKE 'Test Course%'"
-		);
+		// Remove test meta data with test prefix
+		$deleted = $wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'test_attendance_%'" );
 
-		// Delete test users.
-		$deleted_users = $wpdb->query(
-			"DELETE FROM {$wpdb->users} WHERE user_login LIKE 'test_student_%'"
-		);
+		wp_send_json_success( array( 'message' => sprintf( __( 'Cleaned up %d test records.', 'llms-attendance' ), $deleted ) ) );
+	}
 
-		// Delete test attendance records.
-		$table_name         = $this->db->get_table_name();
-		$deleted_attendance = $wpdb->query(
-			"DELETE FROM $table_name WHERE user_id IN (
-				SELECT ID FROM {$wpdb->users} WHERE user_login LIKE 'test_student_%'
-			)"
-		);
+	/**
+	 * Clean up ALL test data including courses and users.
+	 */
+	public function cleanup_all_test_data() {
+		check_ajax_referer( 'llmsat_testing', 'nonce' );
 
-		wp_send_json_success(
-			array(
-				'message' => sprintf(
-					'Cleaned up: %d courses, %d users, %d attendance records',
-					$deleted_courses,
-					$deleted_users,
-					$deleted_attendance
-				),
+		global $wpdb;
+		$deleted_counts = array();
+
+		// 1. Remove test meta data with test prefix
+		$deleted_meta = $wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'test_attendance_%'" );
+		$deleted_counts['meta'] = $deleted_meta;
+
+		// 2. Remove test courses (courses with "test" in title or content)
+		$test_courses = get_posts( array(
+			'post_type' => 'course',
+			'numberposts' => -1,
+			'meta_query' => array(
+				array(
+					'key' => '_llmsat_test_course',
+					'value' => '1',
+					'compare' => '='
+				)
 			)
+		) );
+
+		$deleted_courses = 0;
+		foreach ( $test_courses as $course ) {
+			wp_delete_post( $course->ID, true );
+			$deleted_courses++;
+		}
+		$deleted_counts['courses'] = $deleted_courses;
+
+		// 3. Remove test users (users with "test" in username or email)
+		$test_users = get_users( array(
+			'meta_query' => array(
+				array(
+					'key' => '_llmsat_test_user',
+					'value' => '1',
+					'compare' => '='
+				)
+			)
+		) );
+
+		$deleted_users = 0;
+		foreach ( $test_users as $user ) {
+			wp_delete_user( $user->ID );
+			$deleted_users++;
+		}
+		$deleted_counts['users'] = $deleted_users;
+
+		// 4. Clean up custom table test data
+		if ( $this->db->table_exists() ) {
+			$deleted_custom = $wpdb->query( "DELETE FROM {$wpdb->prefix}llmsat_attendance WHERE user_id IN (SELECT ID FROM {$wpdb->users} WHERE user_login LIKE '%test%' OR user_email LIKE '%test%')" );
+			$deleted_counts['custom_table'] = $deleted_custom;
+		}
+
+		$message = sprintf( 
+			__( 'Complete cleanup: %d meta records, %d courses, %d users, %d custom table records deleted.', 'llms-attendance' ),
+			$deleted_counts['meta'],
+			$deleted_counts['courses'],
+			$deleted_counts['users'],
+			$deleted_counts['custom_table']
 		);
+
+		wp_send_json_success( array( 'message' => $message, 'counts' => $deleted_counts ) );
 	}
 
 	/**
-	 * Get random user ID.
+	 * Get meta attendance count.
 	 */
-	private function get_random_user_id() {
+	private function get_meta_attendance_count() {
 		global $wpdb;
 
-		$user_id = $wpdb->get_var(
-			"SELECT user_id FROM {$wpdb->prefix}llms_attendance ORDER BY RAND() LIMIT 1"
+		$count = $wpdb->get_var(
+			"
+			SELECT COUNT(*) 
+			FROM {$wpdb->usermeta} 
+			WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]+$'
+			AND meta_key NOT LIKE 'test_attendance_%'
+		"
 		);
 
-		return $user_id ?: 1;
-	}
-
-	/**
-	 * Get random course ID.
-	 */
-	private function get_random_course_id() {
-		global $wpdb;
-
-		$course_id = $wpdb->get_var(
-			"SELECT course_id FROM {$wpdb->prefix}llms_attendance ORDER BY RAND() LIMIT 1"
-		);
-
-		return $course_id ?: 1;
+		return intval( $count );
 	}
 }

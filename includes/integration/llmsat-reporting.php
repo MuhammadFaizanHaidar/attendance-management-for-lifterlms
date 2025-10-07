@@ -17,9 +17,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class LLMS_AT_Reporting {
 
 	/**
+	 * Hybrid manager instance.
+	 */
+	private $hybrid_manager;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
+		$this->hybrid_manager = new LLMS_AT_Hybrid_Manager();
 		$this->hooks();
 	}
 
@@ -112,14 +118,61 @@ class LLMS_AT_Reporting {
 	public function get_attendance_data_ajax() {
 		check_ajax_referer( 'llmsat_reporting_nonce', 'nonce' );
 
-		$course_id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
-		$date_from = isset( $_POST['date_from'] ) ? sanitize_text_field( wp_unslash( $_POST['date_from'] ) ) : '';
-		$date_to   = isset( $_POST['date_to'] ) ? sanitize_text_field( wp_unslash( $_POST['date_to'] ) ) : '';
-		$period    = isset( $_POST['period'] ) ? sanitize_text_field( wp_unslash( $_POST['period'] ) ) : 'monthly';
+		try {
+			global $wpdb;
+			
+			$course_id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
+			$date_from = isset( $_POST['date_from'] ) ? sanitize_text_field( wp_unslash( $_POST['date_from'] ) ) : '';
+			$date_to   = isset( $_POST['date_to'] ) ? sanitize_text_field( wp_unslash( $_POST['date_to'] ) ) : '';
+			$period    = isset( $_POST['period'] ) ? sanitize_text_field( wp_unslash( $_POST['period'] ) ) : 'monthly';
 
-		$data = $this->get_attendance_chart_data( $course_id, $date_from, $date_to, $period );
+		// Check if hybrid manager is properly initialized
+		if ( ! $this->hybrid_manager ) {
+			$this->hybrid_manager = new LLMS_AT_Hybrid_Manager();
+		}
+		
+		// Ensure hybrid manager is using the correct data source
+		$migration_status = get_option( 'llmsat_migration_status', 'not_started' );
+		if ( 'completed' === $migration_status || 'cleanup_completed' === $migration_status ) {
+			// Force refresh of hybrid manager to use custom table
+			$this->hybrid_manager = new LLMS_AT_Hybrid_Manager();
+		}
 
-		wp_send_json_success( $data );
+			$data = $this->get_attendance_chart_data( $course_id, $date_from, $date_to, $period );
+
+			// Add debug information to response
+			$data['debug_info'] = array(
+				'course_id' => $course_id,
+				'date_from' => $date_from,
+				'date_to' => $date_to,
+				'period' => $period,
+				'hybrid_manager_status' => $this->hybrid_manager ? 'initialized' : 'not_initialized',
+				'migration_status' => get_option( 'llmsat_migration_status', 'not_started' ),
+				'use_custom_table' => get_option( 'llmsat_use_custom_table', false ),
+			);
+			
+			// Add course and student information
+			if ( function_exists( 'llms_get_enrolled_students' ) ) {
+				$all_courses = get_posts( array( 'post_type' => 'course', 'numberposts' => -1 ) );
+				$data['debug_info']['total_courses'] = count( $all_courses );
+				$data['debug_info']['course_details'] = array();
+				
+				foreach ( $all_courses as $course ) {
+					$enrolled_students = llms_get_enrolled_students( $course->ID );
+					$data['debug_info']['course_details'][] = array(
+						'id' => $course->ID,
+						'title' => $course->post_title,
+						'enrolled_students' => $enrolled_students,
+						'enrolled_count' => count( $enrolled_students )
+					);
+				}
+			}
+
+			wp_send_json_success( $data );
+
+		} catch ( Exception $e ) {
+			wp_send_json_error( array( 'message' => 'Error processing attendance data: ' . $e->getMessage() ) );
+		}
 	}
 
 	/**
@@ -178,6 +231,51 @@ class LLMS_AT_Reporting {
 	private function get_attendance_chart_data( $course_id = 0, $date_from = '', $date_to = '', $period = 'monthly' ) {
 		global $wpdb;
 
+		// Debug: Test LifterLMS function and get enrolled students info
+		$debug_info = array();
+		if ( function_exists( 'llms_get_enrolled_students' ) ) {
+			$debug_info['llms_function_exists'] = true;
+			$test_enrolled = llms_get_enrolled_students( 14 );
+			$debug_info['course_14_enrolled'] = $test_enrolled;
+		} else {
+			$debug_info['llms_function_exists'] = false;
+		}
+		
+		// Get all courses info
+		$all_courses = get_posts( array( 'post_type' => 'course', 'numberposts' => -1 ) );
+		$debug_info['total_courses'] = count( $all_courses );
+		$debug_info['course_details'] = array();
+		
+		foreach ( $all_courses as $course ) {
+			$enrolled_students = llms_get_enrolled_students( $course->ID );
+			$debug_info['course_details'][] = array(
+				'id' => $course->ID,
+				'title' => $course->post_title,
+				'enrolled_students' => $enrolled_students,
+				'enrolled_count' => count( $enrolled_students )
+			);
+		}
+
+		// Debug: Check custom table data (with graceful degradation)
+		$table_name   = $wpdb->prefix . 'llmsat_attendance';
+		$table_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_name ) );
+
+		if ( $table_exists ) {
+			$custom_table_students = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT user_id, COUNT(*) as count 
+					FROM %i 
+					GROUP BY user_id 
+					ORDER BY count DESC 
+					LIMIT 10",
+					$table_name
+				)
+			);
+			
+			// Also show sample records with dates
+			$sample_records = $wpdb->get_results( "SELECT user_id, course_id, attendance_date FROM $table_name ORDER BY attendance_date DESC LIMIT 10" );
+		}
+
 		$data = array(
 			'labels'   => array(),
 			'datasets' => array(
@@ -229,6 +327,9 @@ class LLMS_AT_Reporting {
 				break;
 		}
 
+		// Add debug info to data
+		$data['debug_info'] = $debug_info;
+		
 		return $data;
 	}
 
@@ -255,8 +356,8 @@ class LLMS_AT_Reporting {
 
 				foreach ( $enrolled_students as $student_id ) {
 					$attendance_key = $current_date->format( 'Y-m-d' ) . '-' . $course_id;
-					$attendance     = get_user_meta( $student_id, $attendance_key, true );
-					if ( ! empty( $attendance ) ) {
+					$attendance     = $this->hybrid_manager->has_attendance( $student_id, $course_id, $current_date->format( 'Y-m-d' ) );
+					if ( $attendance ) {
 						++$present_students;
 					}
 				}
@@ -318,9 +419,8 @@ class LLMS_AT_Reporting {
 
 					// Check each day of the week.
 					for ( $i = 0; $i < 7; $i++ ) {
-						$attendance_key = $check_date->format( 'Y-m-d' ) . '-' . $course_id;
-						$attendance     = get_user_meta( $student_id, $attendance_key, true );
-						if ( ! empty( $attendance ) ) {
+						$attendance = $this->hybrid_manager->has_attendance( $student_id, $course_id, $check_date->format( 'Y-m-d' ) );
+						if ( $attendance ) {
 							$week_present = true;
 							break;
 						}
@@ -363,51 +463,77 @@ class LLMS_AT_Reporting {
 		$labels           = array();
 		$attendance_rates = array();
 
-		$current_date = new DateTime( $date_from );
-		$end_date     = new DateTime( $date_to );
+		try {
+			$current_date = new DateTime( $date_from );
+			$end_date     = new DateTime( $date_to );
 
-		// Start from the beginning of the month.
-		$current_date->modify( 'first day of this month' );
+			// Start from the beginning of the month.
+			$current_date->modify( 'first day of this month' );
 
-		while ( $current_date <= $end_date ) {
-			$month_start = clone $current_date;
-			$month_end   = clone $current_date;
-			$month_end->modify( 'last day of this month' );
+			while ( $current_date <= $end_date ) {
+				$month_start = clone $current_date;
+				$month_end   = clone $current_date;
+				$month_end->modify( 'last day of this month' );
 
-			$labels[] = $current_date->format( 'M Y' );
+				$labels[] = $current_date->format( 'M Y' );
 
-			$total_students   = 0;
-			$present_students = 0;
+				$total_students   = 0;
+				$present_students = 0;
 
-			foreach ( $courses as $course_id ) {
-				$enrolled_students = llms_get_enrolled_students( $course_id );
-				$total_students   += count( $enrolled_students );
+				foreach ( $courses as $course_id ) {
+					$enrolled_students = llms_get_enrolled_students( $course_id );
+					$total_students   += count( $enrolled_students );
 
-				foreach ( $enrolled_students as $student_id ) {
-					$month_present = false;
-					$check_date    = clone $month_start;
+					foreach ( $enrolled_students as $student_id ) {
+						$month_present = false;
+						$check_date    = clone $month_start;
+						$attendance_found = false;
 
-					// Check each day of the month.
-					while ( $check_date <= $month_end ) {
-						$attendance_key = $check_date->format( 'Y-m-d' ) . '-' . $course_id;
-						$attendance     = get_user_meta( $student_id, $attendance_key, true );
-						if ( ! empty( $attendance ) ) {
-							$month_present = true;
-							break;
+						// Check each day of the month.
+						while ( $check_date <= $month_end ) {
+							$date_string = $check_date->format( 'Y-m-d' );
+							$attendance = $this->hybrid_manager->has_attendance( $student_id, $course_id, $date_string );
+							
+							if ( $attendance ) {
+								$month_present = true;
+								$attendance_found = true;
+								break;
+							}
+							$check_date->add( new DateInterval( 'P1D' ) );
 						}
-						$check_date->add( new DateInterval( 'P1D' ) );
-					}
+						
+						if ( ! $attendance_found ) {
+							// No attendance found for this student in this month
+						}
 
-					if ( $month_present ) {
-						++$present_students;
+						if ( $month_present ) {
+							++$present_students;
+						}
 					}
 				}
+
+				$rate               = $total_students > 0 ? ( $present_students / $total_students ) * 100 : 0;
+				$attendance_rates[] = round( $rate, 1 );
+
+				$current_date->add( new DateInterval( 'P1M' ) );
 			}
-
-			$rate               = $total_students > 0 ? ( $present_students / $total_students ) * 100 : 0;
-			$attendance_rates[] = round( $rate, 1 );
-
-			$current_date->add( new DateInterval( 'P1M' ) );
+		} catch ( Exception $e ) {
+			// Return empty data on error
+			return array(
+				'labels'   => array(),
+				'datasets' => array(
+					array(
+						'label'           => __( 'Monthly Attendance Rate (%)', 'llms-attendance' ),
+						'data'            => array(),
+						'borderColor'     => '#00a0d2',
+						'backgroundColor' => 'rgba(0, 160, 210, 0.2)',
+						'pointBackgroundColor' => '#00a0d2',
+						'pointBorderColor'     => '#ffffff',
+						'pointBorderWidth'     => 2,
+						'tension'              => 0.1,
+					),
+				),
+			);
 		}
 
 		return array(
@@ -459,15 +585,13 @@ class LLMS_AT_Reporting {
 			}
 
 			// Check today's attendance.
-			$today_key        = $current_date . '-' . $course_id;
-			$today_attendance = get_user_meta( $student_id, $today_key, true );
-			if ( ! empty( $today_attendance ) ) {
+			$today_attendance = $this->hybrid_manager->has_attendance( $student_id, $course_id, $current_date );
+			if ( $today_attendance ) {
 				++$stats['present_today'];
 			}
 
-			// Calculate monthly attendance.
-			$monthly_key   = $current_month . '-' . $course_id;
-			$monthly_count = get_user_meta( $student_id, $monthly_key, true );
+			// Calculate monthly attendance using hybrid manager.
+			$monthly_count = $this->hybrid_manager->get_attendance_data( $student_id, $course_id, $current_month . '-01', $current_month . '-31' );
 			$monthly_count = intval( $monthly_count );
 
 			if ( $monthly_count > 0 ) {
@@ -550,15 +674,13 @@ class LLMS_AT_Reporting {
 				}
 
 				// Check today's attendance.
-				$today_key        = $current_date . '-' . $course_id;
-				$today_attendance = get_user_meta( $student_id, $today_key, true );
-				if ( ! empty( $today_attendance ) ) {
+				$today_attendance = $this->hybrid_manager->has_attendance( $student_id, $course_id, $current_date );
+				if ( $today_attendance ) {
 					++$present_today;
 				}
 
-				// Calculate monthly attendance.
-				$monthly_key   = $current_month . '-' . $course_id;
-				$monthly_count = get_user_meta( $student_id, $monthly_key, true );
+				// Calculate monthly attendance using hybrid manager.
+				$monthly_count = $this->hybrid_manager->get_attendance_data( $student_id, $course_id, $current_month . '-01', $current_month . '-31' );
 				$monthly_count = intval( $monthly_count );
 
 				if ( $monthly_count > 0 ) {
@@ -640,9 +762,8 @@ class LLMS_AT_Reporting {
 		);
 
 		if ( $course_id > 0 ) {
-			// Single course stats.
-			$monthly_key      = $current_month . '-' . $course_id;
-			$attendance_count = get_user_meta( $student_id, $monthly_key, true );
+			// Single course stats using hybrid manager.
+			$attendance_count = $this->hybrid_manager->get_attendance_data( $student_id, $course_id, $current_month . '-01', $current_month . '-31' );
 			$attendance_count = intval( $attendance_count );
 
 			// Calculate attendance percentage based on actual possible days.
@@ -684,8 +805,7 @@ class LLMS_AT_Reporting {
 			foreach ( $courses as $course ) {
 				$enrolled_students = llms_get_enrolled_students( $course );
 				if ( in_array( $student_id, $enrolled_students ) ) {
-					$monthly_key      = $current_month . '-' . $course;
-					$attendance_count = get_user_meta( $student_id, $monthly_key, true );
+					$attendance_count = $this->hybrid_manager->get_attendance_data( $student_id, $course, $current_month . '-01', $current_month . '-31' );
 					$attendance_count = intval( $attendance_count );
 
 					$total_attendance += $attendance_count;
@@ -856,9 +976,8 @@ class LLMS_AT_Reporting {
 		$end_date     = new DateTime( $date_to );
 
 		while ( $current_date <= $end_date ) {
-			$attendance_key = $current_date->format( 'Y-m-d' ) . '-' . $course_id;
-			$attendance     = get_user_meta( $student_id, $attendance_key, true );
-			if ( ! empty( $attendance ) ) {
+			$attendance = $this->hybrid_manager->has_attendance( $student_id, $course_id, $current_date->format( 'Y-m-d' ) );
+			if ( $attendance ) {
 				++$count;
 			}
 			$current_date->add( new DateInterval( 'P1D' ) );
@@ -989,9 +1108,8 @@ class LLMS_AT_Reporting {
 					continue;
 				}
 
-				// Calculate attendance percentage.
-				$monthly_key      = $current_month . '-' . $course->ID;
-				$attendance_count = get_user_meta( $student_id, $monthly_key, true );
+				// Calculate attendance percentage using hybrid manager.
+				$attendance_count = $this->hybrid_manager->get_attendance_data( $student_id, $course->ID, $current_month . '-01', $current_month . '-31' );
 				$attendance_count = intval( $attendance_count );
 
 				$attendance_percentage = $current_day > 0 ? ( $attendance_count / $current_day ) * 100 : 0;

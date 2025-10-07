@@ -31,7 +31,20 @@ class LLMS_AT_Hybrid_Manager {
 	 */
 	public function __construct() {
 		$this->db = new LLMS_AT_Database();
+		
+		// Restore original logic
 		$this->use_custom_table = get_option( 'llmsat_use_custom_table', false );
+
+		// Use custom table if migration is completed OR cleanup is completed.
+		$migration_status = get_option( 'llmsat_migration_status', 'not_started' );
+		if ( 'completed' === $migration_status || 'cleanup_completed' === $migration_status ) {
+			// Force use of custom table after migration/cleanup.
+			$this->use_custom_table = true;
+			update_option( 'llmsat_use_custom_table', true );
+		} else {
+			// Force use of meta storage for real data until migration.
+			$this->use_custom_table = false;
+		}
 		
 		// Hook into existing attendance system.
 		add_action( 'lifterlms_mark_attendance', array( $this, 'handle_attendance_mark' ), 10, 4 );
@@ -45,7 +58,7 @@ class LLMS_AT_Hybrid_Manager {
 		if ( $this->use_custom_table ) {
 			$this->db->insert_attendance( $user_id, $course_id );
 		}
-		
+
 		// Keep meta system for backward compatibility.
 		// This ensures existing code continues to work.
 	}
@@ -65,6 +78,11 @@ class LLMS_AT_Hybrid_Manager {
 	 * Get data from custom table.
 	 */
 	private function get_from_custom_table( $user_id, $course_id, $date_from, $date_to ) {
+		// Check if table exists first.
+		if ( ! $this->db->table_exists() ) {
+			return $this->get_from_meta( $user_id, $course_id, $date_from, $date_to );
+		}
+		
 		// Implementation using custom table.
 		return $this->db->get_attendance_count( $user_id, $course_id, $date_from, $date_to );
 	}
@@ -73,25 +91,54 @@ class LLMS_AT_Hybrid_Manager {
 	 * Get data from meta (existing implementation).
 	 */
 	private function get_from_meta( $user_id, $course_id, $date_from, $date_to ) {
-		// Existing meta-based implementation.
-		$current_month = date( 'Y-m' );
-		$monthly_key = $current_month . '-' . $course_id;
-		return get_user_meta( $user_id, $monthly_key, true );
+		// If no date range provided, get monthly count.
+		if ( ! $date_from || ! $date_to ) {
+			$current_month = date( 'Y-m' );
+			$monthly_key   = $current_month . '-' . $course_id;
+			return get_user_meta( $user_id, $monthly_key, true );
+		}
+
+		// Count attendance in date range.
+		$count        = 0;
+		$current_date = new DateTime( $date_from );
+		$end_date     = new DateTime( $date_to );
+
+		while ( $current_date <= $end_date ) {
+			$meta_key   = $current_date->format( 'Y-m-d' ) . '-' . $course_id;
+			$attendance = get_user_meta( $user_id, $meta_key, true );
+			if ( ! empty( $attendance ) ) {
+				++$count;
+			}
+			$current_date->add( new DateInterval( 'P1D' ) );
+		}
+
+		return $count;
 	}
 
 	/**
 	 * Check if user has attendance (hybrid approach).
 	 */
 	public function has_attendance( $user_id, $course_id, $date = null ) {
+		if ( ! $date ) {
+			$date = current_time( 'Y-m-d' );
+		}
+		
 		if ( $this->use_custom_table ) {
-			return $this->db->has_attendance( $user_id, $course_id, $date );
+			// Check if table exists first.
+			if ( ! $this->db->table_exists() ) {
+				// Fall back to meta-based check.
+				$meta_key = $date . '-' . $course_id;
+				$result = ! empty( get_user_meta( $user_id, $meta_key, true ) );
+				return $result;
+			}
+			
+			$result = $this->db->has_attendance( $user_id, $course_id, $date );
+			return $result;
 		} else {
 			// Meta-based check.
-			if ( ! $date ) {
-				$date = current_time( 'Y-m-d' );
-			}
 			$meta_key = $date . '-' . $course_id;
-			return ! empty( get_user_meta( $user_id, $meta_key, true ) );
+			$result = ! empty( get_user_meta( $user_id, $meta_key, true ) );
+			return $result;
 		}
 	}
 
@@ -117,6 +164,13 @@ class LLMS_AT_Hybrid_Manager {
 	}
 
 	/**
+	 * Enable custom table usage for testing.
+	 */
+	public function enable_for_testing() {
+		$this->enable_custom_table();
+	}
+
+	/**
 	 * Disable custom table usage (fallback to meta).
 	 */
 	public function disable_custom_table() {
@@ -130,7 +184,7 @@ class LLMS_AT_Hybrid_Manager {
 	public function get_system_status() {
 		return array(
 			'use_custom_table' => $this->use_custom_table,
-			'table_exists' => $this->db->get_table_stats(),
+			'table_exists'     => $this->db->get_table_stats(),
 			'migration_status' => get_option( 'llmsat_migration_status', 'not_started' ),
 		);
 	}

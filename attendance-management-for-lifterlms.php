@@ -5,12 +5,12 @@
  * @package Attendance Management For LifterLMS/Main
  *
  * @since 1.0.0
- * @version 1.0.0
+ * @version 2.0.0
  *
  * Plugin Name: Attendance Management For LifterLMS
  * Plugin URI:  https://github.com/MuhammadFaizanHaidar/attendance-management-for-lifterlms
- * Description: This addon provides the Attendance functionality for LifterLMS registered users
- * Version:     1.0.3
+ * Description: Comprehensive attendance management system for LifterLMS with reporting dashboard, custom database tables, and role-based attendance marking
+ * Version:     2.0.0
  * Author:      Muhammad Faizan Haidar
  * Author URI:  https://faizanhaidar.com
  * Text Domain: llms-attendance
@@ -83,21 +83,17 @@ class LLMS_Attendance {
 
 			// Create database tables on activation.
 			self::create_database_tables();
-			
+
 			// Set default migration status.
 			if ( ! get_option( 'llmsat_migration_status' ) ) {
 				update_option( 'llmsat_migration_status', 'not_started' );
 			}
-			
+
 			// Set default database version.
 			if ( ! get_option( 'llmsat_db_version' ) ) {
 				update_option( 'llmsat_db_version', '1.0' );
 			}
-			
-			error_log( 'LLMS Attendance: Plugin activated successfully.' );
-			
 		} catch ( Exception $e ) {
-			error_log( 'LLMS Attendance: Activation error - ' . $e->getMessage() );
 			// Don't prevent activation, just log the error.
 		}
 	}
@@ -111,51 +107,35 @@ class LLMS_Attendance {
 		try {
 			// Define the includes directory path directly since constants aren't set up yet.
 			$includes_dir = plugin_dir_path( __FILE__ ) . 'includes/';
-			error_log( 'LLMS Attendance: Includes directory - ' . $includes_dir );
-			
+
 			// Check if the database file exists.
 			$database_file = $includes_dir . 'database/llmsat-database.php';
-			error_log( 'LLMS Attendance: Database file path - ' . $database_file );
-			
+
 			if ( ! file_exists( $database_file ) ) {
-				error_log( 'LLMS Attendance: Database file not found - ' . $database_file );
 				return;
 			}
-			
-			error_log( 'LLMS Attendance: Database file found, including...' );
-			
+
 			// Include the database class.
 			require_once $database_file;
-			
+
 			// Check if the class exists.
 			if ( ! class_exists( 'LLMS_AT_Database' ) ) {
-				error_log( 'LLMS Attendance: LLMS_AT_Database class not found' );
 				return;
 			}
-			
-			error_log( 'LLMS Attendance: LLMS_AT_Database class found, creating instance...' );
-			
+
 			// Create the database instance and tables.
 			$database = new LLMS_AT_Database();
-			error_log( 'LLMS Attendance: Database instance created, calling create_tables()...' );
-			
+
 			$database->create_tables();
-			error_log( 'LLMS Attendance: create_tables() called successfully' );
-			
+
 			// Check if table was actually created.
 			if ( $database->table_exists() ) {
-				error_log( 'LLMS Attendance: Database table exists after creation' );
-			} else {
-				error_log( 'LLMS Attendance: Database table does NOT exist after creation' );
+				// Table created successfully
 			}
-			
-			// Log successful table creation.
-			error_log( 'LLMS Attendance: Database tables created successfully during activation.' );
-			
 		} catch ( Exception $e ) {
-			error_log( 'LLMS Attendance: Database creation error - ' . $e->getMessage() );
+			// Database creation error
 		} catch ( Error $e ) {
-			error_log( 'LLMS Attendance: Database creation fatal error - ' . $e->getMessage() );
+			// Database creation fatal error
 		}
 	}
 
@@ -166,7 +146,7 @@ class LLMS_Attendance {
 	 */
 	public function upgrade() {
 		$installed_version = get_option( 'llmsat_version', '0.0.0' );
-		$current_version = self::VERSION;
+		$current_version   = self::VERSION;
 
 		// If versions are the same, no upgrade needed.
 		if ( version_compare( $installed_version, $current_version, '>=' ) ) {
@@ -181,22 +161,19 @@ class LLMS_Attendance {
 		// Check if database tables exist, create if not.
 		if ( ! $database->table_exists() ) {
 			$database->create_tables();
-			error_log( 'LLMS Attendance: Database tables created during upgrade.' );
 		}
 
 		// Update version.
 		update_option( 'llmsat_version', $current_version );
-		
+
 		// Set default options if not set.
 		if ( ! get_option( 'llmsat_migration_status' ) ) {
 			update_option( 'llmsat_migration_status', 'not_started' );
 		}
-		
+
 		if ( ! get_option( 'llmsat_db_version' ) ) {
 			update_option( 'llmsat_db_version', '1.0' );
 		}
-
-		error_log( "LLMS Attendance: Upgraded from {$installed_version} to {$current_version}" );
 	}
 
 	/**
@@ -274,13 +251,10 @@ class LLMS_Attendance {
 
 		if ( file_exists( LLMS_At_INCLUDES_DIR . 'integration/llmsat-reporting.php' ) ) {
 
-			require_once LLMS_At_INCLUDES_DIR . 'integration/llmsat-reporting.php';
 			require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-database.php';
-			require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-migration.php';
 			require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-hybrid-manager.php';
-			require_once LLMS_At_INCLUDES_DIR . 'testing/llmsat-testing-framework.php';
-			require_once LLMS_At_INCLUDES_DIR . 'testing/llmsat-test-suite.php';
-			require_once LLMS_At_INCLUDES_DIR . 'testing/llmsat-cli-testing.php';
+			require_once LLMS_At_INCLUDES_DIR . 'integration/llmsat-reporting.php';
+			require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-migration.php';
 		}
 
 		if ( file_exists( LLMS_At_INCLUDES_DIR . 'settings/options.php' ) ) {
@@ -299,26 +273,34 @@ class LLMS_Attendance {
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_enqueue_scripts' ), 11 );
 		add_filter( 'plugin_action_links_' . LLMS_At_BASE_DIR, array( $this, 'settings_link' ), 10, 1 );
 		add_action( 'plugins_loaded', array( $this, 'upgrade' ) );
+		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ), 1 );
+		add_action( 'init', array( $this, 'init_migration_system' ) );
 		add_filter( 'lifterlms_integrations', array( $this, 'register_integration' ), 10, 1 );
 
-		// Initialize testing framework classes.
-		add_action( 'init', array( $this, 'init_testing_framework' ) );
 	}
 
 	/**
-	 * Initialize testing framework classes.
+	 * Load plugin text domain
 	 *
 	 * @return void
 	 */
-	public function init_testing_framework() {
+	public function load_textdomain() {
+		load_plugin_textdomain(
+			'llms-attendance',
+			false,
+			dirname( plugin_basename( __FILE__ ) ) . '/languages'
+		);
+	}
+
+	/**
+	 * Initialize migration system.
+	 *
+	 * @return void
+	 */
+	public function init_migration_system() {
 		// Only initialize in admin area.
 		if ( ! is_admin() ) {
 			return;
-		}
-
-		// Initialize testing framework.
-		if ( class_exists( 'LLMS_AT_Testing_Framework' ) ) {
-			new LLMS_AT_Testing_Framework();
 		}
 
 		// Initialize migration system.
@@ -334,6 +316,29 @@ class LLMS_Attendance {
 		// Initialize database.
 		if ( class_exists( 'LLMS_AT_Database' ) ) {
 			new LLMS_AT_Database();
+		}
+
+		// Initialize testing framework only in development mode.
+		if ( defined( 'LLMSAT_DEVELOPMENT_MODE' ) && LLMSAT_DEVELOPMENT_MODE ) {
+			$this->init_testing_framework();
+		}
+	}
+
+	/**
+	 * Initialize testing framework (development only).
+	 *
+	 * @return void
+	 */
+	private function init_testing_framework() {
+		// Load testing files only in development mode.
+		if ( file_exists( LLMS_At_INCLUDES_DIR . 'testing/llmsat-testing-framework.php' ) ) {
+			require_once LLMS_At_INCLUDES_DIR . 'testing/llmsat-testing-framework.php';
+			require_once LLMS_At_INCLUDES_DIR . 'testing/llmsat-test-suite.php';
+			require_once LLMS_At_INCLUDES_DIR . 'testing/llmsat-cli-testing.php';
+			
+			if ( class_exists( 'LLMS_AT_Testing_Framework' ) ) {
+				new LLMS_AT_Testing_Framework();
+			}
 		}
 	}
 
@@ -387,8 +392,9 @@ class LLMS_Attendance {
 
 			wp_localize_script(
 				'llmsat-admin-script',
-				'llmsat_block_editor',
+				'llmsat_admin',
 				array(
+					'nonce' => wp_create_nonce( 'llmsat_admin_nonce' ),
 					'block_editor_active' => $active,
 				)
 			);
@@ -430,6 +436,7 @@ class LLMS_Attendance {
 			array(
 				'ajax_url'            => admin_url( 'admin-ajax.php' ),
 				'block_editor_active' => $active,
+				'nonce'               => wp_create_nonce( 'llmsat_frontend_nonce' ),
 			)
 		);
 	}
@@ -472,7 +479,6 @@ function llmsat_ready() {
 	return true;
 }
 
-
 /**
  * Plugin Initiation.
  *
@@ -488,4 +494,4 @@ function LLMS_Attendance() {
 	$GLOBALS['LLMS_Attendance'] = LLMS_Attendance::instance();
 }
 
-add_action( 'plugins_loaded', 'LLMS_Attendance' );
+add_action( 'init', 'LLMS_Attendance', 1 );

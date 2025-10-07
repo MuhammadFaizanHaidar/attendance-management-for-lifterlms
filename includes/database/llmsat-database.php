@@ -19,7 +19,7 @@ class LLMS_AT_Database {
 	/**
 	 * Table name for attendance records.
 	 */
-	const TABLE_NAME = 'llms_attendance';
+	const TABLE_NAME = 'llmsat_attendance';
 
 	/**
 	 * Current database version.
@@ -39,7 +39,7 @@ class LLMS_AT_Database {
 	 */
 	public function check_database_version() {
 		$installed_version = get_option( 'llmsat_db_version', '1.0' );
-		
+
 		if ( version_compare( $installed_version, self::DB_VERSION, '<' ) ) {
 			$this->create_tables();
 			update_option( 'llmsat_db_version', self::DB_VERSION );
@@ -53,10 +53,8 @@ class LLMS_AT_Database {
 		global $wpdb;
 
 		$table_name = $wpdb->prefix . self::TABLE_NAME;
-		error_log( 'LLMS Attendance: Creating table - ' . $table_name );
 
 		$charset_collate = $wpdb->get_charset_collate();
-		error_log( 'LLMS Attendance: Charset collate - ' . $charset_collate );
 
 		$sql = "CREATE TABLE $table_name (
 			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -77,20 +75,12 @@ class LLMS_AT_Database {
 			INDEX idx_created_at (created_at)
 		) $charset_collate;";
 
-		error_log( 'LLMS Attendance: SQL to execute - ' . $sql );
-
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		error_log( 'LLMS Attendance: About to call dbDelta...' );
-		
+
 		$result = dbDelta( $sql );
-		error_log( 'LLMS Attendance: dbDelta result - ' . print_r( $result, true ) );
 
 		// Check if table was actually created.
-		$table_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_name ) );
-		error_log( 'LLMS Attendance: Table exists check - ' . ( $table_exists ? 'YES' : 'NO' ) );
-
-		// Log table creation.
-		error_log( 'LLMS Attendance: Custom table created successfully' );
+		$table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) );
 	}
 
 	/**
@@ -109,19 +99,16 @@ class LLMS_AT_Database {
 	public function table_exists() {
 		global $wpdb;
 		$table_name = $this->get_table_name();
-		
-		error_log( 'LLMS Attendance: table_exists() checking table: ' . $table_name );
-		
-		$result = $wpdb->get_var( $wpdb->prepare( 
-			"SHOW TABLES LIKE %s", 
-			$table_name 
-		) );
-		
-		error_log( 'LLMS Attendance: SHOW TABLES result: ' . ( $result ? $result : 'null' ) );
-		
+
+		$result = $wpdb->get_var(
+			$wpdb->prepare(
+				'SHOW TABLES LIKE %s',
+				$table_name
+			)
+		);
+
 		$exists = ( $result === $table_name );
-		error_log( 'LLMS Attendance: table_exists() returning: ' . ( $exists ? 'true' : 'false' ) );
-		
+
 		return $exists;
 	}
 
@@ -199,6 +186,11 @@ class LLMS_AT_Database {
 	public function get_attendance_count( $user_id, $course_id, $date_from = null, $date_to = null ) {
 		global $wpdb;
 
+		// Check if table exists first.
+		if ( ! $this->table_exists() ) {
+			return 0;
+		}
+
 		$table_name = $this->get_table_name();
 
 		$where_conditions = array(
@@ -227,6 +219,17 @@ class LLMS_AT_Database {
 	 */
 	public function get_course_attendance_stats( $course_id, $date_from = null, $date_to = null ) {
 		global $wpdb;
+
+		// Check if table exists first.
+		if ( ! $this->table_exists() ) {
+			
+			return array(
+				'total_students'    => 0,
+				'present_students'  => 0,
+				'attendance_rate'   => 0,
+				'average_attendance' => 0,
+			);
+		}
 
 		$table_name = $this->get_table_name();
 
@@ -261,6 +264,11 @@ class LLMS_AT_Database {
 	 */
 	public function get_top_performers( $course_id, $limit = 5, $date_from = null, $date_to = null ) {
 		global $wpdb;
+
+		// Check if table exists first.
+		if ( ! $this->table_exists() ) {
+			return array();
+		}
 
 		$table_name = $this->get_table_name();
 
@@ -352,7 +360,7 @@ class LLMS_AT_Database {
 	 */
 	private function get_client_ip() {
 		$ip_keys = array( 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR' );
-		
+
 		foreach ( $ip_keys as $key ) {
 			if ( array_key_exists( $key, $_SERVER ) === true ) {
 				foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) {
@@ -363,7 +371,7 @@ class LLMS_AT_Database {
 				}
 			}
 		}
-		
+
 		return isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '0.0.0.0';
 	}
 
@@ -373,7 +381,7 @@ class LLMS_AT_Database {
 	public function cleanup_old_records( $days_to_keep = 365 ) {
 		global $wpdb;
 
-		$table_name = $this->get_table_name();
+		$table_name  = $this->get_table_name();
 		$cutoff_date = date( 'Y-m-d', strtotime( "-$days_to_keep days" ) );
 
 		$deleted = $wpdb->query(
@@ -393,25 +401,20 @@ class LLMS_AT_Database {
 		global $wpdb;
 
 		$table_name = $this->get_table_name();
-		error_log( 'LLMS Attendance: get_table_stats() called for table: ' . $table_name );
-		
+
 		// Check if table exists first.
 		$table_exists = $this->table_exists();
-		error_log( 'LLMS Attendance: table_exists() returned: ' . ( $table_exists ? 'true' : 'false' ) );
-		
+
 		if ( ! $table_exists ) {
-			error_log( 'LLMS Attendance: Table does not exist, returning empty stats' );
 			return array(
-				'total_records' => 0,
-				'unique_users' => 0,
+				'total_records'  => 0,
+				'unique_users'   => 0,
 				'unique_courses' => 0,
-				'earliest_date' => null,
-				'latest_date' => null,
+				'earliest_date'  => null,
+				'latest_date'    => null,
 			);
 		}
 
-		error_log( 'LLMS Attendance: Table exists, running stats query...' );
-		
 		$stats = $wpdb->get_row(
 			"SELECT 
 				COUNT(*) as total_records,
@@ -422,8 +425,6 @@ class LLMS_AT_Database {
 			FROM $table_name",
 			ARRAY_A
 		);
-
-		error_log( 'LLMS Attendance: Stats query result: ' . print_r( $stats, true ) );
 
 		return $stats;
 	}

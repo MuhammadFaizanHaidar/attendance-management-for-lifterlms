@@ -162,6 +162,11 @@ class LLMS_Attendance {
 			require_once LLMS_At_INCLUDES_DIR . 'integration/llmsat-allow-integration.php';
 		}
 
+		if ( file_exists( LLMS_At_INCLUDES_DIR . 'integration/llmsat-reporting.php' ) ) {
+
+			require_once LLMS_At_INCLUDES_DIR . 'integration/llmsat-reporting.php';
+		}
+
 		if ( file_exists( LLMS_At_INCLUDES_DIR . 'settings/options.php' ) ) {
 
 			require_once LLMS_At_INCLUDES_DIR . 'settings/options.php';

@@ -111,13 +111,18 @@ class LLMS_Attendance {
 		try {
 			// Define the includes directory path directly since constants aren't set up yet.
 			$includes_dir = plugin_dir_path( __FILE__ ) . 'includes/';
+			error_log( 'LLMS Attendance: Includes directory - ' . $includes_dir );
 			
 			// Check if the database file exists.
 			$database_file = $includes_dir . 'database/llmsat-database.php';
+			error_log( 'LLMS Attendance: Database file path - ' . $database_file );
+			
 			if ( ! file_exists( $database_file ) ) {
 				error_log( 'LLMS Attendance: Database file not found - ' . $database_file );
 				return;
 			}
+			
+			error_log( 'LLMS Attendance: Database file found, including...' );
 			
 			// Include the database class.
 			require_once $database_file;
@@ -128,15 +133,29 @@ class LLMS_Attendance {
 				return;
 			}
 			
+			error_log( 'LLMS Attendance: LLMS_AT_Database class found, creating instance...' );
+			
 			// Create the database instance and tables.
 			$database = new LLMS_AT_Database();
+			error_log( 'LLMS Attendance: Database instance created, calling create_tables()...' );
+			
 			$database->create_tables();
+			error_log( 'LLMS Attendance: create_tables() called successfully' );
+			
+			// Check if table was actually created.
+			if ( $database->table_exists() ) {
+				error_log( 'LLMS Attendance: Database table exists after creation' );
+			} else {
+				error_log( 'LLMS Attendance: Database table does NOT exist after creation' );
+			}
 			
 			// Log successful table creation.
 			error_log( 'LLMS Attendance: Database tables created successfully during activation.' );
 			
 		} catch ( Exception $e ) {
 			error_log( 'LLMS Attendance: Database creation error - ' . $e->getMessage() );
+		} catch ( Error $e ) {
+			error_log( 'LLMS Attendance: Database creation fatal error - ' . $e->getMessage() );
 		}
 	}
 

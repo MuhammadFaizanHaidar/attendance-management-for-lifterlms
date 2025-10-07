@@ -53,8 +53,10 @@ class LLMS_AT_Database {
 		global $wpdb;
 
 		$table_name = $wpdb->prefix . self::TABLE_NAME;
+		error_log( 'LLMS Attendance: Creating table - ' . $table_name );
 
 		$charset_collate = $wpdb->get_charset_collate();
+		error_log( 'LLMS Attendance: Charset collate - ' . $charset_collate );
 
 		$sql = "CREATE TABLE $table_name (
 			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -75,8 +77,17 @@ class LLMS_AT_Database {
 			INDEX idx_created_at (created_at)
 		) $charset_collate;";
 
+		error_log( 'LLMS Attendance: SQL to execute - ' . $sql );
+
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql );
+		error_log( 'LLMS Attendance: About to call dbDelta...' );
+		
+		$result = dbDelta( $sql );
+		error_log( 'LLMS Attendance: dbDelta result - ' . print_r( $result, true ) );
+
+		// Check if table was actually created.
+		$table_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_name ) );
+		error_log( 'LLMS Attendance: Table exists check - ' . ( $table_exists ? 'YES' : 'NO' ) );
 
 		// Log table creation.
 		error_log( 'LLMS Attendance: Custom table created successfully' );

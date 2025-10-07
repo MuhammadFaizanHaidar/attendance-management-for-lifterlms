@@ -358,6 +358,17 @@ class LLMS_AT_Database {
 		global $wpdb;
 
 		$table_name = $this->get_table_name();
+		
+		// Check if table exists first.
+		if ( ! $this->table_exists() ) {
+			return array(
+				'total_records' => 0,
+				'unique_users' => 0,
+				'unique_courses' => 0,
+				'earliest_date' => null,
+				'latest_date' => null,
+			);
+		}
 
 		$stats = $wpdb->get_row(
 			"SELECT 

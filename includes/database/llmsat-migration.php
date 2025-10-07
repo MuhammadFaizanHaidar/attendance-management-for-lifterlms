@@ -52,6 +52,31 @@ class LLMS_AT_Migration {
 		$meta_stats = $this->get_meta_stats();
 		$table_stats = $this->db->get_table_stats();
 		$migration_status = get_option( 'llmsat_migration_status', 'not_started' );
+		
+		// If table doesn't exist, create it first.
+		if ( ! $this->db->table_exists() ) {
+			$this->db->create_tables();
+		}
+		
+		// Get fresh stats after ensuring table exists.
+		$table_stats = $this->db->get_table_stats();
+		
+		// Ensure we have valid stats arrays.
+		if ( ! is_array( $meta_stats ) ) {
+			$meta_stats = array(
+				'total_records' => 0,
+				'unique_users' => 0,
+				'unique_courses' => 0,
+			);
+		}
+		
+		if ( ! is_array( $table_stats ) ) {
+			$table_stats = array(
+				'total_records' => 0,
+				'unique_users' => 0,
+				'unique_courses' => 0,
+			);
+		}
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Attendance Data Migration', 'llms-attendance' ); ?></h1>
@@ -328,9 +353,18 @@ class LLMS_AT_Migration {
 				COUNT(DISTINCT user_id) as unique_users,
 				COUNT(DISTINCT SUBSTRING_INDEX(meta_key, '-', -1)) as unique_courses
 			FROM {$wpdb->usermeta} 
-			WHERE meta_key LIKE '%-%-%-%'",
+			WHERE meta_key LIKE 'llmsat_attendance_%'",
 			ARRAY_A
 		);
+
+		// Ensure we return a valid array.
+		if ( ! is_array( $stats ) ) {
+			return array(
+				'total_records' => 0,
+				'unique_users' => 0,
+				'unique_courses' => 0,
+			);
+		}
 
 		return $stats;
 	}

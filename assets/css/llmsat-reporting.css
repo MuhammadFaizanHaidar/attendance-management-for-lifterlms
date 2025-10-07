@@ -8,8 +8,10 @@
 
 /* Dashboard Container */
 .llmsat-reporting-dashboard {
-    max-width: 1200px;
-    margin: 20px auto;
+    max-width: 100%;
+    margin: 20px 0;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .llmsat-reporting-dashboard h1 {
@@ -85,8 +87,10 @@
 .llmsat-dashboard-content {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 30px;
+    gap: 20px;
     margin-bottom: 30px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Chart Container */
@@ -98,10 +102,16 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
     height: 400px;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .llmsat-chart-container canvas {
     max-height: 100%;
+    max-width: 100%;
+    width: 100% !important;
+    height: auto !important;
 }
 
 /* Stats Grid */
@@ -261,22 +271,37 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
     .llmsat-dashboard-content {
         grid-template-columns: 1fr;
+        gap: 15px;
     }
     
+    .llmsat-chart-container {
+        height: 350px;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 1024px) {
     .llmsat-dashboard-header {
         flex-direction: column;
         align-items: stretch;
+        padding: 15px;
     }
     
     .llmsat-filters {
         justify-content: center;
+        margin-bottom: 15px;
     }
     
     .llmsat-export-options {
         justify-content: center;
+    }
+    
+    .llmsat-chart-container {
+        height: 300px;
+        padding: 10px;
     }
 }
 

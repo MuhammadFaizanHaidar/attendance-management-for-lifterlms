@@ -110,12 +110,13 @@ jQuery(document).ready(function($) {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                resizeDelay: 0,
                 plugins: {
                     title: {
                         display: true,
                         text: getChartTitle(),
                         font: {
-                            size: 16,
+                            size: 14,
                             weight: 'bold'
                         }
                     },
@@ -138,18 +139,32 @@ jQuery(document).ready(function($) {
                         display: true,
                         title: {
                             display: true,
-                            text: getXAxisLabel()
+                            text: getXAxisLabel(),
+                            font: {
+                                size: 12
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            }
                         }
                     },
                     y: {
                         display: true,
                         title: {
                             display: true,
-                            text: 'Attendance Rate (%)'
+                            text: 'Attendance Rate (%)',
+                            font: {
+                                size: 12
+                            }
                         },
                         min: 0,
                         max: 100,
                         ticks: {
+                            font: {
+                                size: 11
+                            },
                             callback: function(value) {
                                 return value + '%';
                             }
@@ -357,10 +372,25 @@ jQuery(document).ready(function($) {
         }, 300000); // 5 minutes
     }
 
-    // Handle window resize
+    // Handle window resize with debouncing
+    let resizeTimeout;
     $(window).on('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+            if (attendanceChart) {
+                // Force chart to recalculate its size
+                const chartContainer = $('#attendance-chart').parent();
+                if (chartContainer.length) {
+                    attendanceChart.resize();
+                }
+            }
+        }, 250);
+    });
+
+    // Force initial resize after a short delay to ensure proper sizing
+    setTimeout(function() {
         if (attendanceChart) {
             attendanceChart.resize();
         }
-    });
+    }, 500);
 });

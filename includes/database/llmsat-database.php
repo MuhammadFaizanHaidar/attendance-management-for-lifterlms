@@ -91,6 +91,23 @@ class LLMS_AT_Database {
 	}
 
 	/**
+	 * Check if the attendance table exists.
+	 *
+	 * @return bool
+	 */
+	public function table_exists() {
+		global $wpdb;
+		$table_name = $this->get_table_name();
+		
+		$result = $wpdb->get_var( $wpdb->prepare( 
+			"SHOW TABLES LIKE %s", 
+			$table_name 
+		) );
+		
+		return $result === $table_name;
+	}
+
+	/**
 	 * Insert attendance record.
 	 */
 	public function insert_attendance( $user_id, $course_id, $attendance_date = null, $attendance_time = null ) {

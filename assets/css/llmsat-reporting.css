@@ -80,10 +80,15 @@
     padding: 8px 12px;
 }
 
-.llmsat-filters select:hover,
-.llmsat-filters input[type="date"]:hover {
+.llmsat-filters select:hover {
     border-color: #0073aa;
     background-color: #f8f9fa;
+}
+
+.llmsat-filters input[type="date"]:hover {
+    border-color: #0073aa;
+    background-color: #ffffff;
+    color: #23282d;
 }
 
 .llmsat-filters select:focus,
@@ -116,6 +121,24 @@
 .llmsat-filters select#period-filter option {
     background-color: #ffffff !important;
     color: #23282d !important;
+}
+
+/* Specific styling for date inputs */
+.llmsat-filters input[type="date"] {
+    background-color: #ffffff !important;
+    color: #23282d !important;
+}
+
+.llmsat-filters input[type="date"]:hover {
+    background-color: #ffffff !important;
+    color: #23282d !important;
+    border-color: #0073aa !important;
+}
+
+.llmsat-filters input[type="date"]:focus {
+    background-color: #ffffff !important;
+    color: #23282d !important;
+    border-color: #0073aa !important;
 }
 
 .llmsat-export-options {

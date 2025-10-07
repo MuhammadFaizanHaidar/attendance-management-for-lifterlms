@@ -245,7 +245,7 @@ class LLMS_AT_Reporting {
 				$total_students += count( $enrolled_students );
 
 				foreach ( $enrolled_students as $student_id ) {
-					$attendance_key = $current_date->format( 'Y-n-j' ) . '-' . $course_id;
+					$attendance_key = $current_date->format( 'Y-m-d' ) . '-' . $course_id;
 					$attendance = get_user_meta( $student_id, $attendance_key, true );
 					if ( ! empty( $attendance ) ) {
 						$present_students++;
@@ -306,7 +306,7 @@ class LLMS_AT_Reporting {
 
 					// Check each day of the week
 					for ( $i = 0; $i < 7; $i++ ) {
-						$attendance_key = $check_date->format( 'Y-n-j' ) . '-' . $course_id;
+						$attendance_key = $check_date->format( 'Y-m-d' ) . '-' . $course_id;
 						$attendance = get_user_meta( $student_id, $attendance_key, true );
 						if ( ! empty( $attendance ) ) {
 							$week_present = true;
@@ -374,7 +374,7 @@ class LLMS_AT_Reporting {
 
 					// Check each day of the month
 					while ( $check_date <= $month_end ) {
-						$attendance_key = $check_date->format( 'Y-n-j' ) . '-' . $course_id;
+						$attendance_key = $check_date->format( 'Y-m-d' ) . '-' . $course_id;
 						$attendance = get_user_meta( $student_id, $attendance_key, true );
 						if ( ! empty( $attendance ) ) {
 							$month_present = true;
@@ -420,8 +420,9 @@ class LLMS_AT_Reporting {
 		$enrolled_students = llms_get_enrolled_students( $course_id );
 		$total_students = count( $enrolled_students );
 
-		$current_month = date( 'Y-n' );
-		$current_day = date( 'j' );
+		$current_date = date( 'Y-m-d' );
+		$current_month = date( 'Y-m' );
+		$current_day = date( 'd' );
 
 		$stats = array(
 			'total_students'     => $total_students,
@@ -440,7 +441,7 @@ class LLMS_AT_Reporting {
 			}
 
 			// Check today's attendance
-			$today_key = $current_month . '-' . $current_day . '-' . $course_id;
+			$today_key = $current_date . '-' . $course_id;
 			$today_attendance = get_user_meta( $student_id, $today_key, true );
 			if ( ! empty( $today_attendance ) ) {
 				$stats['present_today']++;
@@ -490,8 +491,9 @@ class LLMS_AT_Reporting {
 			return array();
 		}
 
-		$current_month = date( 'Y-n' );
-		$current_day = date( 'j' );
+		$current_date = date( 'Y-m-d' );
+		$current_month = date( 'Y-m' );
+		$current_day = date( 'd' );
 
 		$stats = array(
 			'student_name'      => $user->display_name,
@@ -686,7 +688,7 @@ class LLMS_AT_Reporting {
 		$end_date = new DateTime( $date_to );
 
 		while ( $current_date <= $end_date ) {
-			$attendance_key = $current_date->format( 'Y-n-j' ) . '-' . $course_id;
+			$attendance_key = $current_date->format( 'Y-m-d' ) . '-' . $course_id;
 			$attendance = get_user_meta( $student_id, $attendance_key, true );
 			if ( ! empty( $attendance ) ) {
 				$count++;

@@ -110,12 +110,19 @@ class LLMS_AT_Database {
 		global $wpdb;
 		$table_name = $this->get_table_name();
 		
+		error_log( 'LLMS Attendance: table_exists() checking table: ' . $table_name );
+		
 		$result = $wpdb->get_var( $wpdb->prepare( 
 			"SHOW TABLES LIKE %s", 
 			$table_name 
 		) );
 		
-		return $result === $table_name;
+		error_log( 'LLMS Attendance: SHOW TABLES result: ' . ( $result ? $result : 'null' ) );
+		
+		$exists = ( $result === $table_name );
+		error_log( 'LLMS Attendance: table_exists() returning: ' . ( $exists ? 'true' : 'false' ) );
+		
+		return $exists;
 	}
 
 	/**
@@ -386,9 +393,14 @@ class LLMS_AT_Database {
 		global $wpdb;
 
 		$table_name = $this->get_table_name();
+		error_log( 'LLMS Attendance: get_table_stats() called for table: ' . $table_name );
 		
 		// Check if table exists first.
-		if ( ! $this->table_exists() ) {
+		$table_exists = $this->table_exists();
+		error_log( 'LLMS Attendance: table_exists() returned: ' . ( $table_exists ? 'true' : 'false' ) );
+		
+		if ( ! $table_exists ) {
+			error_log( 'LLMS Attendance: Table does not exist, returning empty stats' );
 			return array(
 				'total_records' => 0,
 				'unique_users' => 0,
@@ -398,6 +410,8 @@ class LLMS_AT_Database {
 			);
 		}
 
+		error_log( 'LLMS Attendance: Table exists, running stats query...' );
+		
 		$stats = $wpdb->get_row(
 			"SELECT 
 				COUNT(*) as total_records,
@@ -408,6 +422,8 @@ class LLMS_AT_Database {
 			FROM $table_name",
 			ARRAY_A
 		);
+
+		error_log( 'LLMS Attendance: Stats query result: ' . print_r( $stats, true ) );
 
 		return $stats;
 	}

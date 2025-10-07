@@ -190,6 +190,41 @@ class LLMS_Attendance {
 		add_filter( 'plugin_action_links_' . LLMS_At_BASE_DIR, array( $this, 'settings_link' ), 10, 1 );
 		add_action( 'plugins_loaded', array( $this, 'upgrade' ) );
 		add_filter( 'lifterlms_integrations', array( $this, 'register_integration' ), 10, 1 );
+
+		// Initialize testing framework classes.
+		add_action( 'init', array( $this, 'init_testing_framework' ) );
+	}
+
+	/**
+	 * Initialize testing framework classes.
+	 *
+	 * @return void
+	 */
+	public function init_testing_framework() {
+		// Only initialize in admin area.
+		if ( ! is_admin() ) {
+			return;
+		}
+
+		// Initialize testing framework.
+		if ( class_exists( 'LLMS_AT_Testing_Framework' ) ) {
+			new LLMS_AT_Testing_Framework();
+		}
+
+		// Initialize migration system.
+		if ( class_exists( 'LLMS_AT_Migration' ) ) {
+			new LLMS_AT_Migration();
+		}
+
+		// Initialize hybrid manager.
+		if ( class_exists( 'LLMS_AT_Hybrid_Manager' ) ) {
+			new LLMS_AT_Hybrid_Manager();
+		}
+
+		// Initialize database.
+		if ( class_exists( 'LLMS_AT_Database' ) ) {
+			new LLMS_AT_Database();
+		}
 	}
 
 	/**

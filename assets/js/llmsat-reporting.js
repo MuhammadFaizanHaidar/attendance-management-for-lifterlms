@@ -236,12 +236,6 @@ jQuery(document).ready(function($) {
 
     // Load course statistics
     function loadCourseStats() {
-        if (currentCourseId <= 0) {
-            $('#course-stats').html('<p>Select a specific course to view statistics.</p>');
-            $('#top-performers').html('<p>Select a specific course to view top performers.</p>');
-            return;
-        }
-
         $.ajax({
             url: llmsat_reporting_ajax.ajax_url,
             type: 'POST',

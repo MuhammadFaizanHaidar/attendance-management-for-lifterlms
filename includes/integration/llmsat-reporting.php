@@ -129,7 +129,14 @@ class LLMS_AT_Reporting {
 		check_ajax_referer( 'llmsat_reporting_nonce', 'nonce' );
 
 		$course_id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
-		$stats     = $this->get_course_attendance_stats( $course_id );
+
+		if ( $course_id > 0 ) {
+			// Single course statistics
+			$stats = $this->get_course_attendance_stats( $course_id );
+		} else {
+			// All courses statistics
+			$stats = $this->get_all_courses_attendance_stats();
+		}
 
 		wp_send_json_success( $stats );
 	}
@@ -506,6 +513,103 @@ class LLMS_AT_Reporting {
 
 		$stats['top_performers']     = array_slice( $student_attendance, 0, 5 );
 		$stats['average_attendance'] = $total_students > 0 ? round( ( $stats['present_this_month'] / $total_students ) * 100, 1 ) : 0;
+
+		return $stats;
+	}
+
+	/**
+	 * Get all courses attendance statistics
+	 */
+	private function get_all_courses_attendance_stats() {
+		$courses = get_posts(
+			array(
+				'post_type'      => 'course',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			)
+		);
+
+		$total_students         = 0;
+		$present_today          = 0;
+		$present_this_month     = 0;
+		$all_student_attendance = array();
+
+		$current_date  = date( 'Y-m-d' );
+		$current_month = date( 'Y-m' );
+		$current_day   = date( 'd' );
+
+		foreach ( $courses as $course_id ) {
+			$enrolled_students = llms_get_enrolled_students( $course_id );
+			$total_students   += count( $enrolled_students );
+
+			foreach ( $enrolled_students as $student_id ) {
+				$user = get_userdata( $student_id );
+				if ( ! $user ) {
+					continue;
+				}
+
+				// Check today's attendance
+				$today_key        = $current_date . '-' . $course_id;
+				$today_attendance = get_user_meta( $student_id, $today_key, true );
+				if ( ! empty( $today_attendance ) ) {
+					++$present_today;
+				}
+
+				// Calculate monthly attendance
+				$monthly_key   = $current_month . '-' . $course_id;
+				$monthly_count = get_user_meta( $student_id, $monthly_key, true );
+				$monthly_count = intval( $monthly_count );
+
+				if ( $monthly_count > 0 ) {
+					++$present_this_month;
+				}
+
+				// Calculate attendance percentage based on actual possible days
+				$first_mark_key   = 'first_mark' . '-' . $course_id;
+				$first_attendance = get_user_meta( $student_id, $first_mark_key, true );
+
+				if ( ! empty( $first_attendance ) ) {
+					// Parse the first attendance date
+					list( $first_year, $first_month, $first_day ) = explode( '-', $first_attendance );
+					$first_date                                   = new DateTime( $first_year . '-' . $first_month . '-' . $first_day );
+					$today_date                                   = new DateTime( $current_date );
+
+					// Calculate days since first attendance
+					$days_since_first = $first_date->diff( $today_date )->days + 1;
+
+					// Calculate percentage based on actual possible days
+					$attendance_percentage = $days_since_first > 0 ? ( $monthly_count / $days_since_first ) * 100 : 0;
+				} else {
+					// If no first attendance date, use current day of month as fallback
+					$attendance_percentage = $current_day > 0 ? ( $monthly_count / $current_day ) * 100 : 0;
+				}
+
+				// Store student data for top performers
+				$all_student_attendance[] = array(
+					'student_id'            => $student_id,
+					'student_name'          => $user->display_name,
+					'attendance_count'      => $monthly_count,
+					'attendance_percentage' => round( $attendance_percentage, 1 ),
+				);
+			}
+		}
+
+		// Sort by attendance percentage
+		usort(
+			$all_student_attendance,
+			function ( $a, $b ) {
+				return $b['attendance_percentage'] <=> $a['attendance_percentage'];
+			}
+		);
+
+		$stats = array(
+			'total_students'     => $total_students,
+			'present_today'      => $present_today,
+			'present_this_month' => $present_this_month,
+			'average_attendance' => $total_students > 0 ? round( ( $present_this_month / $total_students ) * 100, 1 ) : 0,
+			'top_performers'     => array_slice( $all_student_attendance, 0, 5 ),
+		);
 
 		return $stats;
 	}

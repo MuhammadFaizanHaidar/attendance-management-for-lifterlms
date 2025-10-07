@@ -72,25 +72,33 @@ class LLMS_Attendance {
 			return;
 		}
 
-		// Update plugin version.
-		update_option( 'llmsat_version', self::VERSION );
-		$default_values = get_option( 'llmsat_version' );
-		if ( empty( $default_values ) ) {
-			$form_data = array();
-			update_option( 'llmsat_version', $form_data );
-		}
+		try {
+			// Update plugin version.
+			update_option( 'llmsat_version', self::VERSION );
+			$default_values = get_option( 'llmsat_version' );
+			if ( empty( $default_values ) ) {
+				$form_data = array();
+				update_option( 'llmsat_version', $form_data );
+			}
 
-		// Create database tables on activation.
-		self::create_database_tables();
-		
-		// Set default migration status.
-		if ( ! get_option( 'llmsat_migration_status' ) ) {
-			update_option( 'llmsat_migration_status', 'not_started' );
-		}
-		
-		// Set default database version.
-		if ( ! get_option( 'llmsat_db_version' ) ) {
-			update_option( 'llmsat_db_version', '1.0' );
+			// Create database tables on activation.
+			self::create_database_tables();
+			
+			// Set default migration status.
+			if ( ! get_option( 'llmsat_migration_status' ) ) {
+				update_option( 'llmsat_migration_status', 'not_started' );
+			}
+			
+			// Set default database version.
+			if ( ! get_option( 'llmsat_db_version' ) ) {
+				update_option( 'llmsat_db_version', '1.0' );
+			}
+			
+			error_log( 'LLMS Attendance: Plugin activated successfully.' );
+			
+		} catch ( Exception $e ) {
+			error_log( 'LLMS Attendance: Activation error - ' . $e->getMessage() );
+			// Don't prevent activation, just log the error.
 		}
 	}
 
@@ -100,15 +108,36 @@ class LLMS_Attendance {
 	 * @return void
 	 */
 	private static function create_database_tables() {
-		// Include the database class.
-		require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-database.php';
-		
-		// Create the database instance and tables.
-		$database = new LLMS_AT_Database();
-		$database->create_tables();
-		
-		// Log successful table creation.
-		error_log( 'LLMS Attendance: Database tables created successfully during activation.' );
+		try {
+			// Define the includes directory path directly since constants aren't set up yet.
+			$includes_dir = plugin_dir_path( __FILE__ ) . 'includes/';
+			
+			// Check if the database file exists.
+			$database_file = $includes_dir . 'database/llmsat-database.php';
+			if ( ! file_exists( $database_file ) ) {
+				error_log( 'LLMS Attendance: Database file not found - ' . $database_file );
+				return;
+			}
+			
+			// Include the database class.
+			require_once $database_file;
+			
+			// Check if the class exists.
+			if ( ! class_exists( 'LLMS_AT_Database' ) ) {
+				error_log( 'LLMS Attendance: LLMS_AT_Database class not found' );
+				return;
+			}
+			
+			// Create the database instance and tables.
+			$database = new LLMS_AT_Database();
+			$database->create_tables();
+			
+			// Log successful table creation.
+			error_log( 'LLMS Attendance: Database tables created successfully during activation.' );
+			
+		} catch ( Exception $e ) {
+			error_log( 'LLMS Attendance: Database creation error - ' . $e->getMessage() );
+		}
 	}
 
 	/**
@@ -126,7 +155,8 @@ class LLMS_Attendance {
 		}
 
 		// Include database class for upgrades.
-		require_once LLMS_At_INCLUDES_DIR . 'database/llmsat-database.php';
+		$includes_dir = plugin_dir_path( __FILE__ ) . 'includes/';
+		require_once $includes_dir . 'database/llmsat-database.php';
 		$database = new LLMS_AT_Database();
 
 		// Check if database tables exist, create if not.

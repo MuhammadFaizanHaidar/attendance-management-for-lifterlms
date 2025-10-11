@@ -64,15 +64,17 @@
 
 .llmsat-filters select,
 .llmsat-filters input[type="date"] {
-    padding: 8px 12px;
-    border: 1px solid #444;
-    border-radius: 4px;
+    padding: 10px 14px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
     font-size: 14px;
-    min-width: 120px;
-    background-color: #2c3338;
-    color: #ffffff;
+    min-width: 140px;
+    background-color: #ffffff;
+    color: #23282d;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-family: inherit;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .llmsat-filters select option {
@@ -84,30 +86,24 @@
 .llmsat-filters select:hover,
 .llmsat-filters input[type="date"]:hover {
     border-color: #0073aa;
-    background-color: #ffffff;
-    color: #0073aa;
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 115, 170, 0.15);
 }
 
 .llmsat-filters select:focus,
 .llmsat-filters input[type="date"]:focus {
     border-color: #0073aa;
     outline: none;
-    box-shadow: 0 0 0 1px #0073aa;
+    box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.2);
     background-color: #ffffff;
-    color: #0073aa;
+    transform: translateY(-1px);
 }
 
 .llmsat-filters select:active,
 .llmsat-filters input[type="date"]:active {
     background-color: #ffffff;
-    color: #0073aa;
-}
-
-/* Ensure dropdown options have proper contrast */
-.llmsat-filters select option {
-    background-color: #ffffff;
-    color: #23282d;
-    padding: 8px 12px;
+    transform: translateY(0);
 }
 
 .llmsat-export-options {
@@ -115,16 +111,46 @@
     gap: 10px;
 }
 
-.llmsat-export-options .button {
-    padding: 8px 16px;
+.llmsat-export-options .button,
+#update-chart {
+    padding: 10px 20px;
     font-size: 14px;
-    border-radius: 4px;
+    border-radius: 6px;
     transition: all 0.3s ease;
+    border: 2px solid transparent;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.llmsat-export-options .button:hover,
+#update-chart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#update-chart {
+    background: #0073aa;
+    color: #ffffff;
+    border-color: #0073aa;
+}
+
+#update-chart:hover {
+    background: #005a87;
+    border-color: #005a87;
+    color: #ffffff;
+}
+
+.llmsat-export-options .button {
+    background: #ffffff;
+    color: #23282d;
+    border-color: #ddd;
 }
 
 .llmsat-export-options .button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #f8f9fa;
+    border-color: #0073aa;
+    color: #0073aa;
 }
 
 /* Dashboard Content */
@@ -174,6 +200,19 @@
     max-width: 100%;
     width: 100% !important;
     height: auto !important;
+    display: block;
+}
+
+/* Chart loading state */
+.llmsat-chart-container.loading {
+    background: #f9f9f9;
+    border: 2px dashed #ccc;
+}
+
+.llmsat-chart-container.error {
+    background: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
 }
 
 /* Stats Grid */
@@ -392,6 +431,13 @@
     .llmsat-filters input[type="date"] {
         width: 100%;
         min-width: auto;
+        margin-bottom: 10px;
+    }
+    
+    .llmsat-export-options .button,
+    #update-chart {
+        width: 100%;
+        margin-bottom: 10px;
     }
     
     .llmsat-chart-container {
@@ -462,53 +508,233 @@
 }
 
 /* Dark Mode Support */
+.llmsat-dark-mode .llmsat-reporting-dashboard h1 {
+    color: #f0f0f0;
+    border-bottom-color: #0073aa;
+}
+
+.llmsat-dark-mode .llmsat-dashboard-header,
+.llmsat-dark-mode .llmsat-chart-container,
+.llmsat-dark-mode .llmsat-stat-card {
+    background: #2c2c2c;
+    border-color: #444;
+    color: #f0f0f0;
+}
+
+.llmsat-dark-mode .llmsat-filters label {
+    color: #f0f0f0;
+}
+
+.llmsat-dark-mode .llmsat-filters select,
+.llmsat-dark-mode .llmsat-filters input[type="date"] {
+    background: #3c3c3c;
+    border-color: #555;
+    color: #f0f0f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.llmsat-dark-mode .llmsat-filters select:hover,
+.llmsat-dark-mode .llmsat-filters input[type="date"]:hover {
+    border-color: #00a0d2;
+    background-color: #444;
+    box-shadow: 0 4px 8px rgba(0, 160, 210, 0.2);
+}
+
+.llmsat-dark-mode .llmsat-filters select:focus,
+.llmsat-dark-mode .llmsat-filters input[type="date"]:focus {
+    border-color: #00a0d2;
+    box-shadow: 0 0 0 3px rgba(0, 160, 210, 0.3);
+    background-color: #444;
+}
+
+.llmsat-dark-mode .llmsat-filters select option {
+    background: #3c3c3c;
+    color: #f0f0f0;
+}
+
+.llmsat-dark-mode #update-chart {
+    background: #00a0d2;
+    border-color: #00a0d2;
+    color: #ffffff;
+}
+
+.llmsat-dark-mode #update-chart:hover {
+    background: #0073aa;
+    border-color: #0073aa;
+    color: #ffffff;
+}
+
+.llmsat-dark-mode .llmsat-export-options .button {
+    background: #3c3c3c;
+    color: #f0f0f0;
+    border-color: #555;
+}
+
+.llmsat-dark-mode .llmsat-export-options .button:hover {
+    background: #444;
+    border-color: #00a0d2;
+    color: #00a0d2;
+}
+
+.llmsat-dark-mode .llmsat-stat-card h3 {
+    color: #f0f0f0;
+    border-bottom-color: #444;
+}
+
+.llmsat-dark-mode .llmsat-stat-label {
+    color: #ccc;
+}
+
+.llmsat-dark-mode .llmsat-performer-item {
+    background: #3c3c3c;
+}
+
+.llmsat-dark-mode .llmsat-performer-item:hover {
+    background: #444;
+}
+
+.llmsat-dark-mode .llmsat-performer-name {
+    color: #f0f0f0;
+}
+
+.llmsat-dark-mode .llmsat-performer-stats {
+    color: #ccc;
+}
+
+.llmsat-dark-mode .llmsat-loading {
+    color: #f0f0f0;
+}
+
+.llmsat-dark-mode .llmsat-error {
+    background: #4a1a1a;
+    border-color: #6b2c2c;
+    color: #f8d7da;
+}
+
+/* Dark Mode Toggle Button */
+.llmsat-dark-mode-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    background: #0073aa;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    font-size: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.llmsat-dark-mode-toggle:hover {
+    background: #005a87;
+    transform: scale(1.1);
+}
+
+.llmsat-dark-mode .llmsat-dark-mode-toggle {
+    background: #444;
+    color: #f0f0f0;
+}
+
+.llmsat-dark-mode .llmsat-dark-mode-toggle:hover {
+    background: #555;
+}
+
+/* System Dark Mode Support (fallback) */
 @media (prefers-color-scheme: dark) {
-    .llmsat-reporting-dashboard h1 {
+    body:not(.llmsat-light-mode) .llmsat-reporting-dashboard h1 {
         color: #f0f0f0;
         border-bottom-color: #0073aa;
     }
     
-    .llmsat-dashboard-header,
-    .llmsat-chart-container,
-    .llmsat-stat-card {
+    body:not(.llmsat-light-mode) .llmsat-dashboard-header,
+    body:not(.llmsat-light-mode) .llmsat-chart-container,
+    body:not(.llmsat-light-mode) .llmsat-stat-card {
         background: #2c2c2c;
         border-color: #444;
         color: #f0f0f0;
     }
     
-    .llmsat-filters label {
+    body:not(.llmsat-light-mode) .llmsat-filters label {
         color: #f0f0f0;
     }
     
-    .llmsat-filters select,
-    .llmsat-filters input[type="date"] {
+    body:not(.llmsat-light-mode) .llmsat-filters select,
+    body:not(.llmsat-light-mode) .llmsat-filters input[type="date"] {
         background: #3c3c3c;
         border-color: #555;
         color: #f0f0f0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
     
-    .llmsat-stat-card h3 {
+    body:not(.llmsat-light-mode) .llmsat-filters select:hover,
+    body:not(.llmsat-light-mode) .llmsat-filters input[type="date"]:hover {
+        border-color: #00a0d2;
+        background-color: #444;
+        box-shadow: 0 4px 8px rgba(0, 160, 210, 0.2);
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-filters select:focus,
+    body:not(.llmsat-light-mode) .llmsat-filters input[type="date"]:focus {
+        border-color: #00a0d2;
+        box-shadow: 0 0 0 3px rgba(0, 160, 210, 0.3);
+        background-color: #444;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-filters select option {
+        background: #3c3c3c;
+        color: #f0f0f0;
+    }
+    
+    body:not(.llmsat-light-mode) #update-chart {
+        background: #00a0d2;
+        border-color: #00a0d2;
+        color: #ffffff;
+    }
+    
+    body:not(.llmsat-light-mode) #update-chart:hover {
+        background: #0073aa;
+        border-color: #0073aa;
+        color: #ffffff;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-export-options .button {
+        background: #3c3c3c;
+        color: #f0f0f0;
+        border-color: #555;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-export-options .button:hover {
+        background: #444;
+        border-color: #00a0d2;
+        color: #00a0d2;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-stat-card h3 {
         color: #f0f0f0;
         border-bottom-color: #444;
     }
     
-    .llmsat-stat-label {
+    body:not(.llmsat-light-mode) .llmsat-stat-label {
         color: #ccc;
     }
     
-    .llmsat-performer-item {
+    body:not(.llmsat-light-mode) .llmsat-performer-item {
         background: #3c3c3c;
     }
     
-    .llmsat-performer-item:hover {
+    body:not(.llmsat-light-mode) .llmsat-performer-item:hover {
         background: #444;
     }
     
-    .llmsat-performer-name {
+    body:not(.llmsat-light-mode) .llmsat-performer-name {
         color: #f0f0f0;
     }
     
-    .llmsat-performer-stats {
+    body:not(.llmsat-light-mode) .llmsat-performer-stats {
         color: #ccc;
     }
 }

@@ -74,7 +74,7 @@ class LLMS_AT_Reporting {
 			return;
 		}
 
-		// Chart.js for data visualization.
+		// Chart.js for data visualization with fallback
 		wp_enqueue_script(
 			'chart-js',
 			'https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js',
@@ -126,47 +126,19 @@ class LLMS_AT_Reporting {
 			$date_to   = isset( $_POST['date_to'] ) ? sanitize_text_field( wp_unslash( $_POST['date_to'] ) ) : '';
 			$period    = isset( $_POST['period'] ) ? sanitize_text_field( wp_unslash( $_POST['period'] ) ) : 'monthly';
 
-		// Check if hybrid manager is properly initialized
+		// Check if hybrid manager is properly initialized.
 		if ( ! $this->hybrid_manager ) {
 			$this->hybrid_manager = new LLMS_AT_Hybrid_Manager();
 		}
 		
-		// Ensure hybrid manager is using the correct data source
+		// Ensure hybrid manager is using the correct data source.
 		$migration_status = get_option( 'llmsat_migration_status', 'not_started' );
 		if ( 'completed' === $migration_status || 'cleanup_completed' === $migration_status ) {
-			// Force refresh of hybrid manager to use custom table
+			// Force refresh of hybrid manager to use custom table.
 			$this->hybrid_manager = new LLMS_AT_Hybrid_Manager();
 		}
 
 			$data = $this->get_attendance_chart_data( $course_id, $date_from, $date_to, $period );
-
-			// Add debug information to response
-			$data['debug_info'] = array(
-				'course_id' => $course_id,
-				'date_from' => $date_from,
-				'date_to' => $date_to,
-				'period' => $period,
-				'hybrid_manager_status' => $this->hybrid_manager ? 'initialized' : 'not_initialized',
-				'migration_status' => get_option( 'llmsat_migration_status', 'not_started' ),
-				'use_custom_table' => get_option( 'llmsat_use_custom_table', false ),
-			);
-			
-			// Add course and student information
-			if ( function_exists( 'llms_get_enrolled_students' ) ) {
-				$all_courses = get_posts( array( 'post_type' => 'course', 'numberposts' => -1 ) );
-				$data['debug_info']['total_courses'] = count( $all_courses );
-				$data['debug_info']['course_details'] = array();
-				
-				foreach ( $all_courses as $course ) {
-					$enrolled_students = llms_get_enrolled_students( $course->ID );
-					$data['debug_info']['course_details'][] = array(
-						'id' => $course->ID,
-						'title' => $course->post_title,
-						'enrolled_students' => $enrolled_students,
-						'enrolled_count' => count( $enrolled_students )
-					);
-				}
-			}
 
 			wp_send_json_success( $data );
 
@@ -211,12 +183,28 @@ class LLMS_AT_Reporting {
 	 * Export attendance data.
 	 */
 	public function export_attendance_data() {
-		check_ajax_referer( 'llmsat_reporting_nonce', 'nonce' );
+		// Handle both GET and POST requests.
+		$request_data = $_SERVER['REQUEST_METHOD'] === 'GET' ? $_GET : $_POST;
+		
+		// Verify nonce for security.
+		if ( ! wp_verify_nonce( $request_data['nonce'] ?? '', 'llmsat_reporting_nonce' ) ) {
+			wp_die( esc_html__( 'Security check failed.', 'llms-attendance' ) );
+		}
 
-		$course_id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
-		$date_from = isset( $_POST['date_from'] ) ? sanitize_text_field( $_POST['date_from'] ) : '';
-		$date_to   = isset( $_POST['date_to'] ) ? sanitize_text_field( $_POST['date_to'] ) : '';
-		$format    = isset( $_POST['format'] ) ? sanitize_text_field( $_POST['format'] ) : 'csv';
+		$course_id = isset( $request_data['course_id'] ) ? intval( $request_data['course_id'] ) : 0;
+		$date_from = isset( $request_data['date_from'] ) ? sanitize_text_field( wp_unslash( $request_data['date_from'] ) ) : '';
+		$date_to   = isset( $request_data['date_to'] ) ? sanitize_text_field( wp_unslash( $request_data['date_to'] ) ) : '';
+		$format    = isset( $request_data['format'] ) ? sanitize_text_field( wp_unslash( $request_data['format'] ) ) : 'csv';
+
+		// Validate user permissions.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to export data.', 'llms-attendance' ) );
+		}
+
+		// Validate format.
+		if ( ! in_array( $format, array( 'csv', 'pdf' ), true ) ) {
+			wp_die( esc_html__( 'Invalid export format.', 'llms-attendance' ) );
+		}
 
 		if ( 'csv' === $format ) {
 			$this->export_csv( $course_id, $date_from, $date_to );
@@ -231,50 +219,6 @@ class LLMS_AT_Reporting {
 	private function get_attendance_chart_data( $course_id = 0, $date_from = '', $date_to = '', $period = 'monthly' ) {
 		global $wpdb;
 
-		// Debug: Test LifterLMS function and get enrolled students info
-		$debug_info = array();
-		if ( function_exists( 'llms_get_enrolled_students' ) ) {
-			$debug_info['llms_function_exists'] = true;
-			$test_enrolled = llms_get_enrolled_students( 14 );
-			$debug_info['course_14_enrolled'] = $test_enrolled;
-		} else {
-			$debug_info['llms_function_exists'] = false;
-		}
-		
-		// Get all courses info
-		$all_courses = get_posts( array( 'post_type' => 'course', 'numberposts' => -1 ) );
-		$debug_info['total_courses'] = count( $all_courses );
-		$debug_info['course_details'] = array();
-		
-		foreach ( $all_courses as $course ) {
-			$enrolled_students = llms_get_enrolled_students( $course->ID );
-			$debug_info['course_details'][] = array(
-				'id' => $course->ID,
-				'title' => $course->post_title,
-				'enrolled_students' => $enrolled_students,
-				'enrolled_count' => count( $enrolled_students )
-			);
-		}
-
-		// Debug: Check custom table data (with graceful degradation)
-		$table_name   = $wpdb->prefix . 'llmsat_attendance';
-		$table_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_name ) );
-
-		if ( $table_exists ) {
-			$custom_table_students = $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT user_id, COUNT(*) as count 
-					FROM %i 
-					GROUP BY user_id 
-					ORDER BY count DESC 
-					LIMIT 10",
-					$table_name
-				)
-			);
-			
-			// Also show sample records with dates
-			$sample_records = $wpdb->get_results( "SELECT user_id, course_id, attendance_date FROM $table_name ORDER BY attendance_date DESC LIMIT 10" );
-		}
 
 		$data = array(
 			'labels'   => array(),
@@ -327,9 +271,6 @@ class LLMS_AT_Reporting {
 				break;
 		}
 
-		// Add debug info to data
-		$data['debug_info'] = $debug_info;
-		
 		return $data;
 	}
 
@@ -828,13 +769,28 @@ class LLMS_AT_Reporting {
 	}
 
 	/**
-	 * Export data to CSV
+	 * Export data to CSV.
+	 *
+	 * @param int    $course_id Course ID.
+	 * @param string $date_from Date from.
+	 * @param string $date_to Date to.
 	 */
 	private function export_csv( $course_id, $date_from, $date_to ) {
-		$filename = 'attendance-report-' . date( 'Y-m-d' ) . '.csv';
+		$filename = 'attendance-report-' . gmdate( 'Y-m-d-H-i-s' ) . '.csv';
+		$filename = sanitize_file_name( $filename );
 
-		header( 'Content-Type: text/csv' );
+		// Set proper security headers.
+		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
+		header( 'Cache-Control: private, no-transform, no-store, must-revalidate' );
+		header( 'Pragma: no-cache' );
+		header( 'Expires: 0' );
+		header( 'X-Content-Type-Options: nosniff' );
+		header( 'X-Frame-Options: SAMEORIGIN' );
+		header( 'Content-Security-Policy: default-src \'self\'' );
+
+		// Add BOM for UTF-8 compatibility
+		echo "\xEF\xBB\xBF";
 
 		$output = fopen( 'php://output', 'w' );
 
@@ -886,12 +842,12 @@ class LLMS_AT_Reporting {
 				fputcsv(
 					$output,
 					array(
-						$user->display_name,
-						$user->user_email,
-						$course_name,
+						sanitize_text_field( $user->display_name ),
+						sanitize_email( $user->user_email ),
+						sanitize_text_field( $course_name ),
 						$attendance_count,
 						$attendance_percentage . '%',
-						$date_from . ' to ' . $date_to,
+						sanitize_text_field( $date_from . ' to ' . $date_to ),
 					)
 				);
 			}
@@ -903,22 +859,34 @@ class LLMS_AT_Reporting {
 
 	/**
 	 * Export data to PDF (basic implementation)
+	 *
+	 * @param int    $course_id Course ID.
+	 * @param string $date_from Date from.
+	 * @param string $date_to Date to.
 	 */
 	private function export_pdf( $course_id, $date_from, $date_to ) {
 		// For now, we'll create a simple HTML-based PDF.
 		// In a production environment, you might want to use a proper PDF library like TCPDF or mPDF.
 
-		$filename = 'attendance-report-' . date( 'Y-m-d' ) . '.html';
+		$filename = 'attendance-report-' . gmdate( 'Y-m-d-H-i-s' ) . '.html';
+		$filename = sanitize_file_name( $filename );
 
-		header( 'Content-Type: text/html' );
+		// Set proper security headers
+		header( 'Content-Type: text/html; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
+		header( 'Cache-Control: private, no-transform, no-store, must-revalidate' );
+		header( 'Pragma: no-cache' );
+		header( 'Expires: 0' );
+		header( 'X-Content-Type-Options: nosniff' );
+		header( 'X-Frame-Options: SAMEORIGIN' );
+		header( 'Content-Security-Policy: default-src \'self\'' );
 
 		echo '<!DOCTYPE html><html><head><title>Attendance Report</title>';
 		echo '<style>body{font-family:Arial,sans-serif;}table{border-collapse:collapse;width:100%;}th,td{border:1px solid #ddd;padding:8px;text-align:left;}th{background-color:#f2f2f2;}</style>';
 		echo '</head><body>';
 		echo '<h1>Attendance Report</h1>';
-		echo '<p>Generated on: ' . date( 'Y-m-d H:i:s' ) . '</p>';
-		echo '<p>Date Range: ' . $date_from . ' to ' . $date_to . '</p>';
+		echo '<p>Generated on: ' . esc_html( gmdate( 'Y-m-d H:i:s' ) ) . '</p>';
+		echo '<p>Date Range: ' . esc_html( $date_from . ' to ' . $date_to ) . '</p>';
 
 		// Get courses to export.
 		$courses = array();

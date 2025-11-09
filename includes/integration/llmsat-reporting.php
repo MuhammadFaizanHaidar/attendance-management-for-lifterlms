@@ -120,23 +120,23 @@ class LLMS_AT_Reporting {
 
 		try {
 			global $wpdb;
-			
+
 			$course_id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
 			$date_from = isset( $_POST['date_from'] ) ? sanitize_text_field( wp_unslash( $_POST['date_from'] ) ) : '';
 			$date_to   = isset( $_POST['date_to'] ) ? sanitize_text_field( wp_unslash( $_POST['date_to'] ) ) : '';
 			$period    = isset( $_POST['period'] ) ? sanitize_text_field( wp_unslash( $_POST['period'] ) ) : 'monthly';
 
-		// Check if hybrid manager is properly initialized.
-		if ( ! $this->hybrid_manager ) {
-			$this->hybrid_manager = new LLMS_AT_Hybrid_Manager();
-		}
-		
-		// Ensure hybrid manager is using the correct data source.
-		$migration_status = get_option( 'llmsat_migration_status', 'not_started' );
-		if ( 'completed' === $migration_status || 'cleanup_completed' === $migration_status ) {
-			// Force refresh of hybrid manager to use custom table.
-			$this->hybrid_manager = new LLMS_AT_Hybrid_Manager();
-		}
+			// Check if hybrid manager is properly initialized.
+			if ( ! $this->hybrid_manager ) {
+				$this->hybrid_manager = new LLMS_AT_Hybrid_Manager();
+			}
+
+			// Ensure hybrid manager is using the correct data source.
+			$migration_status = get_option( 'llmsat_migration_status', 'not_started' );
+			if ( 'completed' === $migration_status || 'cleanup_completed' === $migration_status ) {
+				// Force refresh of hybrid manager to use custom table.
+				$this->hybrid_manager = new LLMS_AT_Hybrid_Manager();
+			}
 
 			$data = $this->get_attendance_chart_data( $course_id, $date_from, $date_to, $period );
 
@@ -185,7 +185,7 @@ class LLMS_AT_Reporting {
 	public function export_attendance_data() {
 		// Handle both GET and POST requests.
 		$request_data = $_SERVER['REQUEST_METHOD'] === 'GET' ? $_GET : $_POST;
-		
+
 		// Verify nonce for security.
 		if ( ! wp_verify_nonce( $request_data['nonce'] ?? '', 'llmsat_reporting_nonce' ) ) {
 			wp_die( esc_html__( 'Security check failed.', 'llms-attendance' ) );
@@ -218,7 +218,6 @@ class LLMS_AT_Reporting {
 	 */
 	private function get_attendance_chart_data( $course_id = 0, $date_from = '', $date_to = '', $period = 'monthly' ) {
 		global $wpdb;
-
 
 		$data = array(
 			'labels'   => array(),
@@ -426,23 +425,23 @@ class LLMS_AT_Reporting {
 					$total_students   += count( $enrolled_students );
 
 					foreach ( $enrolled_students as $student_id ) {
-						$month_present = false;
-						$check_date    = clone $month_start;
+						$month_present    = false;
+						$check_date       = clone $month_start;
 						$attendance_found = false;
 
 						// Check each day of the month.
 						while ( $check_date <= $month_end ) {
 							$date_string = $check_date->format( 'Y-m-d' );
-							$attendance = $this->hybrid_manager->has_attendance( $student_id, $course_id, $date_string );
-							
+							$attendance  = $this->hybrid_manager->has_attendance( $student_id, $course_id, $date_string );
+
 							if ( $attendance ) {
-								$month_present = true;
+								$month_present    = true;
 								$attendance_found = true;
 								break;
 							}
 							$check_date->add( new DateInterval( 'P1D' ) );
 						}
-						
+
 						if ( ! $attendance_found ) {
 							// No attendance found for this student in this month
 						}
@@ -464,10 +463,10 @@ class LLMS_AT_Reporting {
 				'labels'   => array(),
 				'datasets' => array(
 					array(
-						'label'           => __( 'Monthly Attendance Rate (%)', 'llms-attendance' ),
-						'data'            => array(),
-						'borderColor'     => '#00a0d2',
-						'backgroundColor' => 'rgba(0, 160, 210, 0.2)',
+						'label'                => __( 'Monthly Attendance Rate (%)', 'llms-attendance' ),
+						'data'                 => array(),
+						'borderColor'          => '#00a0d2',
+						'backgroundColor'      => 'rgba(0, 160, 210, 0.2)',
 						'pointBackgroundColor' => '#00a0d2',
 						'pointBorderColor'     => '#ffffff',
 						'pointBorderWidth'     => 2,
@@ -508,6 +507,8 @@ class LLMS_AT_Reporting {
 		$current_date  = date( 'Y-m-d' );
 		$current_month = date( 'Y-m' );
 		$current_day   = date( 'd' );
+		// Get the last day of the current month (handles months with 28-31 days correctly).
+		$last_day_of_month = date( 't' );
 
 		$stats = array(
 			'total_students'     => $total_students,
@@ -532,7 +533,7 @@ class LLMS_AT_Reporting {
 			}
 
 			// Calculate monthly attendance using hybrid manager.
-			$monthly_count = $this->hybrid_manager->get_attendance_data( $student_id, $course_id, $current_month . '-01', $current_month . '-31' );
+			$monthly_count = $this->hybrid_manager->get_attendance_data( $student_id, $course_id, $current_month . '-01', $current_month . '-' . $last_day_of_month );
 			$monthly_count = intval( $monthly_count );
 
 			if ( $monthly_count > 0 ) {
@@ -603,6 +604,8 @@ class LLMS_AT_Reporting {
 		$current_date  = date( 'Y-m-d' );
 		$current_month = date( 'Y-m' );
 		$current_day   = date( 'd' );
+		// Get the last day of the current month (handles months with 28-31 days correctly).
+		$last_day_of_month = date( 't' );
 
 		foreach ( $courses as $course_id ) {
 			$enrolled_students = llms_get_enrolled_students( $course_id );
@@ -621,7 +624,7 @@ class LLMS_AT_Reporting {
 				}
 
 				// Calculate monthly attendance using hybrid manager.
-				$monthly_count = $this->hybrid_manager->get_attendance_data( $student_id, $course_id, $current_month . '-01', $current_month . '-31' );
+				$monthly_count = $this->hybrid_manager->get_attendance_data( $student_id, $course_id, $current_month . '-01', $current_month . '-' . $last_day_of_month );
 				$monthly_count = intval( $monthly_count );
 
 				if ( $monthly_count > 0 ) {
@@ -693,6 +696,8 @@ class LLMS_AT_Reporting {
 		$current_date  = date( 'Y-m-d' );
 		$current_month = date( 'Y-m' );
 		$current_day   = date( 'd' );
+		// Get the last day of the current month (handles months with 28-31 days correctly).
+		$last_day_of_month = date( 't' );
 
 		$stats = array(
 			'student_name'          => $user->display_name,
@@ -704,7 +709,7 @@ class LLMS_AT_Reporting {
 
 		if ( $course_id > 0 ) {
 			// Single course stats using hybrid manager.
-			$attendance_count = $this->hybrid_manager->get_attendance_data( $student_id, $course_id, $current_month . '-01', $current_month . '-31' );
+			$attendance_count = $this->hybrid_manager->get_attendance_data( $student_id, $course_id, $current_month . '-01', $current_month . '-' . $last_day_of_month );
 			$attendance_count = intval( $attendance_count );
 
 			// Calculate attendance percentage based on actual possible days.
@@ -746,7 +751,7 @@ class LLMS_AT_Reporting {
 			foreach ( $courses as $course ) {
 				$enrolled_students = llms_get_enrolled_students( $course );
 				if ( in_array( $student_id, $enrolled_students ) ) {
-					$attendance_count = $this->hybrid_manager->get_attendance_data( $student_id, $course, $current_month . '-01', $current_month . '-31' );
+					$attendance_count = $this->hybrid_manager->get_attendance_data( $student_id, $course, $current_month . '-01', $current_month . '-' . $last_day_of_month );
 					$attendance_count = intval( $attendance_count );
 
 					$total_attendance += $attendance_count;
@@ -1054,8 +1059,10 @@ class LLMS_AT_Reporting {
 		}
 
 		$threshold     = intval( get_option( 'llms_integration_low_attendance_threshold', 70 ) );
-		$current_month = date( 'Y-n' );
-		$current_day   = date( 'j' );
+		$current_month = date( 'Y-m' );
+		$current_day   = date( 'd' );
+		// Get the last day of the current month (handles months with 28-31 days correctly).
+		$last_day_of_month = date( 't' );
 
 		// Get all courses.
 		$courses = get_posts(
@@ -1077,7 +1084,7 @@ class LLMS_AT_Reporting {
 				}
 
 				// Calculate attendance percentage using hybrid manager.
-				$attendance_count = $this->hybrid_manager->get_attendance_data( $student_id, $course->ID, $current_month . '-01', $current_month . '-31' );
+				$attendance_count = $this->hybrid_manager->get_attendance_data( $student_id, $course->ID, $current_month . '-01', $current_month . '-' . $last_day_of_month );
 				$attendance_count = intval( $attendance_count );
 
 				$attendance_percentage = $current_day > 0 ? ( $attendance_count / $current_day ) * 100 : 0;

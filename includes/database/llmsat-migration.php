@@ -80,6 +80,21 @@ class LLMS_AT_Migration {
 				<?php esc_html_e( 'This migration will move your attendance data from WordPress user meta to a custom database table for better performance and scalability.', 'llms-attendance' ); ?></p>
 			</div>
 
+			<?php if ( 'not_started' === $migration_status && $meta_stats['total_records'] > 0 ) : ?>
+			<div class="notice notice-warning">
+				<h3><?php esc_html_e( 'Migration Required', 'llms-attendance' ); ?></h3>
+				<p><?php esc_html_e( 'You have attendance data that needs to be migrated to the new database structure. Follow these steps:', 'llms-attendance' ); ?></p>
+				<ol style="margin-left: 20px;">
+					<li><?php esc_html_e( 'Review the statistics below to see how many records will be migrated.', 'llms-attendance' ); ?></li>
+					<li><?php esc_html_e( 'Click the "Start Migration" button to begin the process.', 'llms-attendance' ); ?></li>
+					<li><?php esc_html_e( 'Wait for the migration to complete (you\'ll see a progress bar).', 'llms-attendance' ); ?></li>
+					<li><?php esc_html_e( 'After migration completes, click "Clean Up Meta Data" to remove old data (optional but recommended).', 'llms-attendance' ); ?></li>
+					<li><?php esc_html_e( 'Verify your attendance data is working correctly in your courses and reports.', 'llms-attendance' ); ?></li>
+				</ol>
+				<p><strong><?php esc_html_e( 'Note:', 'llms-attendance' ); ?></strong> <?php esc_html_e( 'The migration is safe and non-destructive. Your data will remain in both locations until you choose to clean up. We recommend backing up your database before proceeding.', 'llms-attendance' ); ?></p>
+			</div>
+			<?php endif; ?>
+
 			<div class="llmsat-migration-stats">
 				<h2><?php esc_html_e( 'Migration Statistics', 'llms-attendance' ); ?></h2>
 				
@@ -90,7 +105,7 @@ class LLMS_AT_Migration {
 						<p><strong><?php echo esc_html( $meta_stats['unique_users'] ); ?></strong> <?php esc_html_e( 'unique students', 'llms-attendance' ); ?></p>
 						<p><strong><?php echo esc_html( $meta_stats['unique_courses'] ); ?></strong> <?php esc_html_e( 'unique courses', 'llms-attendance' ); ?></p>
 						
-						<?php if ( $meta_stats['total_records'] > 0 ): ?>
+						<?php if ( $meta_stats['total_records'] > 0 ) : ?>
 						<div style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 4px;">
 							<h4>Debug: Remaining Meta Keys</h4>
 							<?php
@@ -100,19 +115,19 @@ class LLMS_AT_Migration {
 								WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]+$' 
 								ORDER BY meta_key LIMIT 10"
 							);
-							
+
 							if ( $remaining_keys ) {
 								echo '<ul>';
 								foreach ( $remaining_keys as $key ) {
 									echo '<li><strong>' . esc_html( $key->meta_key ) . '</strong> (User: ' . esc_html( $key->user_id ) . ', Value: ' . esc_html( $key->meta_value ) . ')</li>';
 								}
 								echo '</ul>';
-								
+
 								$total_remaining = $wpdb->get_var(
 									"SELECT COUNT(*) FROM {$wpdb->usermeta} 
 									WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]+$'"
 								);
-								
+
 								if ( $total_remaining > 10 ) {
 									echo '<p><em>... and ' . esc_html( $total_remaining - 10 ) . ' more records</em></p>';
 								}
@@ -161,7 +176,7 @@ class LLMS_AT_Migration {
 							<?php esc_html_e( 'Migration and cleanup completed successfully! All data is now stored in the custom table.', 'llms-attendance' ); ?>
 						</p>
 						
-						<?php if ( $meta_stats['total_records'] > 0 ): ?>
+						<?php if ( $meta_stats['total_records'] > 0 ) : ?>
 						<div class="notice notice-warning">
 							<p><strong><?php esc_html_e( 'Warning:', 'llms-attendance' ); ?></strong> 
 							<?php esc_html_e( 'Some meta data is still present. You can force cleanup to remove it.', 'llms-attendance' ); ?></p>
@@ -527,7 +542,7 @@ class LLMS_AT_Migration {
 
 		// Get meta records to delete
 		global $wpdb;
-		
+
 		// Delete attendance meta records
 		$deleted_attendance = $wpdb->query(
 			"DELETE FROM {$wpdb->usermeta} WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]+$'"
@@ -547,17 +562,19 @@ class LLMS_AT_Migration {
 
 		// Update migration status to indicate cleanup is done
 		update_option( 'llmsat_migration_status', 'cleanup_completed' );
-		
+
 		// Enable custom table usage after cleanup
 		update_option( 'llmsat_use_custom_table', true );
 
-		wp_send_json_success( array(
-			'message' => sprintf( 'Meta data cleanup completed! Deleted %d meta records.', $total_deleted ),
-			'deleted_attendance' => $deleted_attendance,
-			'deleted_monthly' => $deleted_monthly,
-			'deleted_first_mark' => $deleted_first_mark,
-			'total_deleted' => $total_deleted
-		) );
+		wp_send_json_success(
+			array(
+				'message'            => sprintf( 'Meta data cleanup completed! Deleted %d meta records.', $total_deleted ),
+				'deleted_attendance' => $deleted_attendance,
+				'deleted_monthly'    => $deleted_monthly,
+				'deleted_first_mark' => $deleted_first_mark,
+				'total_deleted'      => $total_deleted,
+			)
+		);
 	}
 
 	/**
@@ -568,7 +585,7 @@ class LLMS_AT_Migration {
 
 		// Get meta records to delete
 		global $wpdb;
-		
+
 		// Delete attendance meta records
 		$deleted_attendance = $wpdb->query(
 			"DELETE FROM {$wpdb->usermeta} WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]+$'"
@@ -586,12 +603,14 @@ class LLMS_AT_Migration {
 
 		$total_deleted = $deleted_attendance + $deleted_monthly + $deleted_first_mark;
 
-		wp_send_json_success( array(
-			'message' => sprintf( 'Force cleanup completed! Deleted %d meta records.', $total_deleted ),
-			'deleted_attendance' => $deleted_attendance,
-			'deleted_monthly' => $deleted_monthly,
-			'deleted_first_mark' => $deleted_first_mark,
-			'total_deleted' => $total_deleted
-		) );
+		wp_send_json_success(
+			array(
+				'message'            => sprintf( 'Force cleanup completed! Deleted %d meta records.', $total_deleted ),
+				'deleted_attendance' => $deleted_attendance,
+				'deleted_monthly'    => $deleted_monthly,
+				'deleted_first_mark' => $deleted_first_mark,
+				'total_deleted'      => $total_deleted,
+			)
+		);
 	}
 }

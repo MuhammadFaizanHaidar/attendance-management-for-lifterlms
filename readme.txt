@@ -90,6 +90,11 @@ Before installation please make sure you have latest LifterLMS installed.
 7. Display Attendance Information using shortcodes 
 8. Admin can disallow attendance on specific courses students will not be able to mark attendance
 9. Disallow attendance
+10. Global Attendance
+11. Attendance Reporting Settings
+12. Attendance Migration
+13. Attendance Reporting
+14. Dark Mode
 
 == FAQ ==
 
@@ -108,6 +113,40 @@ Yes, you can use “Attendance Management For LifterLMS”  addon and any other 
 - **NEW**: Email notifications for low attendance
 - **IMPROVED**: Enhanced error handling and graceful degradation
 - **IMPROVED**: Better database indexing and query optimization
+
+**⚠️ IMPORTANT - MIGRATION REQUIRED FOR EXISTING USERS:**
+
+If you're upgrading from version 1.x to 2.0.0, you **MUST** run the data migration tool to move your attendance data from the old storage system to the new optimized database table.
+
+**How to Migrate Your Data:**
+
+1. After updating to version 2.0.0, you'll see an admin notice at the top of your WordPress admin area prompting you to run the migration.
+
+2. Click the "Go to Migration Tool" button, or navigate to **LifterLMS → Courses → Attendance Migration** from your WordPress admin menu.
+
+3. Review the migration statistics showing:
+   - How many attendance records are in the old system (Meta Storage)
+   - How many records are already in the new system (Custom Table)
+
+4. Click the **"Start Migration"** button to begin the migration process.
+
+5. The migration will run in the background and show a progress bar. Wait for it to complete.
+
+6. After migration completes, click **"Clean Up Meta Data"** to remove the old data from user meta (optional but recommended for performance).
+
+7. Verify your attendance data is working correctly by checking:
+   - Student attendance records in course edit pages
+   - Attendance reports dashboard
+   - Student attendance statistics
+
+**Important Notes:**
+- The migration process is safe and non-destructive. Your data will remain in both locations until you choose to clean up.
+- You can continue using the plugin normally during migration - it will work with both old and new data.
+- We recommend backing up your database before running the migration (standard WordPress best practice).
+- If you encounter any issues, the migration can be run multiple times safely.
+
+**For New Installations:**
+If you're installing version 2.0.0 for the first time, no migration is needed. The plugin will automatically use the new database structure.
 
 *1.0.3*
 - Tested with latest versions of WordPress and LifterLMS.

@@ -279,6 +279,7 @@ class LLMS_Attendance {
 		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ), 1 );
 		add_action( 'init', array( $this, 'init_migration_system' ) );
 		add_filter( 'lifterlms_integrations', array( $this, 'register_integration' ), 10, 1 );
+		add_action( 'admin_notices', array( $this, 'migration_admin_notice' ) );
 	}
 
 	/**
@@ -341,6 +342,62 @@ class LLMS_Attendance {
 			if ( class_exists( 'LLMS_AT_Testing_Framework' ) ) {
 				new LLMS_AT_Testing_Framework();
 			}
+		}
+	}
+
+	/**
+	 * Display admin notice for migration if needed.
+	 *
+	 * @return void
+	 */
+	public function migration_admin_notice() {
+		// Only show to administrators.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// Don't show on migration page itself.
+		$screen = get_current_screen();
+		if ( $screen && 'course_page_llms-attendance-migration' === $screen->id ) {
+			return;
+		}
+
+		$migration_status = get_option( 'llmsat_migration_status', 'not_started' );
+		
+		// Check if there's data in meta that needs migration.
+		global $wpdb;
+		$meta_count = $wpdb->get_var(
+			"SELECT COUNT(*) FROM {$wpdb->usermeta} 
+			WHERE meta_key REGEXP '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]+$'"
+		);
+
+		// Only show notice if migration hasn't been completed and there's data to migrate.
+		if ( ( 'not_started' === $migration_status || 'in_progress' === $migration_status ) && $meta_count > 0 ) {
+			$migration_url = admin_url( 'edit.php?post_type=course&page=llms-attendance-migration' );
+			?>
+			<div class="notice notice-warning is-dismissible">
+				<p>
+					<strong><?php esc_html_e( 'Attendance Management For LifterLMS - Migration Required', 'llms-attendance' ); ?></strong>
+				</p>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: number of records */
+						esc_html__( 'You have %s attendance records that need to be migrated to the new database structure for improved performance. Please run the migration tool to complete the upgrade.', 'llms-attendance' ),
+						'<strong>' . esc_html( number_format_i18n( $meta_count ) ) . '</strong>'
+					);
+					?>
+				</p>
+				<p>
+					<a href="<?php echo esc_url( $migration_url ); ?>" class="button button-primary">
+						<?php esc_html_e( 'Go to Migration Tool', 'llms-attendance' ); ?>
+					</a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=llms-attendance-migration' ) ); ?>" class="button">
+						<?php esc_html_e( 'Learn More', 'llms-attendance' ); ?>
+					</a>
+				</p>
+			</div>
+			<?php
 		}
 	}
 

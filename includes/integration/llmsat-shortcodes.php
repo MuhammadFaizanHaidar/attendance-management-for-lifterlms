@@ -93,8 +93,12 @@ class LLMS_At_Short_Code {
 			<?php
 			// loop through each student
 			foreach ( $students as $student ) {
-				if ( null !== get_user_meta( absint( $student->ID ), $keyname, true ) ) {
-					$count      = intval( get_user_meta( absint( $student->ID ), $keyname, true ) );
+				// Use hybrid manager to get attendance count
+				$hybrid_manager = new LLMS_AT_Hybrid_Manager();
+				$count = $hybrid_manager->get_attendance_data( absint( $student->ID ), $course_id );
+				
+				if ( null !== $count ) {
+					$count      = intval( $count );
 					$attendance = $count / intval( $today_day ) * 100;
 				}
 				?>
@@ -176,8 +180,12 @@ class LLMS_At_Short_Code {
 		$user           = get_userdata( $user_id );
 		$days           = cal_days_in_month( CAL_GREGORIAN, $today_month, $today_year );
 		$meta_key_count = $today_year . '-' . $today_month . '-' . $course_id;
-		if ( null !== get_user_meta( $user_id, $meta_key_count, true ) && $user_id != 0 && $has_access ) {
-			$count      = get_user_meta( $user_id, $meta_key_count, true );
+		
+		// Use hybrid manager to get attendance count
+		$hybrid_manager = new LLMS_AT_Hybrid_Manager();
+		$count = $hybrid_manager->get_attendance_data( $user_id, $course_id );
+		
+		if ( null !== $count && $user_id != 0 && $has_access ) {
 			$count      = intval( $count );
 			$days       = intval( $days );
 			$attendance = $count / intval( $today_day ) * 100;

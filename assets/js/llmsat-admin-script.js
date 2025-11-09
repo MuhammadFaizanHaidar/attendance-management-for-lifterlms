@@ -1,6 +1,6 @@
 
 jQuery(document).ready(function(){
-    if ( llmsat_block_editor.block_editor_active == "yes" ) {
+    if ( llmsat_admin.block_editor_active == "yes" ) {
         jQuery('#search-submit').on('click', function() {	
             var href = window.location.href.substring(0, window.location.href.indexOf('?'));
             var qs = window.location.href.substring(window.location.href.indexOf('?') + 1, window.location.href.length);
@@ -35,5 +35,58 @@ jQuery(document).ready(function(){
             
         }
     });
+    
+    // Instructor attendance marking functionality
+    jQuery(document).on('click', '.llmsat-instructor-mark-present', function(e) {
+        e.preventDefault();
+        
+        var button = jQuery(this);
+        var user_id = button.data('user-id');
+        var course_id = button.data('course-id');
+        
+        // Disable button to prevent double-clicking
+        button.prop('disabled', true);
+        button.text('Marking...');
+        
+        jQuery.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'llmsat_instructor_mark_attendance',
+                user_id: user_id,
+                course_id: course_id,
+                nonce: llmsat_admin.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Replace button with success message
+                    button.replaceWith('<span class="llmsat-attendance-marked" style="color: green; font-weight: bold;">✓ Marked</span>');
+                    
+                    // Show success message
+                    if (typeof response.data.message !== 'undefined') {
+                        alert(response.data.message);
+                    }
+                    
+                    // Optionally refresh the page to update attendance counts
+                    // window.location.reload();
+                } else {
+                    // Show error message
+                    alert(response.data.message || 'Failed to mark attendance');
+                    
+                    // Re-enable button
+                    button.prop('disabled', false);
+                    button.text('Mark Present');
+                }
+            },
+            error: function() {
+                alert('An error occurred while marking attendance');
+                
+                // Re-enable button
+                button.prop('disabled', false);
+                button.text('Mark Present');
+            }
+        });
+    });
+    
     return;
 });

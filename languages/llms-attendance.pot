@@ -1,0 +1,732 @@
+# Copyright (C) 2025 Muhammad Faizan Haidar
+# This file is distributed under the GPLv3.
+msgid ""
+msgstr ""
+"Project-Id-Version: Attendance Management For LifterLMS 2.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/attendance-management-for-lifterlms\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-10-07T17:31:38+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: llms-attendance\n"
+
+#. Plugin Name of the plugin
+#: attendance-management-for-lifterlms.php
+#: includes/settings/options.php:106
+#: includes/settings/options.php:107
+msgid "Attendance Management For LifterLMS"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: attendance-management-for-lifterlms.php
+msgid "https://github.com/MuhammadFaizanHaidar/attendance-management-for-lifterlms"
+msgstr ""
+
+#. Description of the plugin
+#: attendance-management-for-lifterlms.php
+msgid "Comprehensive attendance management system for LifterLMS with reporting dashboard, custom database tables, and role-based attendance marking"
+msgstr ""
+
+#. Author of the plugin
+#: attendance-management-for-lifterlms.php
+msgid "Muhammad Faizan Haidar"
+msgstr ""
+
+#. Author URI of the plugin
+#: attendance-management-for-lifterlms.php
+msgid "https://faizanhaidar.com"
+msgstr ""
+
+#: attendance-management-for-lifterlms.php:451
+msgid "Settings"
+msgstr ""
+
+#: attendance-management-for-lifterlms.php:470
+msgid ""
+"Attendance Management For LifterLMS add-on requires <a href=\"https://wordpress.org/plugins/lifterlms/\" \n"
+"\t\t\ttarget=\"_BLANK\">LifterLMS</a> plugin to be activated."
+msgstr ""
+
+#: includes/database/llmsat-migration.php:42
+#: includes/database/llmsat-migration.php:43
+msgid "Attendance Migration"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:76
+msgid "Attendance Data Migration"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:79
+msgid "Important:"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:80
+msgid "This migration will move your attendance data from WordPress user meta to a custom database table for better performance and scalability."
+msgstr ""
+
+#: includes/database/llmsat-migration.php:84
+msgid "Migration Statistics"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:88
+msgid "Meta Storage"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:89
+#: includes/database/llmsat-migration.php:127
+msgid "attendance records"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:90
+#: includes/database/llmsat-migration.php:128
+msgid "unique students"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:91
+#: includes/database/llmsat-migration.php:129
+msgid "unique courses"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:126
+msgid "Custom Table"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:135
+msgid "Migration Controls"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:138
+msgid "Status:"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:140
+msgid "Debug Info:"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:147
+msgid "Preparing migration..."
+msgstr ""
+
+#: includes/database/llmsat-migration.php:153
+msgid "Start Migration"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:157
+msgid "Clean Up Meta Data"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:161
+msgid "Migration and cleanup completed successfully! All data is now stored in the custom table."
+msgstr ""
+
+#: includes/database/llmsat-migration.php:166
+msgid "Warning:"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:167
+msgid "Some meta data is still present. You can force cleanup to remove it."
+msgstr ""
+
+#: includes/database/llmsat-migration.php:169
+msgid "Force Cleanup Meta Data"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:178
+msgid "Migration Benefits"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:180
+msgid "Improved performance for large datasets"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:181
+msgid "Better database indexing and query optimization"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:182
+msgid "Enhanced reporting capabilities"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:183
+msgid "Reduced memory usage"
+msgstr ""
+
+#: includes/database/llmsat-migration.php:184
+msgid "Better scalability for thousands of students"
+msgstr ""
+
+#: includes/integration/llmsat-allow-integration.php:18
+msgid "LifterLMS Attendance"
+msgstr ""
+
+#: includes/integration/llmsat-allow-integration.php:20
+#: includes/integration/llmsat-allow-integration.php:33
+msgid "Allows Attendance facility on lifterlms courses"
+msgstr ""
+
+#: includes/integration/llmsat-allow-integration.php:31
+msgid "LifterLMS Attendance Options"
+msgstr ""
+
+#: includes/integration/llmsat-core-attendace.php:100
+#: includes/integration/llmsat-views.php:296
+msgid "Mark Present"
+msgstr ""
+
+#: includes/integration/llmsat-core-attendace.php:135
+#: includes/integration/llmsat-core-attendace.php:214
+msgid "Security check failed."
+msgstr ""
+
+#: includes/integration/llmsat-core-attendace.php:190
+msgid "Attendance marked successfully"
+msgstr ""
+
+#: includes/integration/llmsat-core-attendace.php:196
+msgid "Attendance was not marked successfully"
+msgstr ""
+
+#: includes/integration/llmsat-core-attendace.php:201
+msgid "You are already marked present"
+msgstr ""
+
+#: includes/integration/llmsat-core-attendace.php:230
+msgid "You do not have permission to mark attendance."
+msgstr ""
+
+#: includes/integration/llmsat-core-attendace.php:237
+msgid "Invalid user or course ID."
+msgstr ""
+
+#: includes/integration/llmsat-core-attendace.php:243
+msgid "Student is not enrolled in this course."
+msgstr ""
+
+#: includes/integration/llmsat-core-attendace.php:291
+msgid "Attendance marked successfully by instructor."
+msgstr ""
+
+#: includes/integration/llmsat-core-attendace.php:297
+msgid "Student is already marked present today."
+msgstr ""
+
+#: includes/integration/llmsat-metabox.php:75
+msgid "DisAllow Attendance "
+msgstr ""
+
+#: includes/integration/llmsat-metabox.php:77
+msgid "Students Attendance Information "
+msgstr ""
+
+#: includes/integration/llmsat-metabox.php:109
+msgid "Turn off the disallow attendance option to enlist enrolled students attendance information."
+msgstr ""
+
+#: includes/integration/llmsat-metabox.php:138
+msgid "Disallow Attendance."
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:61
+#: includes/integration/llmsat-reporting.php:62
+msgid "Attendance Reports"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:283
+msgid "Attendance Rate"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:376
+msgid "Daily Attendance Rate (%)"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:446
+msgid "Weekly Attendance Rate (%)"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:526
+#: includes/integration/llmsat-reporting.php:543
+msgid "Monthly Attendance Rate (%)"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:845
+msgid "Student Name"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:846
+msgid "Student Email"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:847
+msgid "Course Name"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:848
+#: includes/integration/llmsat-views.php:187
+msgid "Attendance Count"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:849
+#: includes/integration/llmsat-views.php:188
+msgid "Attendance Percentage"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:850
+msgid "Date Range"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1005
+msgid "Attendance Reports Dashboard"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1009
+msgid "Course:"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1011
+msgid "All Courses"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1026
+msgid "Period:"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1028
+msgid "Daily"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1029
+msgid "Weekly"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1030
+msgid "Monthly"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1033
+msgid "From:"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1036
+msgid "To:"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1040
+msgid "Update Chart"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1046
+msgid "Export CSV"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1049
+msgid "Export PDF"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1061
+msgid "Course Statistics"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1063
+#: includes/integration/llmsat-reporting.php:1070
+msgid "Loading..."
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1068
+msgid "Top Performers"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1142
+msgid "[%1$s] Low Attendance Alert - %2$s"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1148
+msgid "Low attendance alert for course: %s"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1153
+msgid "The following students have attendance below %d%%:"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1159
+msgid "• %1$s: %2$d%% (%3$d days)"
+msgstr ""
+
+#: includes/integration/llmsat-reporting.php:1166
+msgid "Please check the attendance reports dashboard for more details."
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:44
+msgid "Attendance Management For LifterLMS Addon General Settings"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:51
+msgid "Use Attendance Management For LifterLMS Addon."
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:55
+msgid "Enable / Disable"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:59
+msgid "Allow global attendance for all courses."
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:63
+msgid "Allow / DisAllow"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:67
+msgid "Roles That Can Mark Attendance for Students"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:69
+msgid "Select which user roles can mark attendance for students in courses. Hold Ctrl/Cmd to select multiple roles."
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:72
+msgid "Instructor"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:73
+msgid "Instructor's Assistant"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:74
+msgid "LMS Manager"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:75
+msgid "Administrator"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:76
+msgid "Editor"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:77
+msgid "Author"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:94
+msgid "Attendance Management For LifterLMS Addon Shortcodes"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:101
+msgid "Top \"X\" attendants shortcode"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:104
+msgid "It shows top \"x\" attendants in a given course id \"y\" by default it shows only 1 top attendant. Automatically retrieves current dates."
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:109
+msgid "Student attendance shortcode"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:112
+msgid "It shows attendance of current login user for a given course id \"x\" automatically reterieves user id if not given. Automatically retrieves current dates."
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:128
+msgid "Attendance Reporting Settings"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:135
+msgid "Enable advanced reporting dashboard with charts and analytics."
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:139
+msgid "Enable Reporting Dashboard"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:143
+msgid "Allow automatic data refresh in reporting dashboard."
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:147
+msgid "Auto Refresh Reports"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:151
+msgid "Enable email notifications for low attendance alerts."
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:155
+msgid "Email Alerts"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:159
+msgid "Low Attendance Threshold (%)"
+msgstr ""
+
+#: includes/integration/llmsat-settings.php:162
+msgid "Percentage below which attendance is considered low for alerts."
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:105
+msgid "Number "
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:107
+#: includes/integration/llmsat-shortcodes.php:197
+msgid "<b>Student Name</b> : "
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:108
+msgid "<b>Course Name</b>       : "
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:109
+#: includes/integration/llmsat-shortcodes.php:199
+msgid "<b>Attendance</b>   : "
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:110
+msgid "<b>Attendance For the Month Of </b> : "
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:122
+msgid "<b>No student found in this course</b>"
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:194
+#: includes/integration/llmsat-shortcodes.php:208
+msgid "Attendance of "
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:198
+msgid "<b>Course Name</b>  : "
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:200
+msgid "<b>Attendance For The Month Of </b> : "
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:210
+#: includes/integration/llmsat-shortcodes.php:227
+msgid "<b>Student Name </b>: "
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:211
+msgid "<b>Course Name </b> : "
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:212
+msgid "<b>Attendance </b>  : 0 %"
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:213
+msgid "<b>Attendance For The month of "
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:221
+msgid "Invalid student ID or course ID :"
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:226
+msgid "<b>Student Name </b>: Student does not exist"
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:234
+msgid "<b>Course Name </b>: "
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:235
+msgid "<b>Course Name </b>:Course does not exist"
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:241
+msgid "<b>Attendance </b>: Invalid data "
+msgstr ""
+
+#: includes/integration/llmsat-shortcodes.php:244
+msgid "<b>Enrollment    : </b>Student is not enrolled in this course"
+msgstr ""
+
+#: includes/integration/llmsat-views.php:18
+msgid "LLMS Student"
+msgstr ""
+
+#: includes/integration/llmsat-views.php:19
+msgid "LLMS Students"
+msgstr ""
+
+#: includes/integration/llmsat-views.php:185
+msgid "ID"
+msgstr ""
+
+#: includes/integration/llmsat-views.php:186
+msgid "Enrolled Students"
+msgstr ""
+
+#: includes/integration/llmsat-views.php:189
+msgid "Actions"
+msgstr ""
+
+#: includes/integration/llmsat-views.php:301
+msgid "✓ Marked"
+msgstr ""
+
+#: includes/settings/options.php:71
+msgid "Settings Saved"
+msgstr ""
+
+#: includes/settings/options.php:91
+msgid "Settings Updated."
+msgstr ""
+
+#: includes/settings/options.php:189
+msgid "Attendance Management For LifterLMS Settings"
+msgstr ""
+
+#: includes/settings/options.php:226
+msgid "General Option"
+msgstr ""
+
+#: includes/settings/options.php:244
+msgid ""
+"Fueled by <a href=\"http://www.wordpress.org\" target=\"_blank\">WordPress</a> | developed and designed by \n"
+"\t\t\t<a href=\"https:faizanhaidar.com/\" target=\"_blank\">Muhammad Faizan Haidar</a>\n"
+"\t\t\t</p>"
+msgstr ""
+
+#: includes/settings/templates/general.php:24
+msgid "Delete Attendance On Uninstall  "
+msgstr ""
+
+#: includes/settings/templates/general.php:33
+msgid "If enabled it will delete all courses & users attendance data"
+msgstr ""
+
+#: includes/settings/templates/general.php:41
+msgid "Save Settings"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:55
+#: includes/testing/llmsat-testing-framework.php:56
+msgid "Performance Testing"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:69
+msgid "Performance Testing Dashboard"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:74
+msgid "System Status"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:75
+msgid "Migration Status:"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:76
+msgid "Custom Table:"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:76
+msgid "Exists"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:76
+msgid "Not Found"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:80
+msgid "Data Statistics"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:85
+msgid "Meta Records:"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:86
+msgid "Table Records:"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:92
+msgid "Test Data Generation"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:93
+msgid "Generate test data for performance testing."
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:95
+msgid "Generate Small Dataset (100 records)"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:98
+msgid "Generate Medium Dataset (1000 records)"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:101
+msgid "Generate Large Dataset (5000 records)"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:105
+msgid "Generate Complete Test Environment (Users + Courses + Enrollments + Attendance)"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:110
+msgid "Performance Tests"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:111
+msgid "Run performance tests to validate system speed."
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:113
+msgid "Run Query Performance Test"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:116
+msgid "Run Report Generation Test"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:119
+msgid "Run Migration Performance Test"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:124
+msgid "Cleanup"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:125
+msgid "Clean up test data after testing."
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:127
+msgid "Clean Up Test Attendance Data"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:130
+msgid "Clean Up ALL Test Data"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:136
+msgid "Test Results"
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:474
+msgid "No users or courses found for test data generation."
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:497
+msgid "Generated %d test attendance records."
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:602
+msgid "Complete test environment created: %d users, %d courses, %d enrollments, %d attendance records."
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:724
+msgid "Cleaned up %d test records."
+msgstr ""
+
+#: includes/testing/llmsat-testing-framework.php:785
+msgid "Complete cleanup: %d meta records, %d courses, %d users, %d custom table records deleted."
+msgstr ""

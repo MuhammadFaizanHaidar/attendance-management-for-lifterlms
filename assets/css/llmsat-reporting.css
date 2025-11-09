@@ -1,0 +1,740 @@
+/**
+ * Attendance Management For LifterLMS Reporting Dashboard Styles
+ *
+ * @author   Muhammad Faizan Haidar
+ * @package  Attendance Management For LifterLMS Reporting
+ * @version  1.0
+ */
+
+/* Dashboard Container */
+.llmsat-reporting-dashboard {
+    max-width: 100%;
+    margin: 20px 0;
+    padding: 0 20px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+/* WordPress Admin Specific Fixes */
+.wp-admin .llmsat-reporting-dashboard {
+    padding: 0 10px;
+    margin: 10px 0;
+}
+
+.wp-admin .llmsat-dashboard-content {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.llmsat-reporting-dashboard h1 {
+    color: #23282d;
+    font-size: 28px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #0073aa;
+    padding-bottom: 10px;
+}
+
+/* Dashboard Header */
+.llmsat-dashboard-header {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.llmsat-filters {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.llmsat-filters label {
+    font-weight: 600;
+    color: #23282d;
+    margin-right: 5px;
+}
+
+.llmsat-filters select,
+.llmsat-filters input[type="date"] {
+    padding: 10px 14px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 140px;
+    background-color: #ffffff;
+    color: #23282d;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.llmsat-filters select option {
+    background-color: #ffffff;
+    color: #23282d;
+    padding: 8px 12px;
+}
+
+.llmsat-filters select:hover,
+.llmsat-filters input[type="date"]:hover {
+    border-color: #0073aa;
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 115, 170, 0.15);
+}
+
+.llmsat-filters select:focus,
+.llmsat-filters input[type="date"]:focus {
+    border-color: #0073aa;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.2);
+    background-color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.llmsat-filters select:active,
+.llmsat-filters input[type="date"]:active {
+    background-color: #ffffff;
+    transform: translateY(0);
+}
+
+.llmsat-export-options {
+    display: flex;
+    gap: 10px;
+}
+
+.llmsat-export-options .button,
+#update-chart {
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.llmsat-export-options .button:hover,
+#update-chart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#update-chart {
+    background: #0073aa;
+    color: #ffffff;
+    border-color: #0073aa;
+}
+
+#update-chart:hover {
+    background: #005a87;
+    border-color: #005a87;
+    color: #ffffff;
+}
+
+.llmsat-export-options .button {
+    background: #ffffff;
+    color: #23282d;
+    border-color: #ddd;
+}
+
+.llmsat-export-options .button:hover {
+    background: #f8f9fa;
+    border-color: #0073aa;
+    color: #0073aa;
+}
+
+/* Dashboard Content */
+.llmsat-dashboard-content {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.llmsat-dashboard-content > * {
+    flex: 1;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.llmsat-dashboard-content .llmsat-chart-container {
+    flex: 2;
+    min-width: 0;
+}
+
+.llmsat-dashboard-content .llmsat-stats-grid {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Chart Container */
+.llmsat-chart-container {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    height: 400px;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.llmsat-chart-container canvas {
+    max-height: 100%;
+    max-width: 100%;
+    width: 100% !important;
+    height: auto !important;
+    display: block;
+}
+
+/* Chart loading state */
+.llmsat-chart-container.loading {
+    background: #f9f9f9;
+    border: 2px dashed #ccc;
+}
+
+.llmsat-chart-container.error {
+    background: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Stats Grid */
+.llmsat-stats-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.llmsat-stat-card {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.llmsat-stat-card h3 {
+    margin: 0 0 15px 0;
+    color: #23282d;
+    font-size: 18px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Course Statistics */
+.llmsat-stats-grid .llmsat-stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.llmsat-stats-grid .llmsat-stat-item:last-child {
+    border-bottom: none;
+}
+
+.llmsat-stat-number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0073aa;
+}
+
+.llmsat-stat-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Top Performers */
+.llmsat-performers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.llmsat-performer-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.llmsat-performer-item:hover {
+    background: #f0f0f0;
+}
+
+.llmsat-performer-rank {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    color: white;
+}
+
+.llmsat-rank-1 {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #333;
+}
+
+.llmsat-rank-2 {
+    background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+    color: #333;
+}
+
+.llmsat-rank-3 {
+    background: linear-gradient(135deg, #cd7f32, #daa520);
+    color: white;
+}
+
+.llmsat-rank-other {
+    background: #0073aa;
+    color: white;
+}
+
+.llmsat-performer-info {
+    flex: 1;
+}
+
+.llmsat-performer-name {
+    font-weight: 600;
+    color: #23282d;
+    margin-bottom: 2px;
+}
+
+.llmsat-performer-stats {
+    font-size: 12px;
+    color: #666;
+}
+
+/* Loading States */
+.llmsat-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: #666;
+}
+
+.llmsat-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0073aa;
+    border-radius: 50%;
+    animation: llmsat-spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes llmsat-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Error States */
+.llmsat-error {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.llmsat-error p {
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .llmsat-dashboard-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .llmsat-chart-container {
+        height: 350px;
+        padding: 15px;
+        flex: none;
+    }
+    
+    .llmsat-stats-grid {
+        flex: none;
+    }
+}
+
+@media (max-width: 1024px) {
+    .llmsat-dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 15px;
+    }
+    
+    .llmsat-filters {
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+    
+    .llmsat-export-options {
+        justify-content: center;
+    }
+    
+    .llmsat-chart-container {
+        height: 300px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .llmsat-reporting-dashboard {
+        margin: 10px;
+    }
+    
+    .llmsat-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
+    .llmsat-filters label {
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+    
+    .llmsat-filters select,
+    .llmsat-filters input[type="date"] {
+        width: 100%;
+        min-width: auto;
+        margin-bottom: 10px;
+    }
+    
+    .llmsat-export-options .button,
+    #update-chart {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .llmsat-chart-container {
+        height: 300px;
+        padding: 15px;
+    }
+    
+    .llmsat-stat-card {
+        padding: 15px;
+    }
+    
+    .llmsat-performer-item {
+        padding: 8px;
+    }
+    
+    .llmsat-performer-rank {
+        width: 25px;
+        height: 25px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .llmsat-reporting-dashboard h1 {
+        font-size: 24px;
+    }
+    
+    .llmsat-dashboard-header {
+        padding: 15px;
+    }
+    
+    .llmsat-chart-container {
+        height: 250px;
+        padding: 10px;
+    }
+    
+    .llmsat-stat-number {
+        font-size: 20px;
+    }
+    
+    .llmsat-performer-name {
+        font-size: 14px;
+    }
+    
+    .llmsat-performer-stats {
+        font-size: 11px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .llmsat-dashboard-header {
+        display: none;
+    }
+    
+    .llmsat-chart-container {
+        height: auto;
+        page-break-inside: avoid;
+    }
+    
+    .llmsat-stat-card {
+        page-break-inside: avoid;
+    }
+    
+    .llmsat-performer-item {
+        page-break-inside: avoid;
+    }
+}
+
+/* Dark Mode Support */
+.llmsat-dark-mode .llmsat-reporting-dashboard h1 {
+    color: #f0f0f0;
+    border-bottom-color: #0073aa;
+}
+
+.llmsat-dark-mode .llmsat-dashboard-header,
+.llmsat-dark-mode .llmsat-chart-container,
+.llmsat-dark-mode .llmsat-stat-card {
+    background: #2c2c2c;
+    border-color: #444;
+    color: #f0f0f0;
+}
+
+.llmsat-dark-mode .llmsat-filters label {
+    color: #f0f0f0;
+}
+
+.llmsat-dark-mode .llmsat-filters select,
+.llmsat-dark-mode .llmsat-filters input[type="date"] {
+    background: #3c3c3c;
+    border-color: #555;
+    color: #f0f0f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.llmsat-dark-mode .llmsat-filters select:hover,
+.llmsat-dark-mode .llmsat-filters input[type="date"]:hover {
+    border-color: #00a0d2;
+    background-color: #444;
+    box-shadow: 0 4px 8px rgba(0, 160, 210, 0.2);
+}
+
+.llmsat-dark-mode .llmsat-filters select:focus,
+.llmsat-dark-mode .llmsat-filters input[type="date"]:focus {
+    border-color: #00a0d2;
+    box-shadow: 0 0 0 3px rgba(0, 160, 210, 0.3);
+    background-color: #444;
+}
+
+.llmsat-dark-mode .llmsat-filters select option {
+    background: #3c3c3c;
+    color: #f0f0f0;
+}
+
+.llmsat-dark-mode #update-chart {
+    background: #00a0d2;
+    border-color: #00a0d2;
+    color: #ffffff;
+}
+
+.llmsat-dark-mode #update-chart:hover {
+    background: #0073aa;
+    border-color: #0073aa;
+    color: #ffffff;
+}
+
+.llmsat-dark-mode .llmsat-export-options .button {
+    background: #3c3c3c;
+    color: #f0f0f0;
+    border-color: #555;
+}
+
+.llmsat-dark-mode .llmsat-export-options .button:hover {
+    background: #444;
+    border-color: #00a0d2;
+    color: #00a0d2;
+}
+
+.llmsat-dark-mode .llmsat-stat-card h3 {
+    color: #f0f0f0;
+    border-bottom-color: #444;
+}
+
+.llmsat-dark-mode .llmsat-stat-label {
+    color: #ccc;
+}
+
+.llmsat-dark-mode .llmsat-performer-item {
+    background: #3c3c3c;
+}
+
+.llmsat-dark-mode .llmsat-performer-item:hover {
+    background: #444;
+}
+
+.llmsat-dark-mode .llmsat-performer-name {
+    color: #f0f0f0;
+}
+
+.llmsat-dark-mode .llmsat-performer-stats {
+    color: #ccc;
+}
+
+.llmsat-dark-mode .llmsat-loading {
+    color: #f0f0f0;
+}
+
+.llmsat-dark-mode .llmsat-error {
+    background: #4a1a1a;
+    border-color: #6b2c2c;
+    color: #f8d7da;
+}
+
+/* Dark Mode Toggle Button */
+.llmsat-dark-mode-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    background: #0073aa;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    font-size: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.llmsat-dark-mode-toggle:hover {
+    background: #005a87;
+    transform: scale(1.1);
+}
+
+.llmsat-dark-mode .llmsat-dark-mode-toggle {
+    background: #444;
+    color: #f0f0f0;
+}
+
+.llmsat-dark-mode .llmsat-dark-mode-toggle:hover {
+    background: #555;
+}
+
+/* System Dark Mode Support (fallback) */
+@media (prefers-color-scheme: dark) {
+    body:not(.llmsat-light-mode) .llmsat-reporting-dashboard h1 {
+        color: #f0f0f0;
+        border-bottom-color: #0073aa;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-dashboard-header,
+    body:not(.llmsat-light-mode) .llmsat-chart-container,
+    body:not(.llmsat-light-mode) .llmsat-stat-card {
+        background: #2c2c2c;
+        border-color: #444;
+        color: #f0f0f0;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-filters label {
+        color: #f0f0f0;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-filters select,
+    body:not(.llmsat-light-mode) .llmsat-filters input[type="date"] {
+        background: #3c3c3c;
+        border-color: #555;
+        color: #f0f0f0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-filters select:hover,
+    body:not(.llmsat-light-mode) .llmsat-filters input[type="date"]:hover {
+        border-color: #00a0d2;
+        background-color: #444;
+        box-shadow: 0 4px 8px rgba(0, 160, 210, 0.2);
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-filters select:focus,
+    body:not(.llmsat-light-mode) .llmsat-filters input[type="date"]:focus {
+        border-color: #00a0d2;
+        box-shadow: 0 0 0 3px rgba(0, 160, 210, 0.3);
+        background-color: #444;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-filters select option {
+        background: #3c3c3c;
+        color: #f0f0f0;
+    }
+    
+    body:not(.llmsat-light-mode) #update-chart {
+        background: #00a0d2;
+        border-color: #00a0d2;
+        color: #ffffff;
+    }
+    
+    body:not(.llmsat-light-mode) #update-chart:hover {
+        background: #0073aa;
+        border-color: #0073aa;
+        color: #ffffff;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-export-options .button {
+        background: #3c3c3c;
+        color: #f0f0f0;
+        border-color: #555;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-export-options .button:hover {
+        background: #444;
+        border-color: #00a0d2;
+        color: #00a0d2;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-stat-card h3 {
+        color: #f0f0f0;
+        border-bottom-color: #444;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-stat-label {
+        color: #ccc;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-performer-item {
+        background: #3c3c3c;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-performer-item:hover {
+        background: #444;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-performer-name {
+        color: #f0f0f0;
+    }
+    
+    body:not(.llmsat-light-mode) .llmsat-performer-stats {
+        color: #ccc;
+    }
+}

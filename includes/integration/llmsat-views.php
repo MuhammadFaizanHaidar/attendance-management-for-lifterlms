@@ -53,57 +53,57 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 				'search'         => intval( sanitize_text_field( $_REQUEST['s'] ) ),
 				'search_columns' => $searchcol,
 			);
-		} else {
-			if ( $order == 'asc' && $orderby == 'id' ) {
+		} elseif ( $order == 'asc' && $orderby == 'id' ) {
 				$args = array(
 					'orderby' => 'ID',
 					'order'   => 'ASC',
 					'fields'  => 'ID',
 				);
-			} elseif ( $order == 'desc' && $orderby == 'id' ) {
-					$args = array(
-						'orderby' => 'ID',
-						'order'   => 'DESC',
-						'fields'  => 'ID',
-					);
-
-			} elseif ( $order == 'desc' && $orderby == 'title' ) {
-					$args = array(
-						'orderby' => 'name',
-						'order'   => 'DESC',
-						'fields'  => 'ID',
-					);
-			} elseif ( $order == 'asc' && $orderby == 'title' ) {
-				$args = array(
-					'orderby' => 'name',
-					'order'   => 'ASC',
-					'fields'  => 'ID',
-				);
-			} else {
+		} elseif ( $order == 'desc' && $orderby == 'id' ) {
 				$args = array(
 					'orderby' => 'ID',
 					'order'   => 'DESC',
 					'fields'  => 'ID',
 				);
-			}
+
+		} elseif ( $order == 'desc' && $orderby == 'title' ) {
+				$args = array(
+					'orderby' => 'name',
+					'order'   => 'DESC',
+					'fields'  => 'ID',
+				);
+		} elseif ( $order == 'asc' && $orderby == 'title' ) {
+			$args = array(
+				'orderby' => 'name',
+				'order'   => 'ASC',
+				'fields'  => 'ID',
+			);
+		} else {
+			$args = array(
+				'orderby' => 'ID',
+				'order'   => 'DESC',
+				'fields'  => 'ID',
+			);
 		}
 
 		$course_id = get_the_ID();
 		$disallow  = get_post_meta( $course_id, 'llmsatck1', true );
 		$course    = llms_get_post( $course_id );
 		$enrolled  = llms_get_enrolled_students( $course_id );
-		$students = $users = get_users( $args );
+		$students  = $users = get_users( $args );
 
-		
 		if ( count( $users ) > 0 ) {
 			foreach ( $users as $student ) {
 				$user_id = absint( $student );
 				if ( in_array( $user_id, $enrolled ) ) {
 					$blogtime = current_time( 'mysql' );
 					list( $today_year, $today_month, $today_day, $hour, $minute, $second ) = preg_split( '([^0-9])', $blogtime );
-					$key            = $today_year . '-' . $today_month . '-' . $today_day . '-' . $course_id;
-					$attendance     = get_user_meta( $user_id, $key, true );
-					//delete_user_meta( $user_id, $key );
+					$key        = $today_year . '-' . $today_month . '-' . $today_day . '-' . $course_id;
+					
+					// Use hybrid manager to check attendance
+					$hybrid_manager = new LLMS_AT_Hybrid_Manager();
+					$attendance = $hybrid_manager->has_attendance( $user_id, $course_id, $today_year . '-' . $today_month . '-' . $today_day );
+					// delete_user_meta( $user_id, $key );
 					$student        = llms_get_student( $user_id );
 					$has_access     = $student->is_enrolled( $course->get( 'id' ) );
 					$dateObj        = DateTime::createFromFormat( '!m', $today_month );
@@ -111,17 +111,30 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 					$author_info    = get_userdata( $user_id );
 					$days           = cal_days_in_month( CAL_GREGORIAN, $today_month, $today_year );
 					$meta_key_count = $today_year . '-' . $today_month . '-' . $course_id;
-					if ( null !== get_user_meta( $user_id, $meta_key_count, true ) && $user_id != 0 && $has_access && $disallow != 'on' && 'yes' === get_option( 'llms_integration_global_attendance_enabled', 'no' ) ) {
-						$count      = get_user_meta( $user_id, $meta_key_count, true );
+					
+					// Use hybrid manager to get monthly attendance count
+					$hybrid_manager = new LLMS_AT_Hybrid_Manager();
+					$count = $hybrid_manager->get_attendance_data( $user_id, $course_id );
+					
+					if ( null !== $count && $user_id != 0 && $has_access && $disallow != 'on' && 'yes' === get_option( 'llms_integration_global_attendance_enabled', 'no' ) ) {
 						$count      = intval( $count );
 						$days       = intval( $days );
 						$attendance = $count / $today_day * 100;
-						//delete_user_meta( $user_id, $meta_key_count );
+						// delete_user_meta( $user_id, $meta_key_count );
+						// Check if current user can mark attendance
+						$can_mark_attendance = $this->can_user_mark_attendance();
+						$attendance_actions  = '';
+
+						if ( $can_mark_attendance ) {
+							$attendance_actions = $this->get_attendance_action_buttons( $user_id, $course_id, $attendance );
+						}
+
 						$users_array[] = array(
-							'id'                => $user_id,
-							'title'             => '<b><a href="' . get_author_posts_url( $user_id ) . '"> ' . $author_info->display_name . '</a></b>',
-							'attendance_count'  => $count,
-							'attendance_percen' => round( $attendance ) . '%',
+							'id'                 => $user_id,
+							'title'              => '<b><a href="' . get_author_posts_url( $user_id ) . '"> ' . $author_info->display_name . '</a></b>',
+							'attendance_count'   => $count,
+							'attendance_percen'  => round( $attendance ) . '%',
+							'attendance_actions' => $attendance_actions,
 						);
 					}
 					// code...
@@ -164,15 +177,16 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 	}
-		// get_columns
+	// get_columns.
 	public function get_columns() {
 
 		$columns = array(
-			'cb'                => "<input type='checkbox'/>",
-			'id'                => __( 'ID', 'llms-attendance' ),
-			'title'             => __( 'Enrolled Students', 'llms-attendance' ),
-			'attendance_count'  => __( 'Attendance Count', 'llms-attendance' ),
-			'attendance_percen' => __( 'Attendance Percentage', 'llms-attendance' ),
+			'cb'                 => "<input type='checkbox'/>",
+			'id'                 => __( 'ID', 'llms-attendance' ),
+			'title'              => __( 'Enrolled Students', 'llms-attendance' ),
+			'attendance_count'   => __( 'Attendance Count', 'llms-attendance' ),
+			'attendance_percen'  => __( 'Attendance Percentage', 'llms-attendance' ),
+			'attendance_actions' => __( 'Actions', 'llms-attendance' ),
 		);
 
 		return $columns;
@@ -187,7 +201,6 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 				'title' => array( 'title', true ),
 				'id'    => array( 'id', true ),
 			);
-
 	}
 
 	/**
@@ -231,15 +244,66 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 			case 'title':
 			case 'attendance_count':
 			case 'attendance_percen':
+			case 'attendance_actions':
 				return $item[ $column_name ];
 
 			default:
 				return 'no value';
 
 		}
-
 	}
 
+	/**
+	 * Check if current user can mark attendance for students.
+	 */
+	private function can_user_mark_attendance() {
+		$current_user = wp_get_current_user();
+		$allowed_roles = get_option( 'llms_integration_attendance_marking_roles', array( 'instructor', 'lms_manager', 'administrator' ) );
+		
+		if ( empty( $allowed_roles ) ) {
+			return false;
+		}
+		
+		// Check if user has any of the allowed roles
+		foreach ( $allowed_roles as $role ) {
+			if ( in_array( $role, $current_user->roles ) ) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Generate attendance action buttons for a student.
+	 */
+	private function get_attendance_action_buttons( $user_id, $course_id, $current_attendance ) {
+		$blogtime = current_time( 'mysql' );
+		list( $today_year, $today_month, $today_day, $hour, $minute, $second ) = preg_split( '([^0-9])', $blogtime );
+		$key = $today_year . '-' . $today_month . '-' . $today_day . '-' . $course_id;
+		
+		// Use hybrid manager to check attendance
+		$hybrid_manager = new LLMS_AT_Hybrid_Manager();
+		$attendance = $hybrid_manager->has_attendance( $user_id, $course_id, $today_year . '-' . $today_month . '-' . $today_day );
+		
+		$buttons = '';
+		
+		if ( empty( $attendance ) ) {
+			// Student hasn't marked attendance today - show "Mark Present" button
+			$buttons .= '<button type="button" class="button button-primary llmsat-instructor-mark-present" ';
+			$buttons .= 'data-user-id="' . esc_attr( $user_id ) . '" ';
+			$buttons .= 'data-course-id="' . esc_attr( $course_id ) . '">';
+			$buttons .= __( 'Mark Present', 'llms-attendance' );
+			$buttons .= '</button>';
+		} else {
+			// Student has already marked attendance - show "Marked" status
+			$buttons .= '<span class="llmsat-attendance-marked" style="color: green; font-weight: bold;">';
+			$buttons .= __( '✓ Marked', 'llms-attendance' );
+			$buttons .= '</span>';
+		}
+		
+		return $buttons;
+	}
 }
 
 /**
@@ -260,7 +324,6 @@ function llms_at_list_table_layout() {
 	<?php endif; ?>
 	</form> 
 	<?php
-
 }
 
 llms_at_list_table_layout();

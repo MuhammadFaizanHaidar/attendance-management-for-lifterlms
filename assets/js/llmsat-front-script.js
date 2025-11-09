@@ -19,7 +19,8 @@ function llmsat_attendance_btn_ajax( postId, usrid ) {
 		data : {
 			action : 'llmsat_attendance_btn_ajax_action',
 			pid : post_id,
-			uid : user_ID
+			uid : user_ID,
+			nonce : llmsat_ajax_url.nonce
 		},
 		success : function( response ) {
 			

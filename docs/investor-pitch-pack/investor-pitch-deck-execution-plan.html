@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Investor-Style Pitch Deck Execution Plan</title>
+  <style>
+    :root {
+      --text: #172033;
+      --muted: #5e667d;
+      --accent: #284ef0;
+      --border: #d9e1f2;
+      --soft: #f5f8ff;
+      --warm: #fff7e8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 44px 52px 60px;
+    }
+    h1, h2, h3 {
+      margin: 0 0 10px;
+      line-height: 1.2;
+    }
+    h1 { font-size: 30px; }
+    h2 {
+      margin-top: 30px;
+      padding-top: 12px;
+      border-top: 2px solid var(--border);
+      font-size: 22px;
+    }
+    h3 {
+      margin-top: 18px;
+      color: var(--accent);
+      font-size: 18px;
+    }
+    p { margin: 0 0 12px; }
+    ul, ol { margin: 0 0 14px 20px; padding: 0; }
+    li { margin-bottom: 6px; }
+    .hero {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: linear-gradient(135deg, #eef3ff, #fbfcff);
+      padding: 24px 26px;
+      margin-bottom: 24px;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0 18px;
+    }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--soft);
+      padding: 16px 18px;
+    }
+    .callout {
+      border: 1px solid #f0d59f;
+      background: var(--warm);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 14px 0 18px;
+    }
+    .phase {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-top: 16px;
+      background: #fff;
+    }
+    .badge {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #e8eeff;
+      color: #1c3da9;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px;
+      font-size: 13px;
+    }
+    .table th, .table td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    .table th { background: var(--soft); }
+    .page-break { page-break-before: always; }
+    @page {
+      size: A4;
+      margin: 14mm;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>Investor-Style Pitch Deck Execution Plan</h1>
+      <p>Create a complete investor pitch package for the AI Work Verification and Auto-Invoicing Platform, with separate execution tracks for the internal team and for Cursor/model workflows.</p>
+      <p class="meta">Use this document to guide planning, source collection, deck writing, challenge review, and packaging.</p>
+    </section>
+
+    <h2>1. Desired Output</h2>
+    <p>The goal is to produce a full investor communication package, not just slide text.</p>
+    <ul>
+      <li>Investor deck outline</li>
+      <li>Investor deck slide copy</li>
+      <li>Short and long versions</li>
+      <li>Speaker notes</li>
+      <li>Metrics worksheet</li>
+      <li>Q&amp;A prep</li>
+      <li>Demo flow notes</li>
+      <li>Cursor prompt pack</li>
+    </ul>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Team-Owned Truth</h3>
+        <p>The team owns the facts, numbers, proof, product decisions, investor target, and final strategic judgment.</p>
+      </div>
+      <div class="card">
+        <h3>Cursor-Driven Acceleration</h3>
+        <p>Cursor helps with positioning options, deck structures, wording compression, skeptical review, variants, and support material.</p>
+      </div>
+    </div>
+
+    <h2>2. Investment Story to Aim For</h2>
+    <p>The company should be framed as <strong>an AI-assisted infrastructure layer between project delivery, time, and billing</strong>, not merely as a feature for invoice automation.</p>
+    <ul>
+      <li>Services businesses lose margin and trust because work, time, and billing are fragmented</li>
+      <li>Verification, auditability, and billing confidence matter more than ever</li>
+      <li>AI is useful when combined with auditable rules and system-of-record integrations</li>
+      <li>Invoice automation is the wedge; benchmarking and intelligence become the moat</li>
+    </ul>
+
+    <h2>3. Recommended Deck Structure</h2>
+    <table class="table">
+      <tr>
+        <th>Slide</th>
+        <th>Purpose</th>
+      </tr>
+      <tr><td>1. Vision</td><td>Name, positioning, tagline, and immediate clarity on what the company is building.</td></tr>
+      <tr><td>2. Problem</td><td>Show the fragmentation between PM tools, time logs, and billing systems.</td></tr>
+      <tr><td>3. Why Now</td><td>Explain why AI, workflow pressure, and finance scrutiny make this timely.</td></tr>
+      <tr><td>4. Solution</td><td>Explain verification, invoice validation, and auto-invoicing clearly.</td></tr>
+      <tr><td>5. Product Walkthrough</td><td>Describe the user flow from connect to verify to invoice draft.</td></tr>
+      <tr><td>6. Market</td><td>Show starting wedge and expansion path.</td></tr>
+      <tr><td>7. Business Model</td><td>Explain pricing logic and monetization layers.</td></tr>
+      <tr><td>8. Traction</td><td>Present pilots, conversations, prototype proof, and signals of demand.</td></tr>
+      <tr><td>9. Go-to-Market</td><td>Show how the first customers will be won.</td></tr>
+      <tr><td>10. Competitive Advantage</td><td>Show why this is not a shallow feature.</td></tr>
+      <tr><td>11. Roadmap</td><td>Tell the phase story from MVP to benchmark intelligence.</td></tr>
+      <tr><td>12. Team</td><td>Explain founder credibility and ability to execute.</td></tr>
+      <tr><td>13. Financial Model</td><td>Show business logic and efficiency path.</td></tr>
+      <tr><td>14. Ask</td><td>State raise/use-of-funds if relevant.</td></tr>
+    </table>
+
+    <h2>4. Full Team Execution Plan</h2>
+    <section class="phase">
+      <div class="badge">TEAM WORKFLOW</div>
+      <h3>Step 1 - Lock the narrative</h3>
+      <ul>
+        <li>Define the exact category or wedge you are entering</li>
+        <li>Agree on the strongest pain point to lead with</li>
+        <li>Decide what makes the company venture-scale if it works</li>
+      </ul>
+
+      <h3>Step 2 - Choose the investor audience</h3>
+      <ul>
+        <li>Generalist pre-seed</li>
+        <li>AI application investors</li>
+        <li>Fintech/ops workflow investors</li>
+        <li>Vertical SaaS investors</li>
+      </ul>
+
+      <h3>Step 3 - Gather proof</h3>
+      <ul>
+        <li>Customer pain examples</li>
+        <li>Prototype screenshots</li>
+        <li>Design partner notes</li>
+        <li>Pricing assumptions</li>
+        <li>Roadmap and integration list</li>
+        <li>Founder bios</li>
+      </ul>
+
+      <h3>Step 4 - Build the proof hierarchy</h3>
+      <p>Rank claims by evidence strength. Strongest proof includes paying users, pilots, LOIs, active beta commitments, and measurable prototypes.</p>
+
+      <h3>Step 5 - Draft the deck in plain text</h3>
+      <p>For each slide define the title, key point, 3 bullets maximum, required visual, and source of proof.</p>
+
+      <h3>Step 6 - Pressure test the story</h3>
+      <p>Simulate investor pushback around market size, trust, defensibility, and whether the product is a feature or a category-worthy company.</p>
+    </section>
+
+    <section class="phase page-break">
+      <div class="badge">CURSOR / MODEL WORKFLOW</div>
+      <h3>Step 1 - Feed a complete brief</h3>
+      <p>Give Cursor a structured master brief that includes product summary, target customer, Phase 1 scope, traction signals, pricing assumptions, team background, and open questions.</p>
+
+      <h3>Step 2 - Generate positioning options</h3>
+      <ul>
+        <li>Ask for multiple one-line positioning statements</li>
+        <li>Ask for several category framings</li>
+        <li>Compare which framing sounds most venture-backable</li>
+      </ul>
+
+      <h3>Step 3 - Generate deck structures</h3>
+      <ul>
+        <li>Create 10-slide, 12-slide, and 14-slide outlines</li>
+        <li>Choose the right one for the fundraising stage</li>
+      </ul>
+
+      <h3>Step 4 - Draft each slide in layers</h3>
+      <ul>
+        <li>headline options</li>
+        <li>three concise bullets</li>
+        <li>visual/chart suggestions</li>
+        <li>missing-proof flags</li>
+        <li>speaker notes</li>
+      </ul>
+
+      <h3>Step 5 - Run skeptical review passes</h3>
+      <p>Ask Cursor to critique the deck like an investor and rewrite weak lines without inventing new facts.</p>
+
+      <h3>Step 6 - Create support materials</h3>
+      <ul>
+        <li>Q&amp;A prep</li>
+        <li>intro email</li>
+        <li>post-meeting note</li>
+        <li>one-page memo</li>
+        <li>demo script</li>
+      </ul>
+    </section>
+
+    <h2>5. Rules for Working With Cursor</h2>
+    <div class="callout">
+      <strong>Rule:</strong> the team owns the truth, and Cursor owns acceleration.
+    </div>
+    <ul>
+      <li>Provide facts first and assumptions second</li>
+      <li>Ask for options, not a single answer</li>
+      <li>Never allow made-up metrics, traction, or market claims</li>
+      <li>Use Cursor for sharpening, condensing, reviewing, and adapting to audiences</li>
+      <li>Keep the deck business-led, not feature-led</li>
+    </ul>
+
+    <h2>6. Division of Responsibilities</h2>
+    <table class="table">
+      <tr>
+        <th>Team</th>
+        <th>Cursor</th>
+      </tr>
+      <tr>
+        <td>
+          Strategy, proof, numbers, customer truth, market assumptions, product scope, fundraising logic, and final sign-off.
+        </td>
+        <td>
+          Rewrite for clarity, create framing options, compress slide copy, run challenge passes, generate Q&amp;A prep, and adapt the story to audience variants.
+        </td>
+      </tr>
+    </table>
+
+    <h2>7. Documents to Generate</h2>
+    <ul>
+      <li>Master product brief</li>
+      <li>Investor narrative brief</li>
+      <li>Proof and traction worksheet</li>
+      <li>Slide source sheet</li>
+      <li>Investor deck outline</li>
+      <li>Investor deck copy draft</li>
+      <li>Investor Q&amp;A prep</li>
+      <li>Demo flow script</li>
+      <li>Cursor prompt pack</li>
+    </ul>
+
+    <h2>8. Suggested Execution Sequence</h2>
+    <ol>
+      <li>Create the master product brief</li>
+      <li>Define the investor narrative</li>
+      <li>Gather proof and metrics</li>
+      <li>Write the text-only deck</li>
+      <li>Use Cursor to sharpen framing and compression</li>
+      <li>Create visuals and charts</li>
+      <li>Run investor objection testing</li>
+      <li>Create short and long versions</li>
+      <li>Finalize speaker notes</li>
+      <li>Package the full pitch kit</li>
+    </ol>
+
+    <h2>9. What Makes It Truly Investor-Style</h2>
+    <ul>
+      <li>concise, not overloaded</li>
+      <li>proof-led, not adjective-led</li>
+      <li>clear on why the market can be large</li>
+      <li>clear on why this specific wedge matters first</li>
+      <li>clear on why this team can win</li>
+      <li>strong on business outcomes, not just features</li>
+    </ul>
+
+    <h2>10. Immediate Next Step</h2>
+    <p>Before touching slide design, first finalize three source documents: a master product brief, the team workbook, and the Cursor brief template. Once those are complete, the investor deck can be generated and refined much faster with better quality.</p>
+  </div>
+</body>
+</html>

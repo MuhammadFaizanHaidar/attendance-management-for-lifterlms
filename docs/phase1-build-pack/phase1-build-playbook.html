@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Phase 1 Build Playbook</title>
+  <style>
+    :root {
+      --text: #172033;
+      --muted: #59637b;
+      --accent: #2f59f7;
+      --border: #d9e1f2;
+      --soft: #f5f8ff;
+      --warm: #fff7e8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 44px 52px 60px;
+    }
+    h1, h2, h3 {
+      margin: 0 0 10px;
+      line-height: 1.2;
+    }
+    h1 { font-size: 30px; }
+    h2 {
+      margin-top: 30px;
+      padding-top: 12px;
+      border-top: 2px solid var(--border);
+      font-size: 22px;
+    }
+    h3 {
+      margin-top: 18px;
+      color: var(--accent);
+      font-size: 18px;
+    }
+    p { margin: 0 0 12px; }
+    ul, ol { margin: 0 0 14px 20px; padding: 0; }
+    li { margin-bottom: 6px; }
+    pre {
+      background: #101623;
+      color: #f2f5fb;
+      padding: 14px 16px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .hero {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: linear-gradient(135deg, #eef3ff, #fbfcff);
+      padding: 24px 26px;
+      margin-bottom: 24px;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0 18px;
+    }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--soft);
+      padding: 16px 18px;
+    }
+    .callout {
+      border: 1px solid #f0d59f;
+      background: var(--warm);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 14px 0 18px;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px;
+      font-size: 13px;
+    }
+    .table th, .table td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    .table th { background: var(--soft); }
+    .page-break { page-break-before: always; }
+    @page {
+      size: A4;
+      margin: 14mm;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>Phase 1 Build Playbook</h1>
+      <p>Build a real, working, pitchable Phase 1 version of the AI Work Verification Platform that can be shown to customers and investors.</p>
+      <p class="meta">This playbook covers scope, architecture, coding, UI, database, infrastructure, delivery responsibilities, Cursor usage, commands, and the main challenges with recommended solutions.</p>
+    </section>
+
+    <h2>1. What Phase 1 Must Be</h2>
+    <p>Phase 1 should be a working operational wedge, not the full company vision.</p>
+    <ul>
+      <li>connect PM and time systems</li>
+      <li>import tasks, users, and time entries</li>
+      <li>verify hours against activity evidence</li>
+      <li>review approved vs flagged work</li>
+      <li>generate invoice drafts from approved records</li>
+    </ul>
+    <div class="callout">
+      <strong>Phase 1 promise:</strong> Connect PM and time systems, verify hours against work evidence, and generate invoice drafts from approved records.
+    </div>
+
+    <h2>2. The Demo to Build</h2>
+    <ol>
+      <li>Admin signs in and creates a workspace</li>
+      <li>Admin connects Jira or ClickUp</li>
+      <li>Admin connects Harvest or Tempo</li>
+      <li>Admin connects QuickBooks or Xero</li>
+      <li>Data sync imports users, projects, tasks, and time entries</li>
+      <li>The verification engine labels entries as verified, needs review, or flagged</li>
+      <li>A manager reviews anomalies in the dashboard and queue</li>
+      <li>A finance user generates a draft invoice from approved work</li>
+    </ol>
+
+    <h2>3. Recommended Stack</h2>
+    <table class="table">
+      <tr><th>Layer</th><th>Recommendation</th></tr>
+      <tr><td>Frontend</td><td>Next.js, TypeScript, Tailwind CSS, shadcn/ui, TanStack Query</td></tr>
+      <tr><td>Backend API</td><td>NestJS with REST APIs</td></tr>
+      <tr><td>Database</td><td>PostgreSQL with Prisma</td></tr>
+      <tr><td>Jobs</td><td>Redis + BullMQ</td></tr>
+      <tr><td>Auth</td><td>Clerk or Auth0</td></tr>
+      <tr><td>Storage</td><td>S3 or MinIO for local/dev</td></tr>
+      <tr><td>Deployment</td><td>Vercel + Railway/Render/Fly + Neon + Upstash</td></tr>
+    </table>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Why this stack</h3>
+        <p>It is fast to build, modern, manageable, and friendly for Cursor-assisted development.</p>
+      </div>
+      <div class="card">
+        <h3>Why not overbuild</h3>
+        <p>Phase 1 needs speed, credibility, and a clean demo more than enterprise-scale infrastructure.</p>
+      </div>
+    </div>
+
+    <h2>4. Architecture</h2>
+    <ul>
+      <li><strong>Web app:</strong> onboarding, integrations, dashboard, review queue, invoice draft UI</li>
+      <li><strong>API service:</strong> workspaces, integrations, sync orchestration, verification, invoice logic</li>
+      <li><strong>Worker service:</strong> background syncs, webhook processing, scoring, draft generation</li>
+      <li><strong>Database:</strong> multi-tenant relational store for normalized entities and auditability</li>
+      <li><strong>Storage:</strong> files, exports, and future document support</li>
+    </ul>
+
+    <h2>5. Repository Structure</h2>
+    <pre>phase1-platform/
+  apps/
+    web/
+    api/
+    worker/
+  packages/
+    ui/
+    config/
+    types/
+    sdk/
+  infra/
+    docker/
+    scripts/
+  docs/</pre>
+
+    <h2>6. Core Screens</h2>
+    <ul>
+      <li>sign-in and workspace setup</li>
+      <li>integrations page</li>
+      <li>dashboard</li>
+      <li>verification review queue</li>
+      <li>project detail page</li>
+      <li>invoice draft page</li>
+      <li>audit log/activity view</li>
+    </ul>
+
+    <h2>7. Data Model</h2>
+    <p>Use strict workspace scoping and store both normalized data and source-provider references.</p>
+    <ul>
+      <li>workspaces, users, workspace_members</li>
+      <li>integrations, external_identities</li>
+      <li>projects, tasks, time_entries, activity_events</li>
+      <li>verification_results, verification_reasons</li>
+      <li>invoice_drafts, invoice_lines</li>
+      <li>audit_logs</li>
+    </ul>
+
+    <h2>8. Core Backend Modules</h2>
+    <ul>
+      <li>auth</li>
+      <li>workspaces</li>
+      <li>integrations</li>
+      <li>sync</li>
+      <li>users</li>
+      <li>projects</li>
+      <li>tasks</li>
+      <li>time-entries</li>
+      <li>verification</li>
+      <li>invoices</li>
+      <li>audit</li>
+    </ul>
+
+    <h2>9. Verification Engine</h2>
+    <p>Use deterministic rules first. This makes Phase 1 explainable and trustworthy.</p>
+    <ul>
+      <li>linked task present → positive score</li>
+      <li>task updated near the work window → positive score</li>
+      <li>comments/activity present → positive score</li>
+      <li>duplicate overlapping time entries → negative score</li>
+      <li>task closed before time log → flag</li>
+      <li>unmapped user → flag</li>
+    </ul>
+    <p><strong>Statuses:</strong> verified, needs_review, flagged.</p>
+
+    <h2>10. Invoice Draft Engine</h2>
+    <ul>
+      <li>input: approved time entries, client/project mapping, user or role rates</li>
+      <li>output: draft invoice, line items, totals, summary note</li>
+      <li>keep logic simple in Phase 1: hourly by user or role only</li>
+    </ul>
+
+    <h2>11. Team Workstreams</h2>
+    <table class="table">
+      <tr><th>Track</th><th>Focus</th></tr>
+      <tr><td>Product and UX</td><td>golden flow, wireframes, status language, review UX, invoice layout</td></tr>
+      <tr><td>Platform and Infra</td><td>monorepo, environments, CI/CD, database, queues, secrets, deployments</td></tr>
+      <tr><td>Backend and Data</td><td>schema, APIs, verification, invoice engine, audit trail, tenant safety</td></tr>
+      <tr><td>Integrations</td><td>Jira/ClickUp, Harvest/Tempo, accounting connector shell, idempotent syncs</td></tr>
+      <tr><td>Frontend App</td><td>app shell, screens, tables, drawers, dashboard, invoice views</td></tr>
+      <tr><td>Demo and Pitch</td><td>demo data, screenshots, walkthrough, product story</td></tr>
+    </table>
+
+    <h2>12. Build Sequence</h2>
+    <h3>Bootstrap repository</h3>
+    <pre>mkdir phase1-platform
+cd phase1-platform
+pnpm init
+pnpm dlx create-turbo@latest .</pre>
+
+    <h3>Create the web app</h3>
+    <pre>pnpm dlx create-next-app@latest apps/web --ts --tailwind --eslint --app --src-dir --import-alias "@/*"</pre>
+
+    <h3>Create the API app</h3>
+    <pre>pnpm add -D @nestjs/cli
+pnpm dlx @nestjs/cli new apps/api --package-manager pnpm</pre>
+
+    <h3>Create the worker and shared tooling</h3>
+    <pre>mkdir -p apps/worker/src packages/ui packages/types infra/docker
+pnpm add -w @prisma/client zod dotenv bullmq ioredis
+pnpm add -w -D prisma typescript tsx turbo eslint prettier
+pnpm prisma init</pre>
+
+    <h3>Start local infrastructure</h3>
+    <pre>docker compose up -d postgres redis minio
+pnpm prisma migrate dev --name init
+pnpm prisma generate</pre>
+
+    <h3>Then build in this order</h3>
+    <ol>
+      <li>auth and workspace setup</li>
+      <li>integration framework</li>
+      <li>normalized entities</li>
+      <li>verification engine</li>
+      <li>invoice draft engine</li>
+      <li>frontend flows</li>
+      <li>demo seed data</li>
+      <li>staging deployment and golden-path demo</li>
+    </ol>
+
+    <h2>13. Main Challenges and Solutions</h2>
+    <table class="table">
+      <tr><th>Challenge</th><th>Solution</th></tr>
+      <tr><td>Identity mapping across tools</td><td>Use external_identities, email-first matching, manual review/merge fallback.</td></tr>
+      <tr><td>API rate limits and sync failures</td><td>Use provider adapters, sync cursors, retries, and idempotent jobs.</td></tr>
+      <tr><td>Opaque verification scoring</td><td>Store reasons, show triggered rules, allow overrides, and log every review action.</td></tr>
+      <tr><td>Invoice logic exploding in complexity</td><td>Support only hourly user or role rates in Phase 1.</td></tr>
+      <tr><td>UI overload</td><td>Keep 5–7 core screens and use progressive disclosure.</td></tr>
+      <tr><td>Multi-tenant data leakage risk</td><td>Enforce workspace scope on every query and action.</td></tr>
+      <tr><td>Messy demos</td><td>Seed curated, realistic data and prepare a polished golden-path workspace.</td></tr>
+    </table>
+
+    <h2>14. How Cursor Should Be Used</h2>
+    <p>Use Cursor as an execution accelerator for small, clear tasks.</p>
+    <ul>
+      <li>good for scaffolding modules, tables, DTOs, queue handlers, and tests</li>
+      <li>good for schema drafts and refactors</li>
+      <li>bad for inventing business logic, billing rules, or unsupported claims</li>
+    </ul>
+
+    <h2>15. Concrete Cursor Commands and Prompts</h2>
+    <h3>Bootstrap commands</h3>
+    <pre>pnpm install
+docker compose up -d
+pnpm prisma migrate dev
+pnpm dev</pre>
+
+    <h3>Prompt: create Prisma schema</h3>
+    <pre>Create a Phase 1 Prisma schema for a multi-tenant work verification platform.
+Include:
+- workspaces
+- users
+- workspace_members
+- integrations
+- external_identities
+- projects
+- tasks
+- time_entries
+- activity_events
+- verification_results
+- invoice_drafts
+- invoice_lines
+- audit_logs
+Requirements:
+- every business table must be workspace-scoped
+- include unique constraints for provider external ids
+- optimize for Jira/Harvest style imports</pre>
+
+    <h3>Prompt: build verification engine</h3>
+    <pre>Implement the Phase 1 verification engine.
+Rules:
+- linked task present => positive score
+- task updated near work window => positive score
+- comments/activity present => positive score
+- duplicate overlapping time entries => negative score
+- task closed before time log => flag
+- unmapped user => flag
+Output:
+- score
+- status
+- explanation reasons array
+Add unit tests for the rules.</pre>
+
+    <h3>Prompt: build dashboard UI</h3>
+    <pre>Build the Phase 1 dashboard in Next.js.
+Include:
+- KPI cards for total hours, verified hours, flagged hours, invoiceable hours
+- anomaly panel
+- recent sync panel
+- pending review table preview
+Use Tailwind and reusable components.
+Keep it visually clean and pitch-demo friendly.</pre>
+
+    <h3>Prompt: build invoice draft flow</h3>
+    <pre>Build the invoice draft feature for Phase 1.
+Requirements:
+- group approved time entries by project/client
+- create line items using user or role hourly rate
+- show total hours, rate, amount
+- include a generated work summary field
+- maintain references back to time entries
+Implement API, service layer, and Next.js UI.</pre>
+
+    <h2>16. Definition of Done</h2>
+    <ul>
+      <li>a demo user can onboard a workspace</li>
+      <li>sample integrations sync realistic data</li>
+      <li>the verification dashboard is clear</li>
+      <li>flagged items can be reviewed and approved</li>
+      <li>invoice drafts can be generated from approved work</li>
+      <li>the app looks credible enough for customer and investor demos</li>
+    </ul>
+
+    <h2>17. Final Recommendation</h2>
+    <p>Build Phase 1 as a credible working wedge: deterministic verification, simple invoice rules, curated demo data, managed infrastructure, and a small number of polished screens. That is the fastest path to something real, demoable, and fundable.</p>
+  </div>
+</body>
+</html>

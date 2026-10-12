@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Work Verification and Auto-Invoicing Platform Roadmap</title>
+  <style>
+    :root {
+      --text: #172033;
+      --muted: #58627a;
+      --accent: #315efb;
+      --border: #d9e0ef;
+      --bg-soft: #f6f8fc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 44px 52px 60px;
+    }
+    h1, h2, h3, h4 {
+      margin: 0 0 10px;
+      line-height: 1.2;
+    }
+    h1 { font-size: 30px; }
+    h2 {
+      font-size: 22px;
+      padding-top: 12px;
+      border-top: 2px solid var(--border);
+      margin-top: 28px;
+    }
+    h3 {
+      font-size: 18px;
+      color: var(--accent);
+      margin-top: 20px;
+    }
+    h4 {
+      font-size: 15px;
+      margin-top: 14px;
+    }
+    p { margin: 0 0 12px; }
+    ul, ol {
+      margin: 0 0 14px 20px;
+      padding: 0;
+    }
+    li { margin-bottom: 6px; }
+    .hero {
+      background: linear-gradient(135deg, #edf2ff, #f9fbff);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 26px;
+      margin-bottom: 24px;
+    }
+    .hero p:last-child,
+    .card p:last-child { margin-bottom: 0; }
+    .meta {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0 18px;
+    }
+    .card {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+    }
+    .phase {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-top: 16px;
+      background: #fff;
+    }
+    .phase.fast {
+      border-color: #b8c9ff;
+      background: #f8faff;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      margin-bottom: 12px;
+      color: #1e3fa9;
+      background: #e6eeff;
+    }
+    .pitch-slide {
+      border-left: 4px solid var(--accent);
+      padding: 10px 0 10px 14px;
+      margin: 8px 0 12px;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 18px;
+      font-size: 13px;
+    }
+    .table th, .table td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .table th {
+      background: var(--bg-soft);
+    }
+    .note {
+      background: #fff7e8;
+      border: 1px solid #f0d59f;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 12px 0 18px;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+    @page {
+      size: A4;
+      margin: 14mm;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>AI Work Verification and Auto-Invoicing Platform</h1>
+      <p><strong>Strategic Product Document</strong></p>
+      <p>Build a platform that cross-verifies work completed against hours logged, compares delivery effort against internal and later market benchmarks, validates invoices, and auto-generates invoice drafts from approved work records.</p>
+      <p class="meta">Prepared for team alignment, planning, and sharing with AI/copilot systems.</p>
+    </section>
+
+    <h2>1. Executive Summary</h2>
+    <p>This product will help service teams answer three important questions:</p>
+    <ol>
+      <li>Was the logged work supported by real delivery evidence?</li>
+      <li>Was the time and cost reasonable compared to similar internal work and future market benchmarks?</li>
+      <li>Can that verified work flow into faster, more accurate invoice creation?</li>
+    </ol>
+    <p>The fastest route to value is a tight first release focused on PM tools, time tracking, verification logic, and invoice draft generation. Wider AI analysis and deeper benchmarking can then expand during beta and after customer feedback.</p>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Primary Problem</h3>
+        <p>Hours are logged in one tool, delivery happens in another, and invoices are created elsewhere. This creates weak visibility, billing disputes, and poor benchmark intelligence.</p>
+      </div>
+      <div class="card">
+        <h3>Initial Solution</h3>
+        <p>Connect PM, time, and accounting systems; verify hours against work signals; flag anomalies; and generate invoice drafts from approved records.</p>
+      </div>
+    </div>
+
+    <h2>2. Product Vision</h2>
+    <p><strong>Working statement:</strong> An AI-assisted work verification and invoicing platform that turns task activity, time logs, and business records into verified, benchmarked, invoice-ready output.</p>
+    <ul>
+      <li>Reduce unsupported or inflated time entries</li>
+      <li>Improve billing confidence</li>
+      <li>Speed up invoice preparation</li>
+      <li>Reduce disputes and manual reconciliation</li>
+      <li>Create a long-term benchmark layer across teams and projects</li>
+    </ul>
+
+    <h2>3. First Target Users</h2>
+    <ul>
+      <li>Agencies</li>
+      <li>Software consultancies</li>
+      <li>Professional services teams</li>
+      <li>Delivery, operations, and finance leaders inside service-based businesses</li>
+    </ul>
+
+    <h2>4. Core Product Capabilities</h2>
+    <table class="table">
+      <tr>
+        <th>Capability</th>
+        <th>What it does</th>
+      </tr>
+      <tr>
+        <td>Work Verification</td>
+        <td>Links time entries to tasks and supporting activity, then scores whether work appears sufficiently evidenced.</td>
+      </tr>
+      <tr>
+        <td>Benchmarking</td>
+        <td>Compares effort and cost to similar internal work first, then later to external market norms.</td>
+      </tr>
+      <tr>
+        <td>Invoice Validation</td>
+        <td>Checks invoice lines, rates, users, and hours against approved work and system records.</td>
+      </tr>
+      <tr>
+        <td>Auto-Invoicing</td>
+        <td>Creates invoice drafts from approved users, tasks, hours, and rate card rules.</td>
+      </tr>
+    </table>
+
+    <h2>5. Phase-by-Phase Delivery Plan</h2>
+
+    <section class="phase fast">
+      <div class="badge">PHASE 1 - FASTEST RELEASE / MVP</div>
+      <h3>Main Goal</h3>
+      <p>Ship a focused product quickly and get into beta as fast as possible.</p>
+
+      <h3>Phase 1 Product Promise</h3>
+      <p><strong>Connect your PM and time systems, verify whether logged work is supported by delivery activity, and generate invoice drafts from approved records.</strong></p>
+
+      <h3>Scope</h3>
+      <ul>
+        <li>PM integration: Jira or ClickUp</li>
+        <li>Time-tracking integration: Harvest or Tempo</li>
+        <li>Accounting integration: QuickBooks or Xero</li>
+        <li>Optional support signal: GitHub</li>
+        <li>Verification dashboard</li>
+        <li>Invoice draft generator</li>
+        <li>Review and approval flow</li>
+      </ul>
+
+      <h3>Must-have Features</h3>
+      <ol>
+        <li>Organization/workspace setup</li>
+        <li>User identity mapping across systems</li>
+        <li>Project, task, user, and time entry sync</li>
+        <li>Rules-based work verification</li>
+        <li>Verification dashboard for flagged and approved records</li>
+        <li>Invoice draft generation from approved hours</li>
+        <li>Shareable invoice support summary</li>
+      </ol>
+
+      <h3>AI in Phase 1</h3>
+      <ul>
+        <li>Summarize verified work for invoice descriptions</li>
+        <li>Explain why a time entry was flagged</li>
+        <li>Help normalize unclear task descriptions</li>
+      </ul>
+
+      <h3>Out of Scope</h3>
+      <ul>
+        <li>Deep email parsing</li>
+        <li>Invoice OCR</li>
+        <li>External market benchmarking</li>
+        <li>Complex ERP workflows</li>
+        <li>Fully automated invoice sending</li>
+      </ul>
+
+      <div class="note">
+        <strong>Why this phase first:</strong> It is the fastest path to real customer value, clean beta feedback, and a strong product story without overbuilding too early.
+      </div>
+
+      <h3>Phase 1 Exit Criteria</h3>
+      <ul>
+        <li>A customer can connect tools successfully</li>
+        <li>A manager can review verified versus flagged hours</li>
+        <li>A finance user can generate a draft invoice from approved work</li>
+        <li>The system explains why entries were flagged</li>
+      </ul>
+    </section>
+
+    <section class="phase">
+      <div class="badge">PHASE 1 ADD-ON - PITCH DECK STYLE VERSION</div>
+      <div class="pitch-slide"><strong>Slide 1 - Title:</strong> AI Work Verification and Auto-Invoicing Platform. Verify work. Validate hours. Generate invoices faster.</div>
+      <div class="pitch-slide"><strong>Slide 2 - Problem:</strong> Work happens across multiple tools, creating weak proof of delivery and invoice friction.</div>
+      <div class="pitch-slide"><strong>Slide 3 - Solution:</strong> Connect PM tools, timesheets, and accounting systems to verify, flag, and invoice from approved work.</div>
+      <div class="pitch-slide"><strong>Slide 4 - Why now:</strong> AI can explain work evidence, while finance teams need auditability and faster billing workflows.</div>
+      <div class="pitch-slide"><strong>Slide 5 - Target customer:</strong> Agencies, consultancies, and professional services organizations.</div>
+      <div class="pitch-slide"><strong>Slide 6 - MVP:</strong> Jira/ClickUp + Harvest/Tempo + QuickBooks/Xero + verification dashboard + invoice draft generation.</div>
+      <div class="pitch-slide"><strong>Slide 7 - Value:</strong> Faster invoicing, fewer disputes, better billing confidence, and improved accountability.</div>
+      <div class="pitch-slide"><strong>Slide 8 - Moat:</strong> Cross-system mapping, verification logic, historical benchmarks, and finance-delivery alignment.</div>
+      <div class="pitch-slide"><strong>Slide 9 - Business model:</strong> SaaS pricing by workspace/team size, with premium analytics and controls.</div>
+      <div class="pitch-slide"><strong>Slide 10 - Near-term roadmap:</strong> Ship fast, start beta, then expand into OCR, email, and benchmarking.</div>
+    </section>
+
+    <section class="phase page-break">
+      <div class="badge">PHASE 2 - BETA EXPANSION</div>
+      <h3>Main Goal</h3>
+      <p>Increase trust, validation depth, and real-world coverage while early customers actively use the MVP.</p>
+      <h3>Scope</h3>
+      <ul>
+        <li>Gmail and Outlook integration</li>
+        <li>Invoice PDF upload</li>
+        <li>OCR/document extraction</li>
+        <li>Cross-check invoice lines against approved work</li>
+        <li>Basic internal benchmarking by task type, role, and project</li>
+        <li>Exception review queue</li>
+      </ul>
+      <h3>Beta Focus</h3>
+      <ul>
+        <li>Accuracy of verification scores</li>
+        <li>Usefulness of discrepancy flags</li>
+        <li>Cross-system mapping quality</li>
+        <li>Finance team confidence in draft invoices</li>
+      </ul>
+      <h3>Exit Criteria</h3>
+      <ul>
+        <li>Beta teams trust the system enough to review it regularly</li>
+        <li>Invoice validation catches real mismatches</li>
+        <li>Internal benchmark views are useful for decision-making</li>
+      </ul>
+    </section>
+
+    <section class="phase">
+      <div class="badge">PHASE 3 - INTELLIGENCE AND BENCHMARKING</div>
+      <h3>Main Goal</h3>
+      <p>Move from operational verification into delivery intelligence and performance analysis.</p>
+      <ul>
+        <li>Historical benchmarking engine</li>
+        <li>Cross-team and cross-project comparisons</li>
+        <li>Role and project-level productivity trends</li>
+        <li>Effort variance analysis</li>
+        <li>Margin and efficiency insights</li>
+      </ul>
+    </section>
+
+    <section class="phase">
+      <div class="badge">PHASE 4 - MARKET BENCHMARKING AND ADVANCED AUTOMATION</div>
+      <h3>Main Goal</h3>
+      <p>Add external market context and deeper automation once internal data quality and auditability are strong.</p>
+      <ul>
+        <li>External market rate benchmarks</li>
+        <li>Pricing recommendations</li>
+        <li>Contract-aware billing suggestions</li>
+        <li>Auto-approval suggestions with human review</li>
+        <li>Advanced finance workflow automation</li>
+      </ul>
+    </section>
+
+    <h2>6. Recommended Tech Stack</h2>
+    <table class="table">
+      <tr>
+        <th>Layer</th>
+        <th>Recommendation</th>
+      </tr>
+      <tr>
+        <td>Frontend</td>
+        <td>Next.js, TypeScript, Tailwind CSS, shadcn/ui</td>
+      </tr>
+      <tr>
+        <td>Core backend</td>
+        <td>NestJS with TypeScript</td>
+      </tr>
+      <tr>
+        <td>AI/analytics service</td>
+        <td>Python + FastAPI, pandas, scikit-learn, LLM APIs</td>
+      </tr>
+      <tr>
+        <td>Database</td>
+        <td>PostgreSQL, optionally pgvector</td>
+      </tr>
+      <tr>
+        <td>Jobs and workflows</td>
+        <td>Redis + BullMQ or Temporal</td>
+      </tr>
+      <tr>
+        <td>Files and documents</td>
+        <td>AWS S3</td>
+      </tr>
+      <tr>
+        <td>OCR/document extraction</td>
+        <td>AWS Textract or Google Document AI</td>
+      </tr>
+      <tr>
+        <td>Auth</td>
+        <td>Auth0, Clerk, or WorkOS</td>
+      </tr>
+      <tr>
+        <td>Infra/observability</td>
+        <td>AWS, containers, OpenTelemetry, Datadog or Grafana</td>
+      </tr>
+    </table>
+
+    <h2>7. Architecture Principles</h2>
+    <ul>
+      <li><strong>Deterministic rules first:</strong> rely on source data and rules before advanced AI judgement.</li>
+      <li><strong>AI as assistant:</strong> use AI for explanation, summarization, and support rather than as sole decision-maker.</li>
+      <li><strong>Full audit trail:</strong> every result must show what data, rule, model, and approver were involved.</li>
+      <li><strong>Normalized entities:</strong> standardize users, clients, projects, tasks, time entries, invoices, invoice lines, rate cards, and evidence events.</li>
+    </ul>
+
+    <h2>8. Recommended Beta Metrics</h2>
+    <ul>
+      <li>Percentage of time entries mapped to tasks</li>
+      <li>Percentage of hours verified versus flagged</li>
+      <li>Invoice draft generation time</li>
+      <li>Number of mismatches caught before invoicing</li>
+      <li>Human overrides of flagged entries</li>
+      <li>Finance review time per invoice cycle</li>
+    </ul>
+
+    <h2>9. Key Open Questions</h2>
+    <ol>
+      <li>Who is the exact first customer profile?</li>
+      <li>Is the biggest pain point verification, invoicing, or benchmarking?</li>
+      <li>Should Phase 1 create invoice drafts only, or also send them?</li>
+      <li>Which PM, time, and accounting integrations matter most at launch?</li>
+      <li>How should pricing work: by seat, workspace, invoices, or usage?</li>
+      <li>How deep should email and document permissions go?</li>
+      <li>Where will market benchmark data eventually come from?</li>
+    </ol>
+
+    <h2>10. Final Recommendation</h2>
+    <p>Move fast with a tightly scoped first release centered on PM task sync, time-log verification, approval workflows, and invoice draft generation. Use beta usage to harden the verification engine and guide the rollout of OCR, email validation, and benchmarking in subsequent phases.</p>
+  </div>
+</body>
+</html>
